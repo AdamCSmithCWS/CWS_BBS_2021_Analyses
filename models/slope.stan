@@ -3,7 +3,6 @@
 data {
   int<lower=1> nstrata;
   int<lower=1> ncounts;
-  int<lower=1> nroutes;
   int<lower=1> nyears;
 
   int<lower=0> count[ncounts];              // count observations
@@ -11,7 +10,7 @@ data {
   int<lower=1> year[ncounts]; // year index
   int<lower=1> fixedyear; // centering value for years
   
-  int<lower=1> firstyr[ncounts]; // first year index
+  int<lower=0> firstyr[ncounts]; // first year index
   
   int<lower=1> obser[ncounts];              // observer indicators
   int<lower=1> nobservers[nstrata];
@@ -100,8 +99,6 @@ model {
 
   real<lower=0> n[nstrata,nyears];
   real<lower=0> nsmooth[nstrata,nyears];
-  real<lower=0> n_o[nstrata,nyears,max_nobservers];
-  real<lower=0> nsmooth_o[nstrata,nyears,max_nobservers];
   real<lower=0> retrans_noise;
   
   retrans_noise = 0.5*(sdnoise^2);
@@ -110,12 +107,15 @@ for(y in 1:nyears){
   
       for(s in 1:nstrata){
 
+  real n_o[nobservers[s]];
+  real nsmooth_o[nobservers[s]];
+
         for(o in 1:nobservers[s]){
-      n_o[s,y,o] = exp(strata[s]+ beta[s]*(y-fixedyear) + obs[s,o] + yeareffect[s,y] + retrans_noise );
-      nsmooth_o[s,y,o] = exp(strata[s]+ beta[s]*(y-fixedyear) + obs[s,o] + retrans_noise );
+      n_o[o] = exp(strata[s]+ beta[s]*(y-fixedyear) + obs[s,o] + yeareffect[s,y] + retrans_noise );
+      nsmooth_o[o] = exp(strata[s]+ beta[s]*(y-fixedyear) + obs[s,o] + retrans_noise );
         }
-        n[s,y] = nonzeroweight[s] * mean(n_o[s,y,1:nobservers[s]]);
-        nsmooth[s,y] = nonzeroweight[s] * mean(nsmooth_o[s,y,1:nobservers[s]]);
+        n[s,y] = nonzeroweight[s] * mean(n_o);
+        nsmooth[s,y] = nonzeroweight[s] * mean(nsmooth_o);
         
         
     }

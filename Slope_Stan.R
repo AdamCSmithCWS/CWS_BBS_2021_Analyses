@@ -31,6 +31,7 @@ stan_data = jags_data[c("ncounts",
                          "fixedyear",
                         "nonzeroweight")]
 stan_data[["nyears"]] <- max(jags_data$year)
+stan_data[["max_nobservers"]] <- max(jags_data$nobservers)
 
 
 mod.file = "models/slope.stan"
