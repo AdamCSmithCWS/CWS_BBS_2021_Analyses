@@ -10,13 +10,13 @@ library(shinystan)
 # load and stratify CASW data ---------------------------------------------
 species = "Pacific Wren"
 strat = "bbs_usgs"
-model = "slope"
+model = "gamye"
 
 strat_data = stratify(by = strat)
 jags_data = prepare_jags_data(strat_data = strat_data,
                              species_to_run = species,
                              model = model,
-                             n_knots = 10,
+                             n_knots = 7,
                              min_year = 1999)
 
 
@@ -35,9 +35,11 @@ stan_data = jags_data[c("ncounts",
                         "nonzeroweight")]
 stan_data[["nyears"]] <- max(jags_data$year)
 stan_data[["max_nobservers"]] <- max(jags_data$nobservers)
+stan_data[["nknots_year"]] <- jags_data$nknots
+stan_data[["year_basispred"]] <- jags_data$X.basis
 
 
-mod.file = "models/slope.stan"
+mod.file = "models/gamye.stan"
 
 parms = c("sdnoise",
           "sdyear",
