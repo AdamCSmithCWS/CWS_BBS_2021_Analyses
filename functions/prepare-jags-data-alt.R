@@ -1,77 +1,7 @@
 #' Wrangle data to use for JAGS input
 #'
-#' \code{prepare_jags_data} subsets raw BBS data by selected species and
-#'    and wrangles stratified data for use as input to run JAGS models.
-#'
-#' @param strat_data Large list of stratified data returned by \code{stratify()}
-#' @param species_to_run Character string of the English name of the species to run
-#' @param model Character string of model to be used.
-#'   Options are "slope", "firstdiff", "gam", "gamye.
-#' @param heavy_tailed Logical indicating whether the extra-Poisson error distribution should be modeled as a t-distribution, with heavier tails than the standard normal distribution. Default is currently FALSE, but recent results suggest users should strongly consider setting this to TRUE, even though it requires much longer convergence times
-#' @param n_knots Number of knots to be used in GAM function
-#' @param min_year Minimum year to keep in analysis
-#' @param max_year Maximum year to keep in analysis
-#' @param min_n_routes Minimum routes per strata where species has been observed.
-#'   Defaults to 3
-#' @param min_max_route_years Minimum number of years with non-zero observations
-#'   of species on at least 1 route. Defaults to 3
-#' @param min_mean_route_years Minimum average of years per route with the
-#'   species observed. Defaults to 1.
-#' @param strata_rem Strata to remove from analysis. Defaults to NULL
-#' @param quiet Should progress bars be suppressed?
-#' @param ... Additional arguments
-#'
-#' @return List of data to be used in JAGS, including:
-#'   \item{model}{The model to be used in JAGS}
-#'   \item{heavy_tailed}{Logical indicating whether the extra-Poisson error distribution should be modeled as a t-distribution}
-#'   \item{ncounts}{The number of counts containing useful data for the species}
-#'   \item{nstrata}{The number of strata used in the analysis}
-#'   \item{ymin}{Minimum year used}
-#'   \item{ymax}{Maximum year used}
-#'   \item{nonzeroweight}{Proportion of routes in each strata with species obervation}
-#'   \item{count}{Vector of counts for the species}
-#'   \item{strat}{Vector of strata to be used in the analysis}
-#'   \item{osber}{Vector of unique observer-route pairings}
-#'   \item{year}{Vector of years for each count}
-#'   \item{firstyr}{Vector of indicator variables as to whether an observer was a first year}
-#'   \item{month}{vector of numeric month of observation}
-#'   \item{day}{vector of numeric day of observation}
-#'   \item{nobservers}{Total number of observer-route pairings}
-#'   \item{fixedyear}{Median of all years (ymin:ymax), included only with slope model}
-#'   \item{nknots}{Number of knots to use for smooting functions, included only with GAM}
-#'   \item{X.basis}{Basis function for n smoothing functions, included only with GAM}
-#'
-#' @importFrom stats median
-#' @importFrom progress progress_bar
-#' @export
-#'
-#' @examples
-#' # Toy example with Pacific Wren sample data
-#' # First, stratify the sample data
-#'
-#' strat_data <- stratify(by = "bbs_cws", sample_data = TRUE)
-#'
-#' # Prepare the stratified data for use in a JAGS model. In this
-#' #   toy example, we will set the minimum year as 2009 and
-#' #   maximum year as 2018, effectively only setting up to
-#' #   model 10 years of data. We will use the "first difference
-#' #   model.
-#' jags_data <- prepare_jags_data(strat_data = strat_data,
-#'                                species_to_run = "Pacific Wren",
-#'                                model = "firstdiff",
-#'                                min_year = 2009,
-#'                                max_year = 2018)
-#'
-#' # You can also specify the GAM model, with an optional number of
-#' # knots to use for the GAM basis.
-#' # By default, the number of knots will be equal to the floor
-#' # of the total unique years for the species / 4
-#' jags_data <- prepare_jags_data(strat_data = strat_data,
-#'                                species_to_run = "Pacific Wren",
-#'                                model = "gam",
-#'                                n_knots = 9)
-#'
-#'
+## modified version of the bbsBayes function to retain the observer indicators
+## not just the observer-route values
 
 prepare_jags_data <- function(strat_data = NULL,
                               species_to_run = NULL,
@@ -302,8 +232,8 @@ prepare_jags_data <- function(strat_data = NULL,
   spsp_f <- spsp_ft
 
   spsp_f[which(is.na(spsp_f$firstyear)),"firstyear"] <- 0
-  spsp_f <- spsp_f[,c("count","stratum","obser","yr","firstyear","strat_name","rt.uni","Year","Month","Day")]
-  names(spsp_f) <- c("count","strat","obser","year","firstyr","strat_name","route","rYear","Month","Day")
+  spsp_f <- spsp_f[,c("count","stratum","obser","yr","firstyear","strat_name","rt.uni","Year","Month","Day","ObsN")]
+  names(spsp_f) <- c("count","strat","obser","year","firstyr","strat_name","route","rYear","Month","Day","ObsN")
   if (!isTRUE(quiet)){pb$tick()}
 
   pR_wts <- pR.wts
@@ -362,7 +292,8 @@ prepare_jags_data <- function(strat_data = NULL,
                     route = spsp_f$route,
                     r_year = spsp_f$rYear,
                     month = spsp_f$Month,
-                    day = spsp_f$Day)
+                    day = spsp_f$Day,
+                    ObsN = spsp_f$ObsN)
   if (!is.null(model))
   {
     if (tolower(model) == "slope")
