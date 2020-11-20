@@ -27,21 +27,20 @@ data {
 }
 
 parameters {
-  real noise[ncounts];             // over-dispersion
+  vector[ncounts] noise_raw;             // over-dispersion
   real lambda[ncounts];             // Poisson means
   
- 
-  real strata_p[nstrata];
-  real STRATA; 
+ vector[nstrata] strata_p;
+   real STRATA; 
 
   real eta; //first-year intercept
   
-  real yeareffect[nstrata,nyears];
+  matrix[nstrata,nyears] yeareffect_raw;
 
-  real obs[nstrata,max_nobservers]; //observer effects
+  matrix[nstrata,max_nobservers] obs_raw; //observer effects
 
   real<lower=0> sdnoise;    // sd of over-dispersion
-  real<lower=1> nu;  //optional heavy-tail df for t-distribution
+ //real<lower=1> nu;  //optional heavy-tail df for t-distribution
   real<lower=0> sdobs;    // sd of observer effects
   real<lower=0> sdbeta[nknots_year];    // sd of GAM coefficients among strata 
   real<lower=0> sdstrata;    // sd of intercepts
@@ -50,19 +49,26 @@ parameters {
   real<lower=0> sdyear[nstrata];    // sd of year effects
 
   
-  vector[nknots_year] BETA; 
+  vector[nknots_year] BETA;//_raw; 
   matrix[nstrata,nknots_year] beta_p;         // GAM strata level parameters
 
 }
 
 transformed parameters { 
   vector[ncounts] E;           // log_scale additive likelihood
- vector[nstrata] strata;
+  vector[nstrata] strata;
   matrix[nstrata,nknots_year] beta;         // spatial effect slopes (0-centered deviation from continental mean slope B)
-    matrix[nyears,nstrata] year_pred;
+  matrix[nyears,nstrata] year_pred;
   vector[nyears] Y_pred;  
 
-
+  matrix[nstrata,max_nobservers] obs; //observer effects
+  matrix[nstrata,nyears] yeareffect;
+  vector[ncounts] noise;             // over-dispersion
+  //vector[nknots_year] BETA;
+  
+  
+ // BETA = sdyear_gam*BETA_raw;
+  
   for(k in 1:nknots_year){
     beta[,k] = (sdbeta[k] * beta_p[,k]) + BETA[k];
   }
@@ -72,12 +78,17 @@ transformed parameters {
      year_pred[,s] = year_basispred * transpose(beta[s,]);
 }
 
+for(s in 1:nstrata){
+    yeareffect[s,] = sdyear[s]*yeareffect_raw[s,];
+    obs[s,] = sdobs*obs_raw[s,];
+}
 
 
 // intercepts and slopes
-for(s in 1:nstrata){
-  strata[s] = strata_p[s] + STRATA;
-}
+
+  strata = (sdstrata*strata_p) + STRATA;
+  noise = noise_raw;//sdnoise*noise_raw;
+  
   
 
   for(i in 1:ncounts){
@@ -91,19 +102,19 @@ for(s in 1:nstrata){
 model {
 
   sdnoise ~ normal(0,1); //prior on scale of extra Poisson log-normal variance
-  noise ~ student_t(nu,0,sdnoise); //heavy tailed extra Poisson log-normal variance
-  
+  noise_raw ~ student_t(4,0,sdnoise); //normal tailed extra Poisson log-normal variance
+   
   sdobs ~ normal(0,1); //prior on sd of gam hyperparameters
-  sdyear ~ normal(0,1); // prior on sd of yeareffects - stratum specific
+  sdyear ~ gamma(2,2); // prior on sd of yeareffects - stratum specific, and boundary-avoiding with a prior mode at 0.5 (1/2) - recommended by https://doi.org/10.1007/s11336-013-9328-2 
   sdyear_gam ~ normal(0,1); // prior on sd of GAM parameters
   
   //nu ~ gamma(2,0.1); // prior on df for t-distribution of heavy tailed route-effects from https://github.com/stan-dev/stan/wiki/Prior-Choice-Recommendations#prior-for-degrees-of-freedom-in-students-t-distribution
  for(s in 1:nstrata){
-  obs[s,] ~ normal(0,sdobs);//observer effects
-    sum(obs[s,]) ~ normal(0,0.001*nobservers[s]);
- 
-  yeareffect[s,] ~ normal(0,sdyear[s]);
-   sum(yeareffect[s,]) ~ normal(0,0.001*nyears);
+  obs_raw[s,] ~ normal(0,1);//observer effects
+  sum(obs_raw[s,]) ~ normal(0,0.001*nobservers[s]);
+  
+  yeareffect_raw[s,] ~ normal(0,1);
+  sum(yeareffect_raw[s,]) ~ normal(0,0.001*nyears);
   
  }
   count ~ poisson_log(E); //vectorized count likelihood with log-transformation
@@ -118,10 +129,10 @@ model {
   sdbeta ~ normal(0,0.1); //prior on sd of GAM parameter variation
 
 for(k in 1:nknots_year){
-  beta_p[,k] ~ normal(0,sdbeta[k]); //prior on stratum-level slopes
+  beta_p[,k] ~ normal(0,1); //prior on stratum-level GAM parameters
     sum(beta_p[,k]) ~ normal(0,0.001*nstrata);
 }
-  strata_p ~ normal(0,sdstrata); //prior on stratum-level slopes
+  strata_p ~ normal(0,1); //prior on stratum-level slopes
   
   //sum to zero constraints
   sum(strata_p) ~ normal(0,0.001*nstrata);

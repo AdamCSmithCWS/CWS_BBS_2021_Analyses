@@ -95,7 +95,8 @@ model {
   noise_raw ~ normal(0,1); //normal tailed extra Poisson log-normal variance
   
   sdobs ~ normal(0,1); //prior on sd of gam hyperparameters
-  sdyear ~ normal(0,1); // prior on sd of yeareffects - stratum specific
+  //sdyear ~ normal(0,1); // prior on sd of yeareffects - stratum specific
+  sdyear ~ gamma(2,2); // prior on sd of yeareffects - stratum specific, and boundary-avoiding with a prior mode at 0.5 (1/2) - recommended by https://doi.org/10.1007/s11336-013-9328-2 
   
   //nu ~ gamma(2,0.1); // prior on df for t-distribution of heavy tailed route-effects from https://github.com/stan-dev/stan/wiki/Prior-Choice-Recommendations#prior-for-degrees-of-freedom-in-students-t-distribution
  for(s in 1:nstrata){
@@ -118,7 +119,7 @@ model {
   sdbeta ~ normal(0,0.1); //prior on sd of slope variation
 
   beta_p ~ icar_normal_lpdf(nstrata, node1, node2);
-  strata_p ~ icar_normal_lpdf(nstrata, node1, node2);
+  strata_p ~ normal(0,1);//icar_normal_lpdf(nstrata, node1, node2);
 
   //sum to zero constraints
   sum(strata_p) ~ normal(0,0.001*nstrata);
@@ -126,33 +127,33 @@ model {
   
 }
 
-//  generated quantities {
-// 
-//   real<lower=0> n[nstrata,nyears];
-//   real<lower=0> nsmooth[nstrata,nyears];
-//   real<lower=0> retrans_noise;
-//   
-//   retrans_noise = 0.5*(sdnoise^2);
-// 
-// for(y in 1:nyears){
-//   
-//       for(s in 1:nstrata){
-// 
-//   real n_o[nobservers[s]];
-//   real nsmooth_o[nobservers[s]];
-// 
-//         for(o in 1:nobservers[s]){
-//       n_o[o] = exp(strata[s]+ beta[s]*(y-fixedyear) + obs[s,o] + yeareffect[s,y] + retrans_noise );
-//       nsmooth_o[o] = exp(strata[s]+ beta[s]*(y-fixedyear) + obs[s,o] + retrans_noise );
-//         }
-//         n[s,y] = nonzeroweight[s] * mean(n_o);
-//         nsmooth[s,y] = nonzeroweight[s] * mean(nsmooth_o);
-//         
-//         
-//     }
-//   }
-// 
-// 
-// 
-//  }
+ generated quantities {
+
+  real<lower=0> n[nstrata,nyears];
+  real<lower=0> nsmooth[nstrata,nyears];
+  real<lower=0> retrans_noise;
+
+  retrans_noise = 0.5*(sdnoise^2);
+
+for(y in 1:nyears){
+
+      for(s in 1:nstrata){
+
+  real n_o[nobservers[s]];
+  real nsmooth_o[nobservers[s]];
+
+        for(o in 1:nobservers[s]){
+      n_o[o] = exp(strata[s]+ beta[s]*(y-fixedyear) + obs[s,o] + yeareffect[s,y] + retrans_noise );
+      nsmooth_o[o] = exp(strata[s]+ beta[s]*(y-fixedyear) + obs[s,o] + retrans_noise );
+        }
+        n[s,y] = nonzeroweight[s] * mean(n_o);
+        nsmooth[s,y] = nonzeroweight[s] * mean(nsmooth_o);
+
+
+    }
+  }
+
+
+
+ }
 

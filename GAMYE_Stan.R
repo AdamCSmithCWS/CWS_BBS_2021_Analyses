@@ -8,16 +8,16 @@ library(shinystan)
 
 
 # load and stratify CASW data ---------------------------------------------
-species = "Pacific Wren"
-strat = "bbs_usgs"
+species = "Mourning Dove"
+strat = "bbs_cws"
 model = "gamye"
 
 strat_data = stratify(by = strat)
 jags_data = prepare_jags_data(strat_data = strat_data,
                              species_to_run = species,
                              model = model,
-                             n_knots = 7,
-                             min_year = 1999)
+                             #min_year = 1999,
+                             n_knots = 13)
 
 
 
@@ -43,6 +43,7 @@ mod.file = "models/gamye.stan"
 
 parms = c("sdnoise",
           "sdyear",
+          "sdyear_gam",
           "sdobs",
           "beta_p",
           "sdbeta",
@@ -50,8 +51,8 @@ parms = c("sdnoise",
           "sdstrata",
           "BETA",
           "STRATA",
-          # "n",
-          # "nsmooth",
+           "n",
+           "nsmooth",
           "eta")
 
 ## compile model
@@ -62,14 +63,15 @@ stime = system.time(slope_stanfit <-
                       sampling(slope_model,
                                data=stan_data,
                                verbose=TRUE, refresh=100,
-                               chains=3, iter=2000,
-                               warmup=1000,
+                               chains=3, iter=500,
+                               warmup=400,
                                cores = 3,
                                pars = parms,
                                control = list(adapt_delta = 0.8,
-                                              max_treedepth = 15)))
+                                              max_treedepth = 13)))
 
 
+paste(stime[[3]]/3600,"hours")
 launch_shinystan(slope_stanfit) 
 
 

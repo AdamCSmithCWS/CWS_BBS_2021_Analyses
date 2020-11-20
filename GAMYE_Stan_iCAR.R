@@ -15,13 +15,13 @@ source("functions/mungeCARdata4stan.R")
 species = "Pacific Wren"
 #species = "Barred Owl"
 strat = "bbs_usgs"
-model = "slope"
+model = "gamye"
 
 strat_data = stratify(by = strat)
 jags_data = prepare_jags_data(strat_data = strat_data,
                              species_to_run = species,
                              model = model,
-                             n_knots = 10,
+                             n_knots = 7,
                              min_year = 1999)
 
 
@@ -30,13 +30,33 @@ stan_data = jags_data[c("ncounts",
                          "nobservers",
                          "count",
                          "strat",
-                         "obser",
+                         #"obser",
+                        #"fixedyear",
+                        #"nonzeroweight",
                          "year",
-                         "firstyr",
-                         "fixedyear",
-                        "nonzeroweight")]
+                         "firstyr"
+                        )]
 stan_data[["nyears"]] <- max(jags_data$year)
-stan_data[["max_nobservers"]] <- max(jags_data$nobservers)
+stan_data[["sum_observers"]] <- sum(jags_data$nobservers)
+stan_data[["obser"]] <- as.integer(factor(paste(jags_data$strat,jags_data$obser,sep = "_")))
+stan_data[["nknots_year"]] <- jags_data$nknots
+stan_data[["year_basispred"]] <- jags_data$X.basis
+
+
+### needed if derived annual index values are included
+# stan_data[["max_nobservers"]] <- max(jags_data$nobservers)
+# 
+# obsstr = unique(data.frame(obser_o = jags_data$obser,
+#                            strat = jags_data$strat,
+#                            obser = as.integer(factor(paste(jags_data$strat,jags_data$obser,sep = "_")))))
+# obsstr = obsstr[order(obsstr$strat,obsstr$obser_o),]
+# 
+# obs_mat = matrix(1,nrow = jags_data$nstrata,ncol = stan_data$max_nobservers)
+# 
+# for(s in 1:jags_data$nstrata){
+#   obs_mat[s,1:stan_data$nobservers[s]] <- obsstr[which(obsstr$strat == s),"obser"]
+# }
+#stan_data[["obs_mat"]] = obs_mat
 
 
 
@@ -100,21 +120,22 @@ stan_data[["node1"]] = car_stan_dat$node1
 stan_data[["node2"]] = car_stan_dat$node2
 
 
-mod.file = "models/slope_iCAR.stan"
+mod.file = "models/gamye_iCAR.stan"
 
 parms = c("sdnoise",
           "sdyear",
           "sdobs",
-          "beta_p",
+          "beta",
           "sdbeta",
-          "strata_p",
+          "strata",
           "sdstrata",
           "BETA",
           "STRATA",
-           "n",
+          "sdBETA_gam",
+          # "n",
           # "nsmooth",
-          "beta",
-          "eta")
+          "eta",
+          "log_lik")
 
 ## compile model
 slope_model = stan_model(file=mod.file)
@@ -124,12 +145,12 @@ stime = system.time(slope_stanfit <-
                       sampling(slope_model,
                                data=stan_data,
                                verbose=TRUE, refresh=100,
-                               chains=3, iter=500,
-                               warmup=400,
+                               chains=3, iter=600,
+                               warmup=500,
                                cores = 3,
                                pars = parms,
                                control = list(adapt_delta = 0.8,
-                                              max_treedepth = 17)))
+                                              max_treedepth = 15)))
 
 
 paste(stime[[3]]/3600,"hours")
