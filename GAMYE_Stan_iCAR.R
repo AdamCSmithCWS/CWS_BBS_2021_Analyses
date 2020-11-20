@@ -152,8 +152,102 @@ stime = system.time(slope_stanfit <-
                                control = list(adapt_delta = 0.8,
                                               max_treedepth = 15)))
 
+save(list = c("slope_stanfit","species","mod.file","model","strat"),
+     file = "output/Pacific Wren_iCAR_GAMYE_normaltail.RData")
 
-paste(stime[[3]]/3600,"hours")
+
+get_elapsed_time(slope_stanfit)/3600 ## in hours
+# warmup   sample
+# chain:1 9.186139 1.975275
+# chain:2 8.263056 1.897203
+# chain:3 8.954222 2.016814
+
+library(loo)
+library(tidyverse)
+
+log_lik_1 <- extract_log_lik(slope_stanfit, merge_chains = FALSE)
+r_eff <- relative_eff(exp(log_lik_1), cores = 10)
+loo_1 <- loo(log_lik_1, r_eff = r_eff, cores = 10)
+print(loo_1)
+
+# 
+# Computed from 300 by 4171 log-likelihood matrix
+# 
+# Estimate    SE
+# elpd_loo  -7936.8  86.6
+# p_loo      1079.0  24.5
+# looic     15873.6 173.3
+# ------
+#   Monte Carlo SE of elpd_loo is NA.
+# 
+# Pareto k diagnostic values:
+#   Count Pct.    Min. n_eff
+# (-Inf, 0.5]   (good)     2835  68.0%   15        
+# (0.5, 0.7]   (ok)        817  19.6%   12        
+# (0.7, 1]   (bad)       456  10.9%   6         
+# (1, Inf)   (very bad)   63   1.5%   1         
+# See help('pareto-k-diagnostic') for details.
+
+
+doy = ((jags_data$month-4)*30+jags_data$day)
+plot(loo_1$pointwise[,"influence_pareto_k"],log(stan_data$count+1))
+plot(loo_1$pointwise[,"influence_pareto_k"],doy)
+plot(doy,log(stan_data$count+1))
+
+
+
+loo2 = data.frame(loo_1$pointwise)
+
+loo2$flag = cut(loo2$influence_pareto_k,breaks = c(0,0.5,0.7,1,Inf))
+dts = data.frame(count = stan_data$count,
+                 obser = stan_data$obser,
+                 strat = stan_data$strat,
+                 year = stan_data$year)
+loo2 = cbind(loo2,dts)
+
+plot(log(loo2$count+1),loo2$influence_pareto_k)
+
+obserk = loo2 %>% group_by(obser) %>% 
+  summarise(n = n(),
+            mean_k = mean(influence_pareto_k),
+            max_k = max(influence_pareto_k),
+            sd_k = sd(influence_pareto_k),
+            strat = mean(strat),
+            sd = sd(strat))
+plot(obserk$n,obserk$max_k)
+plot(obserk$n,obserk$mean_k)
+plot(obserk$n,obserk$sd_k)
+
+
+yeark = loo2 %>% group_by(year) %>% 
+  summarise(n = n(),
+            mean_k = mean(influence_pareto_k),
+            q90 = quantile(influence_pareto_k,0.9),
+            max_k = max(influence_pareto_k),
+            sd_k = sd(influence_pareto_k),
+            strat = mean(strat),
+            sd = sd(strat))
+plot(yeark$year,yeark$max_k)
+plot(yeark$year,yeark$mean_k)
+plot(yeark$year,yeark$sd_k)
+plot(yeark$year,yeark$q90)
+
+stratk = loo2 %>% group_by(strat) %>% 
+  summarise(n = n(),
+            mean_k = mean(influence_pareto_k),
+            q90_k = quantile(influence_pareto_k,0.9),
+            max_k = max(influence_pareto_k),
+            sd_k = sd(influence_pareto_k),
+            strat = mean(strat),
+            sd = sd(strat))
+plot(stratk$strat,stratk$max_k)
+plot(stratk$n,stratk$mean_k)
+
+plot(stratk$strat,stratk$mean_k)
+plot(stratk$strat,stratk$sd_k)
+plot(stratk$strat,stratk$q90_k)
+
+
 
 launch_shinystan(slope_stanfit) 
 
