@@ -40,7 +40,7 @@ stan_data = jags_data[c("ncounts",
                          "firstyr",
                          "fixedyear")]
 stan_data[["nyears"]] <- max(jags_data$year)
-stan_data[["observer"]] <- as.integer(factor(max(jags_data$ObsN)))
+stan_data[["observer"]] <- as.integer(factor((jags_data$ObsN)))
 stan_data[["nobservers"]] <- max(stan_data$observer)
 
 
