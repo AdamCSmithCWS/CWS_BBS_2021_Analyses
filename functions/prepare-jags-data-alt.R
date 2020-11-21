@@ -232,8 +232,8 @@ prepare_jags_data <- function(strat_data = NULL,
   spsp_f <- spsp_ft
 
   spsp_f[which(is.na(spsp_f$firstyear)),"firstyear"] <- 0
-  spsp_f <- spsp_f[,c("count","stratum","obser","yr","firstyear","strat_name","rt.uni","Year","Month","Day","ObsN")]
-  names(spsp_f) <- c("count","strat","obser","year","firstyr","strat_name","route","rYear","Month","Day","ObsN")
+  spsp_f <- spsp_f[,c("count","stratum","obser","yr","firstyear","strat_name","rt.uni","Year","Month","Day","ObsN","Latitude","Longitude")]
+  names(spsp_f) <- c("count","strat","obser","year","firstyr","strat_name","route","rYear","Month","Day","ObsN","Latitude","Longitude")
   if (!isTRUE(quiet)){pb$tick()}
 
   pR_wts <- pR.wts
@@ -293,7 +293,9 @@ prepare_jags_data <- function(strat_data = NULL,
                     r_year = spsp_f$rYear,
                     month = spsp_f$Month,
                     day = spsp_f$Day,
-                    ObsN = spsp_f$ObsN)
+                    ObsN = spsp_f$ObsN,
+                    Latitude = spsp_f$Latitude,
+                    Longitude = spsp_f$Longitude)
   if (!is.null(model))
   {
     if (tolower(model) == "slope")
