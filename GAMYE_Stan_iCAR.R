@@ -153,7 +153,7 @@ stime = system.time(slope_stanfit <-
                                               max_treedepth = 15)))
 
 save(list = c("slope_stanfit","species","mod.file","model","strat"),
-     file = "output/Pacific Wren_iCAR_GAMYE_normaltail.RData")
+     file = "output/Pacific Wren_iCAR_GAMYE_t4tail.RData")
 
 
 get_elapsed_time(slope_stanfit)/3600 ## in hours
@@ -212,11 +212,13 @@ obserk = loo2 %>% group_by(obser) %>%
             mean_k = mean(influence_pareto_k),
             max_k = max(influence_pareto_k),
             sd_k = sd(influence_pareto_k),
-            strat = mean(strat),
-            sd = sd(strat))
+            mean_looic = mean(looic),
+            mean_ploo = mean(p_loo))
 plot(obserk$n,obserk$max_k)
 plot(obserk$n,obserk$mean_k)
 plot(obserk$n,obserk$sd_k)
+plot(obserk$n,obserk$mean_looic)
+plot(obserk$n,obserk$mean_ploo)
 
 
 yeark = loo2 %>% group_by(year) %>% 

@@ -147,11 +147,10 @@ stan_data[["nroutes"]] = max(jags_data$routeF)
 mod.file = "models/slope_iCAR_route.stan"
 
 parms = c("sdnoise",
-          "sdyear",
           "sdobs",
           "sdbeta",
           "alpha",
-          "sdstrata",
+          "sdalpha",
           "BETA",
           "ALPHA",
           "beta",
@@ -166,17 +165,91 @@ stime = system.time(slope_stanfit <-
                       sampling(slope_model,
                                data=stan_data,
                                verbose=TRUE, refresh=100,
-                               chains=3, iter=500,
-                               warmup=400,
+                               chains=3, iter=900,
+                               warmup=600,
                                cores = 3,
                                pars = parms,
                                control = list(adapt_delta = 0.8,
-                                              max_treedepth = 17)))
+                                              max_treedepth = 15)))
+
+
+save(list = c("slope_stanfit","stan_data","jags_data","vintj","route_map"),
+     file = "output/PAWR_slope_route_iCAR.RData")
+
 
 
 paste(stime[[3]]/3600,"hours")
 
 launch_shinystan(slope_stanfit) 
+
+
+library(loo)
+library(tidyverse)
+
+log_lik_1 <- extract_log_lik(slope_stanfit, merge_chains = FALSE)
+r_eff <- relative_eff(exp(log_lik_1), cores = 10)
+loo_1 <- loo(log_lik_1, r_eff = r_eff, cores = 10)
+print(loo_1)
+
+doy = ((jags_data$month-4)*30+jags_data$day)
+plot(loo_1$pointwise[,"influence_pareto_k"],log(stan_data$count+1))
+plot(loo_1$pointwise[,"influence_pareto_k"],doy)
+plot(doy,log(stan_data$count+1))
+
+
+
+loo2 = data.frame(loo_1$pointwise)
+
+loo2$flag = cut(loo2$influence_pareto_k,breaks = c(0,0.5,0.7,1,Inf))
+dts = data.frame(count = stan_data$count,
+                 obser = stan_data$obser,
+                 strat = stan_data$strat,
+                 year = stan_data$year)
+loo2 = cbind(loo2,dts)
+
+plot(log(loo2$count+1),loo2$influence_pareto_k)
+
+obserk = loo2 %>% group_by(obser) %>% 
+  summarise(n = n(),
+            mean_k = mean(influence_pareto_k),
+            max_k = max(influence_pareto_k),
+            sd_k = sd(influence_pareto_k),
+            mean_looic = mean(looic),
+            mean_ploo = mean(p_loo))
+plot(obserk$n,obserk$max_k)
+plot(obserk$n,obserk$mean_k)
+plot(obserk$n,obserk$sd_k)
+plot(obserk$n,obserk$mean_looic)
+plot(obserk$n,obserk$mean_ploo)
+
+
+yeark = loo2 %>% group_by(year) %>% 
+  summarise(n = n(),
+            mean_k = mean(influence_pareto_k),
+            q90 = quantile(influence_pareto_k,0.9),
+            max_k = max(influence_pareto_k),
+            sd_k = sd(influence_pareto_k),
+            strat = mean(strat),
+            sd = sd(strat))
+plot(yeark$year,yeark$max_k)
+plot(yeark$year,yeark$mean_k)
+plot(yeark$year,yeark$sd_k)
+plot(yeark$year,yeark$q90)
+
+stratk = loo2 %>% group_by(strat) %>% 
+  summarise(n = n(),
+            mean_k = mean(influence_pareto_k),
+            q90_k = quantile(influence_pareto_k,0.9),
+            max_k = max(influence_pareto_k),
+            sd_k = sd(influence_pareto_k),
+            strat = mean(strat),
+            sd = sd(strat))
+plot(stratk$strat,stratk$max_k)
+plot(stratk$n,stratk$mean_k)
+
+plot(stratk$strat,stratk$mean_k)
+plot(stratk$strat,stratk$sd_k)
+plot(stratk$strat,stratk$q90_k)
 
 
 
