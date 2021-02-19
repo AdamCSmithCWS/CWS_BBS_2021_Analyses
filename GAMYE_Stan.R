@@ -156,7 +156,7 @@ mod.file = "models/gamye_iCAR.stan"
 
 parms = c("sdnoise",
           "sdyear",
-          "sdyear_gam",
+          "sdBETA",
           "sdobs",
           "sdrte",
           "beta",
