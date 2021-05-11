@@ -71,7 +71,7 @@ parameters {
   real<lower=0> sdstrata;    // sd of intercepts
   real<lower=0> sdBETA;    // sd of GAM coefficients
   real<lower=0> sdyear[nstrata];    // sd of year effects
- // real<lower=4,upper=500> nu; // df of t-distribution > 4 so that it has a finite mean, variance, kurtosis
+  real<lower=4> nu; // df of t-distribution > 4 so that it has a finite mean, variance, kurtosis
   
   vector[nknots_year] BETA_raw;//_raw; 
   matrix[nstrata,nknots_year] beta_raw;         // GAM strata level parameters
@@ -128,8 +128,9 @@ for(s in 1:nstrata){
   
   
 model {
+  nu ~ gamma(2,0.1);
   sdnoise ~ normal(0,0.5); //prior on scale of extra Poisson log-normal variance
-  noise_raw ~ student_t(4,0,1);//student_t(nu,0,1); //normal tailed extra Poisson log-normal variance
+  noise_raw ~ student_t(nu,0,1); //normal tailed extra Poisson log-normal variance
    
   sdobs ~ normal(0,0.5); //prior on sd of observer effects
   sdrte ~ std_normal(); //prior on sd of route effects
@@ -165,8 +166,11 @@ model {
 
 for(k in 1:nknots_year){
     beta_raw[,k] ~ icar_normal(nstrata, node1, node2);
+    //sum(beta_raw[,k]) ~ normal(0,nstrata*0.001);
 }
    strata_raw ~ icar_normal(nstrata, node1, node2);
+   
+    //sum(strata_raw) ~ normal(0,nstrata*0.001);
 
 
   count ~ poisson_log(E); //vectorized count likelihood with log-transformation
