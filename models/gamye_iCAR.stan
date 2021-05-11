@@ -1,6 +1,8 @@
 // This is a Stan implementation of the bbsBayes gamye model
+// Consider moving annual index calculations outside of Stan to 
+// facilitate the ragged array issues
 // with iCAR component for the stratum smooths
-//iCAR function
+// iCAR function
 
 functions {
   real icar_normal_lpdf(vector bb, int ns, int[] n1, int[] n2) {
