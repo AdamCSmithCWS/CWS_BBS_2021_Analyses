@@ -11,7 +11,7 @@ library(spdep)
 
 source("functions/mungeCARdata4stan.R") ## function to modify the BUGS formatted spatial neighbourhood data to the required format for the Stan iCAR model
 source("functions/prepare-jags-data-alt.R") ## function to modify the BUGS formatted spatial neighbourhood data to the required format for the Stan iCAR model
-
+source("functions/neighbours_define.R")
 
 # spatial data load -------------------------------------------------------
 
@@ -27,87 +27,40 @@ strata_map = read_sf(dsn = locat,
 strata_map = st_transform(strata_map,crs = laea) #reprojecting the geographic coordinate file to an equal area projection
 
 
-
-
-# load and stratify CASW data ---------------------------------------------
-species = "Wood Thrush"
-strat = "bbs_cws"
+strat = "bbs_usgs"
 model = "gamye"
 
 strat_data = stratify(by = strat)
+
+# load and stratify species data ---------------------------------------------
+species = "Pacific Wren"
+
+
+
 jags_data = prepare_jags_data(strat_data = strat_data,
                              species_to_run = species,
                              model = model,
-                             min_year = 2009,
-                             n_knots = 5)
+                             min_year = 1990,
+                             n_knots = 10)
 
 
 str_link <- unique(data.frame(strat = jags_data$strat,
                               strat_name = jags_data$strat_name))
 str_link <- str_link %>% arrange(strat)
 
-real_strata_map <- inner_join(strata_map,str_link,by = c("ST_12" = "strat_name")) %>% 
+realized_strata_map <- inner_join(strata_map,str_link,by = c("ST_12" = "strat_name")) %>% 
   arrange(strat)
 # generate neighbourhoods -------------------------------------------------
-strat_link_fill = 100000 #distance between strata to fill if isolated strata remain
-
-reg_bounds <- st_union(real_strata_map)
-reg_bounds_buf = st_buffer(reg_bounds,dist = strat_link_fill)
-
-centres = suppressWarnings(st_centroid(real_strata_map))
-coords = st_coordinates(centres)
-
-
-box <- st_as_sfc(st_bbox(centres))
-
-v <- st_cast(st_voronoi(st_union(centres), envelope = box))
-
-vint = st_sf(st_cast(st_intersection(v,reg_bounds_buf),"POLYGON"))
-#vint <- bind_cols(centres,v)
-vintj = st_join(vint,centres,join = st_contains)
-vintj = arrange(vintj,strat)
-
-nb_db = poly2nb(vintj,row.names = vintj$strat,queen = FALSE)
-
-
-### currently using 2 nearest neighbours to define the spatial relationships
-## many regions may  have > 2 neighbours because of the symmetry condition
-# nb_db <- spdep::knn2nb(spdep::knearneigh(coords,k = 4),row.names = route_map$route,sym = TRUE)
-cc = suppressWarnings(st_coordinates(st_centroid(vintj)))
-#
-
-ggp = ggplot(data = real_strata_map)+
-  geom_sf(data = vintj,alpha = 0.3)+ 
-  geom_sf(aes(col = strat))+
-  geom_sf_text(aes(label = strat),size = 3,alpha = 0.3)+
-  theme(legend.position = "none")
-pdf(file = paste0("Figures/",species,"strata_connections 2009",strat_link_fill/1000,".pdf"))
-plot(nb_db,cc,col = "pink")
-text(labels = rownames(cc),cc ,pos = 2)
-print(ggp)
-dev.off()
-
-
-# wca = which(grepl(route_map$strat,pattern = "-CA-",fixed = T))
-# wak = which(grepl(route_map$strat,pattern = "-AK-",fixed = T))
-# 
-# nb2[[wak]]
-
-
-nb_info = spdep::nb2WB(nb_db)
-
-
-
-
-
-
+buff_dist <- 10000
 
 
 
 
 ### re-arrange GEOBUGS formated nb_info into appropriate format for Stan model
-car_stan_dat <- mungeCARdata4stan(adjBUGS = nb_info$adj,
-                                  numBUGS = nb_info$num)
+car_stan_dat <- neighbours_define(real_strata_map = realized_strata_map,
+                                   strat_link_fill = buff_dist,
+                                   species = species,
+                                  voronoi = FALSE)
 
 
 

@@ -15,8 +15,14 @@ prepare_jags_data <- function(strat_data = NULL,
                               min_mean_route_years = 1,
                               strata_rem = NULL,
                               quiet = FALSE,
+                              mgcv_gam = TRUE,
                               ...)
 {
+ if(mgcv_gam){
+   source("Functions/GAM_basis_function_mgcv.R")
+ } 
+  
+  
   if (is.null(strat_data))
   {
     stop("No data supplied to prepare_jags_data()."); return(NULL)
@@ -310,14 +316,21 @@ prepare_jags_data <- function(strat_data = NULL,
       {
         n_knots <- floor(length(unique((spsp_f$year)))/4)
       }
+      if(mgcv_gam){
+        gam_base <- gam_basis(orig.preds = c(ymin:ymax),
+                              nknots = n_knots,
+                              sm_name = "year")
+        X_basis = gam_base$year_basis
+      }else{
       knotsX<- seq(yminsc,ymaxsc,length=(n_knots+2))[-c(1,n_knots+2)]
       X_K<-(abs(outer(seq(yminsc,ymaxsc,length = nyears),knotsX,"-")))^3
       X_OMEGA_all<-(abs(outer(knotsX,knotsX,"-")))^3
       X_svd.OMEGA_all<-svd(X_OMEGA_all)
       X_sqrt.OMEGA_all<-t(X_svd.OMEGA_all$v  %*% (t(X_svd.OMEGA_all$u)*sqrt(X_svd.OMEGA_all$d)))
       X_basis<-t(solve(X_sqrt.OMEGA_all,t(X_K)))
-
+      }
       to_return <- c(to_return, list(nknots = n_knots, X.basis = X_basis))
+      
     }
     if (heavy_tailed)
     {

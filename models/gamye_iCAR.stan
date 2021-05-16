@@ -149,13 +149,14 @@ model {
  for(s in 1:nstrata){
 
   yeareffect_raw[s,] ~ std_normal();
+  //soft sum to zero constraint on year effects within a stratum
   sum(yeareffect_raw[s,]) ~ normal(0,0.001*nyears);
   
  }
   
   BETA_raw ~ std_normal();// prior on fixed effect mean GAM parameters
   //sum to zero constraint
-  sum(BETA_raw) ~ normal(0,0.001*nknots_year);
+  //sum(BETA_raw) ~ normal(0,0.001*nknots_year);
   
   STRATA ~ std_normal();// prior on fixed effect mean intercept
   eta ~ normal(0,0.2);// prior on first-year observer effect
@@ -163,7 +164,7 @@ model {
   
   //spatial iCAR intercepts and gam parameters by strata
   sdstrata ~ std_normal(); //prior on sd of intercept variation
-  sdbeta ~ normal(0,0.1); //prior on sd of GAM parameter variation
+  sdbeta ~ normal(0,1); //prior on sd of GAM parameter variation
 
 for(k in 1:nknots_year){
     beta_raw[,k] ~ icar_normal(nstrata, node1, node2);
@@ -205,6 +206,7 @@ for(y in 1:nyears){
         }
         n[s,y] = nonzeroweight[s] * mean(n_t);
         nsmooth[s,y] = nonzeroweight[s] * mean(nsmooth_t);
+
 
 
     }
