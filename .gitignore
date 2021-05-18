@@ -4,3 +4,7 @@
 .Ruserdata
 **arch/
 output/
+**.pdf
+**.RData
+**.exe
+

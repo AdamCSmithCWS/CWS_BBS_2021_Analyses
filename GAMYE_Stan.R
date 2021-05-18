@@ -184,7 +184,6 @@ save(list = c("slope_stanfit","stan_data","jags_data","model"),
 
 slope_stanfit$cmdstan_diagnose()
 
-dr = slope_stanfit$draws(variables = "n")
 
 # export to csv and read in as rstan --------------------------------------
 
