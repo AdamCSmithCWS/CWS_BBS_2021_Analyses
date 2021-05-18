@@ -77,8 +77,7 @@ neighbours_define <- function(real_strata_map = realized_strata_map,
         if(save_plot_data){
           save_file_name = paste0(plot_dir,species_dirname,"_route_data.RData")
           
-          save(list = c("centres",
-                        "real_strata_map",
+          save(list = c("real_strata_map",
                         "vintj",
                         "nb_db",
                         "cc"),

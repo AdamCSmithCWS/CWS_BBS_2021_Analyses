@@ -201,8 +201,10 @@ for(y in 1:nyears){
   real nsmooth_t[nroutes_strata[s]];
 
         for(t in 1:nroutes_strata[s]){
+            real retrans_yr = 0.5*(sdyear[s]^2);
+
       n_t[t] = exp(strata[s]+ year_pred[y,s] + rte[rte_mat[s,t]] + yeareffect[s,y] + retrans_noise + retrans_obs);
-      nsmooth_t[t] = exp(strata[s] + year_pred[y,s] + rte[rte_mat[s,t]] + retrans_noise + retrans_obs);
+      nsmooth_t[t] = exp(strata[s] + year_pred[y,s] + rte[rte_mat[s,t]] + retrans_yr + retrans_noise + retrans_obs);
         }
         n[s,y] = nonzeroweight[s] * mean(n_t);
         nsmooth[s,y] = nonzeroweight[s] * mean(nsmooth_t);

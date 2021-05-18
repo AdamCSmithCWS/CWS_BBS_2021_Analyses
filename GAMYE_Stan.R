@@ -27,20 +27,20 @@ strata_map = read_sf(dsn = locat,
 strata_map = st_transform(strata_map,crs = laea) #reprojecting the geographic coordinate file to an equal area projection
 
 
-strat = "bbs_usgs"
+strat = "bbs_cws"
 model = "gamye"
 
 strat_data = stratify(by = strat)
 
 # load and stratify species data ---------------------------------------------
-species = "Pacific Wren"
+species = "Cooper's Hawk"
 
-
+start_year = 1990
 
 jags_data = prepare_jags_data(strat_data = strat_data,
                              species_to_run = species,
                              model = model,
-                             min_year = 1990,
+                             min_year = start_year,
                              n_knots = 10)
 
 
@@ -177,9 +177,10 @@ slope_stanfit <- slope_model$sample(
 
 
 
+species_file = gsub(pattern = "([[:punct:]]|[[:blank:]])","",species)
 
 save(list = c("slope_stanfit","stan_data","jags_data","model"),
-     file = paste0("output/cmdStan_",species,"ten_yr__gamye_iCAR.RData"))
+     file = paste0("output/cmdStan_",species_file,"ten_yr__gamye_iCAR.RData"))
 
 slope_stanfit$cmdstan_diagnose()
 
@@ -187,12 +188,11 @@ dr = slope_stanfit$draws(variables = "n")
 
 # export to csv and read in as rstan --------------------------------------
 
-
 slope_stanfit$save_output_files(dir = "output",
-                                basename = paste0(species,"_cmdStan_out_",nyears))
+                                basename = paste0(species_file,"_cmdStan_out_",nyears))
 csv_files <- dir("output/",pattern = paste0(species,"_cmdStan_out_",nyears),full.names = TRUE)
 
-sl_rstan <- As.mcmc.list(read_stan_csv(csv_files))
+#sl_rstan <- As.mcmc.list(read_stan_csv(csv_files))
 
 
 # mod_sum = slope_stanfit$summary(variables = "n")
@@ -208,27 +208,28 @@ df = data.frame(count = stan_data$count,
                 strat = stan_data$strat,
                 year = stan_data$year)
 ploo = bind_cols(ploo,df)
+nyear_sqrt <- ceiling(sqrt(length(unique(ploo$year))))
 k_count = ggplot(data = ploo,aes(x = count,y = influence_pareto_k,colour = k_cat))+
   geom_point()+
-  facet_wrap(~year,nrow = 4,ncol = 3,scales = "fixed")+
+  facet_wrap(~year,nrow = nyear_sqrt,scales = "fixed")+
 geom_abline(slope = 0,intercept = 0.7,colour = "red")
 print(k_count)
 
 looic_count = ggplot(data = ploo,aes(x = count,y = looic,colour = k_cat))+
   geom_point()+
-  facet_wrap(~year,nrow = 4,ncol = 3,scales = "fixed")
+  facet_wrap(~year,nrow = nyear_sqrt,scales = "fixed")
 print(looic_count)
 
 
 k_looic = ggplot(data = ploo,aes(x = looic,y = influence_pareto_k,colour = k_cat))+
   geom_point()+
-  facet_wrap(~year,nrow = 4,ncol = 3,scales = "fixed")+
+  facet_wrap(~year,nrow = nyear_sqrt,scales = "fixed")+
   geom_abline(slope = 0,intercept = 0.7,colour = "red")
 print(k_looic)
 
 looic_strat = ggplot(data = ploo,aes(x = strat,y = looic,colour = k_cat))+
   geom_point()+
-  facet_wrap(~year,nrow = 4,ncol = 3,scales = "fixed")
+  facet_wrap(~year,nrow = nyear_sqrt,scales = "fixed")
 print(looic_strat)
 
 strat_loo_sum <- ploo %>% group_by(strat) %>% 
@@ -239,7 +240,7 @@ strat_loo_sum <- ploo %>% group_by(strat) %>%
             md_loo = median(looic),
             md_ploo = median(p_loo))
 
-map_loo <- inner_join(real_strata_map,strat_loo_sum,by = "strat")
+map_loo <- inner_join(realized_strata_map,strat_loo_sum,by = "strat")
 plot_map_loo = ggplot(data = map_loo,aes(fill = md_loo))+
   geom_sf()
 print(plot_map_loo)
@@ -251,6 +252,100 @@ print(plot_map_k)
 plot_map_ploo = ggplot(data = map_loo,aes(fill = md_ploo))+
   geom_sf()
 print(plot_map_ploo)
+
+
+# index and trend plotting ------------------------------------------------
+
+nsmooth_samples <- gather_samples(fit = slope_stanfit,
+                                  parm = "nsmooth",
+                                  dims = c("s","y")) %>% 
+  left_join(.,str_link,by = c("s" = "strat")) %>% 
+  mutate(year = y+(start_year-1))
+
+
+n_samples <- gather_samples(fit = slope_stanfit,
+                                  parm = "n",
+                                  dims = c("s","y")) %>% 
+  left_join(.,str_link,by = c("s" = "strat")) %>% 
+  mutate(year = y+(start_year-1))
+
+
+
+# STratum level indices ---------------------------------------------------
+
+
+ind_sm <- nsmooth_samples %>% group_by(s,strat_name,year) %>% 
+  summarise(mean = mean(.value),
+            lci = quantile(.value,0.025),
+            uci = quantile(.value,0.975)) %>% 
+  mutate(type = "smooth")
+
+ind_full <- n_samples %>% group_by(s,strat_name,year) %>% 
+  summarise(mean = mean(.value),
+            lci = quantile(.value,0.025),
+            uci = quantile(.value,0.975))%>% 
+  mutate(type = "full")
+
+
+inds <- bind_rows(ind_sm,ind_full)
+
+nstrata <- max(inds$s)
+nf <- ceiling(sqrt(nstrata))
+
+ind_fac <- ggplot(data = inds,aes(x = year,y = mean))+
+  geom_ribbon(aes(ymin = lci,ymax = uci,fill = type),alpha = 0.2)+
+  geom_line(aes(colour = type))+
+  scale_y_continuous(limits = c(0,NA))+
+  facet_wrap(~strat_name,nrow = nf,scales = "free")
+  
+print(ind_fac)
+
+
+# continental indices -----------------------------------------------------
+
+a_weights <- as.data.frame(realized_strata_map) %>% 
+  rename(s = strat) %>% 
+  mutate(area = AREA/sum(AREA)) %>% 
+  select(s,area)
+
+
+I_sm <- nsmooth_samples %>% left_join(.,a_weights,by = "s") %>% 
+  mutate(.value = .value*area) %>% 
+  group_by(.draw,year) %>% 
+  summarise(.value = sum(.value)) %>% 
+  group_by(year) %>% 
+  summarise(mean = mean(.value),
+            lci = quantile(.value,0.025),
+            uci = quantile(.value,0.975)) %>% 
+  mutate(type = "smooth")
+
+I_full <- n_samples %>% left_join(.,a_weights,by = "s") %>% 
+  mutate(.value = .value*area) %>% 
+  group_by(.draw,year) %>% 
+  summarise(.value = sum(.value)) %>% 
+  group_by(year) %>% 
+  summarise(mean = mean(.value),
+            lci = quantile(.value,0.025),
+            uci = quantile(.value,0.975)) %>%
+  mutate(type = "full")
+
+
+Is <- bind_rows(I_sm,I_full)
+
+
+I_plot <- ggplot(data = Is,aes(x = year,y = mean))+
+  geom_ribbon(aes(ymin = lci,ymax = uci,fill = type),alpha = 0.2)+
+  geom_line(aes(colour = type))+
+  scale_y_continuous(limits = c(0,NA))
+
+print(I_plot)
+
+
+
+
+
+
+
 
 # RStan -------------------------------------------------------------------
 
