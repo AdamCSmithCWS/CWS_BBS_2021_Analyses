@@ -208,6 +208,12 @@ df = data.frame(count = stan_data$count,
                 year = stan_data$year)
 ploo = bind_cols(ploo,df)
 nyear_sqrt <- ceiling(sqrt(length(unique(ploo$year))))
+
+pdf(paste0("figures/",species_file,"loo_plots.pdf"),
+    width = 11,
+    height = 8.5)
+
+
 k_count = ggplot(data = ploo,aes(x = count,y = influence_pareto_k,colour = k_cat))+
   geom_point()+
   facet_wrap(~year,nrow = nyear_sqrt,scales = "fixed")+
@@ -252,9 +258,11 @@ plot_map_ploo = ggplot(data = map_loo,aes(fill = md_ploo))+
   geom_sf()
 print(plot_map_ploo)
 
-
+dev.off()
 
 source("functions/cmdstanr_gather.R")
+source("functions/trend_function.R")
+
 # index and trend plotting ------------------------------------------------
 
 nsmooth_samples <- gather_samples(fit = slope_stanfit,
@@ -293,9 +301,22 @@ inds <- bind_rows(ind_sm,ind_full)
 nstrata <- max(inds$s)
 nf <- ceiling(sqrt(nstrata))
 
+raw <- data.frame(count = stan_data$count,
+                  strat = stan_data$strat,
+                  year = stan_data$year+(start_year-1)) %>% 
+  left_join(.,str_link,by = "strat")
+
+raw_means <- raw %>% group_by(year,strat,strat_name) %>% 
+  summarise(mean_count = mean(count),
+            uqrt_count = quantile(count,0.75),
+            n_surveys = n())
+
+
+
 ind_fac <- ggplot(data = inds,aes(x = year,y = mean))+
   geom_ribbon(aes(ymin = lci,ymax = uci,fill = type),alpha = 0.2)+
   geom_line(aes(colour = type))+
+  geom_point(data = raw_means,aes(x = year,y = mean_count,fill = n_surveys),alpha = 0.2,inherit.aes = FALSE)+
   scale_y_continuous(limits = c(0,NA))+
   facet_wrap(~strat_name,nrow = nf,scales = "free")
   
@@ -337,9 +358,38 @@ Is <- bind_rows(I_sm,I_full)
 I_plot <- ggplot(data = Is,aes(x = year,y = mean))+
   geom_ribbon(aes(ymin = lci,ymax = uci,fill = type),alpha = 0.2)+
   geom_line(aes(colour = type))+
+  labs(title = paste(species,"survey wide trajectory"))+
   scale_y_continuous(limits = c(0,NA))
 
+pdf(file = paste0("figures/",species_file,"trajectories.pdf"))
+
 print(I_plot)
+
+
+for(st in str_link$strat_name){
+  indst = filter(inds,strat_name == st)
+  raw_mt = filter(raw_means,strat_name == st)
+  nsur = filter(raw,strat_name == st)
+  ind_fac <- ggplot(data = indst,aes(x = year,y = mean))+
+  geom_ribbon(aes(ymin = lci,ymax = uci,fill = type),alpha = 0.2)+
+  geom_line(aes(colour = type))+
+  geom_point(data = raw_mt,
+             aes(x = year,y = mean_count),
+             alpha = 0.1,colour = "blue",
+             size = 1,inherit.aes = FALSE)+
+    geom_dotplot(data = nsur,aes(x = year),
+                 inherit.aes = FALSE,binwidth = 1,
+                 colour = grey(0.5),
+                 fill = grey(0.5),
+                 alpha = 0.1,
+                 method = "histodot",dotsize = 0.5)+
+  scale_y_continuous(limits = c(0,NA))+
+  labs(title = st)
+print(ind_fac)
+}
+dev.off()
+
+
 
 
 
@@ -350,53 +400,6 @@ print(I_plot)
 
 
 
-tr_func <- function(samples = nsmooth_samples,
-                    scale = "strat_name",
-                    start_year = 2000,
-                    end_year = 2019){
-  
- 
-  nyear = end_year - start_year
-  
-  #samples$reg <- as.character(samples[,scale])
-  p_py <- function(i1,i2,ny = nyear){
-    ppy <- 100*((i2/i1)^(1/(ny))-1)
-    return(ppy)
-  }
-  
-  p_ch <- function(i1,i2){
-    pch <- 100*((i2/i1)-1)
-    return(pch)
-  }
-  
-  
-  tr_sm <- samples %>% filter(year %in% c(start_year,end_year)) %>% 
-    pivot_wider(.,id_cols = any_of(c(scale,"strat_name",
-                                     ".variable",".chain",".iteration",".draw")),
-                names_from = year,
-                values_from = .value,
-                names_prefix = "Y") %>% 
-    rename_with(.,~gsub(pattern = paste0("Y",start_year),"Y1",.x,fixed = TRUE))%>% 
-    rename_with(.,~gsub(pattern = paste0("Y",end_year),"Y2",.x,fixed = TRUE)) %>% 
-    rename_with(.,~gsub(pattern = scale,"reg",.x,fixed = TRUE)) %>% 
-    mutate(ch = p_ch(Y1,Y2),
-           t = p_py(Y1,Y2)) %>% 
-    group_by(reg) %>% 
-    summarise(mean_trend = mean(t),
-              lci_trend = quantile(t,0.025),
-              uci_trend = quantile(t,0.975),
-              mean_ch = mean(ch),
-              lci_ch = quantile(ch,0.025),
-              uci_ch = quantile(ch,0.975)) %>% 
-    mutate(start_year = start_year,
-           end_year = end_year) %>% 
-    rename_with(.,~gsub(pattern = "reg",scale,.x,fixed = TRUE))
-  
-  return(tr_sm)
-  
-  
-}
-
 
 
 
@@ -405,80 +408,64 @@ tr_func <- function(samples = nsmooth_samples,
 
 trend_90 = tr_func(nsmooth_samples,start_year = 1990)
 trend_09 = tr_func(nsmooth_samples,start_year = 2009)
+trend_70 = tr_func(nsmooth_samples,start_year = 1970)
 
 
-trend_map <- function(base_map = realized_strata_map,
-                      trends = trend_90){
-  breaks <- c(-7, -4, -2, -1, -0.5, 0.5, 1, 2, 4, 7)
-  labls = c(paste0("< ",breaks[1]),paste0(breaks[-c(length(breaks))],":", breaks[-c(1)]),paste0("> ",breaks[length(breaks)]))
-  labls = paste0(labls, " %")
-  map_palette <- c("#a50026", "#d73027", "#f46d43", "#fdae61", "#fee090", "#ffffbf",
-                   "#e0f3f8", "#abd9e9", "#74add1", "#4575b4", "#313695")
-  names(map_palette) <- labls
-  
-  tmap <- left_join(base_map,trends,by = c("ST_12" = "strat_name")) %>% 
-    mutate(Tplot = cut(mean_trend,breaks = c(-Inf, breaks, Inf),labels = labls))
-  
-  fyear = unique(trends$start_year)
-  lyear = unique(trends$end_year)
-  tplot <- ggplot(data = tmap)+
-    geom_sf(aes(fill = Tplot)) +
-    scale_colour_manual(values = map_palette, 
-                        aesthetics = c("fill"),
-                        guide = ggplot2::guide_legend(reverse=TRUE),
-                        name = paste0("Trend\n",fyear,"-",lyear))
-  
-  
-  return(tplot)
-  
-}
+pdf(paste0("Figures/",species_file,"trend_maps_spatial_GAMYE.pdf"),
+    width = 11,
+    height = 8.5)
 
-m1 = trend_map(trends = trend_09)
+for(yy in c(1970,1990,2009)){
+
+  trends_t = tr_func(nsmooth_samples,start_year = yy)
+  
+  m1 = trend_map(trends = trends_t)
 print(m1)
 
 
-m2 = trend_map(trends = trend_90)
-print(m2)
+}
+
+dev.off()
 
 # RStan -------------------------------------------------------------------
-
-mod.file = "models/gamye_iCAR.stan"
-
-## compile model
-slope_model = stan_model(file=mod.file)
-
-## run sampler on model, data
-slope_stanfit <- sampling(slope_model,
-                               data=stan_data,
-                               verbose=TRUE, refresh=25,
-                               chains=3, 
-                          iter=800,
-                               warmup=500,
-                          cores = 3,
-                               pars = parms,
-                               control = list(adapt_delta = 0.8,
-                                              max_treedepth = 14),
-                          init = init_def)
-
-
-
-
-save(list = c("slope_stanfit","stan_data","jags_data","model"),
-     file = paste0("output/",species,"full__gamye_iCAR.RData"))
-
-loo_sum_rstan = loo(slope_stanfit)
-
-
-loo_sum_rstan
-
-launch_shinystan(slope_stanfit) 
-
-
-
-
-n_draws = gather_draws(slope_stanfit,n[s,y])
-nsmooth_draws = gather_draws(slope_stanfit,nsmooth[s,y])
-
+# 
+# mod.file = "models/gamye_iCAR.stan"
+# 
+# ## compile model
+# slope_model = stan_model(file=mod.file)
+# 
+# ## run sampler on model, data
+# slope_stanfit <- sampling(slope_model,
+#                                data=stan_data,
+#                                verbose=TRUE, refresh=25,
+#                                chains=3, 
+#                           iter=800,
+#                                warmup=500,
+#                           cores = 3,
+#                                pars = parms,
+#                                control = list(adapt_delta = 0.8,
+#                                               max_treedepth = 14),
+#                           init = init_def)
+# 
+# 
+# 
+# 
+# save(list = c("slope_stanfit","stan_data","jags_data","model"),
+#      file = paste0("output/",species,"full__gamye_iCAR.RData"))
+# 
+# loo_sum_rstan = loo(slope_stanfit)
+# 
+# 
+# loo_sum_rstan
+# 
+# launch_shinystan(slope_stanfit) 
+# 
+# 
+# 
+# 
+# n_draws = gather_draws(slope_stanfit,n[s,y])
+# nsmooth_draws = gather_draws(slope_stanfit,nsmooth[s,y])
+# 
 
 
 
