@@ -33,15 +33,16 @@ model = "gamye"
 strat_data = stratify(by = strat)
 
 # load and stratify species data ---------------------------------------------
-species = "Bobolink"
+species = "Wood Thrush"
 
 start_year = 1970
 
 jags_data = prepare_jags_data(strat_data = strat_data,
                              species_to_run = species,
                              model = model,
-                             min_year = start_year,
-                             n_knots = 10)
+                             min_max_route_years = 2,
+                             #min_year = start_year,
+                             n_knots = 14)
 
 
 str_link <- unique(data.frame(strat = jags_data$strat,
@@ -320,7 +321,7 @@ ind_fac <- ggplot(data = inds,aes(x = year,y = mean))+
   scale_y_continuous(limits = c(0,NA))+
   facet_wrap(~strat_name,nrow = nf,scales = "free")
   
-print(ind_fac)
+#print(ind_fac)
 
 
 # continental indices -----------------------------------------------------
