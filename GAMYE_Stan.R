@@ -113,17 +113,20 @@ model = "gamye"
 strat_data = stratify(by = strat)
 
 # load and stratify species data ---------------------------------------------
-species = "Wood Thrush"
+species = "Pine Siskin"
 
-start_year = 1970
+shiny_explore = FALSE # set to TRUE to automatically launch shinystan on model finish
+
+#first_year = 1970
 
 jags_data = prepare_jags_data(strat_data = strat_data,
                              species_to_run = species,
                              model = model,
                              min_max_route_years = 2,
-                             #min_year = start_year,
+                             #min_year = first_year,
                              n_knots = 14)
 
+first_year = min(jags_data$r_year)
 
 str_link <- unique(data.frame(strat = jags_data$strat,
                               strat_name = jags_data$strat_name))
@@ -270,11 +273,13 @@ slope_stanfit$cmdstan_diagnose()
 
 slope_stanfit$save_output_files(dir = "output",
                                 basename = paste0(species_file,"_cmdStan_out_",nyears))
-csv_files <- dir("output/",pattern = paste0(species,"_cmdStan_out_",nyears),full.names = TRUE)
+csv_files <- dir("output/",pattern = paste0(species_file,"_cmdStan_out_",nyears),full.names = TRUE)
 
 #sl_rstan <- As.mcmc.list(read_stan_csv(csv_files))
-
-
+if(shiny_explore){
+sl_rstan <- rstan::read_stan_csv(csv_files)
+launch_shinystan(as.shinystan(sl_rstan))
+}
 # mod_sum = slope_stanfit$summary(variables = "n")
 
 
@@ -320,14 +325,14 @@ print(looic_strat)
 
 strat_loo_sum <- ploo %>% group_by(strat) %>% 
   summarise(m_k = mean(influence_pareto_k),
-            m_loo = mean(looic),
+            m_looic = mean(looic),
             m_ploo = mean(p_loo),
             md_k = median(influence_pareto_k),
-            md_loo = median(looic),
+            md_looic = median(looic),
             md_ploo = median(p_loo))
 
 map_loo <- inner_join(realized_strata_map,strat_loo_sum,by = "strat")
-plot_map_loo = ggplot(data = map_loo,aes(fill = md_loo))+
+plot_map_loo = ggplot(data = map_loo,aes(fill = md_looic))+
   geom_sf()
 print(plot_map_loo)
 
@@ -350,14 +355,14 @@ nsmooth_samples <- gather_samples(fit = slope_stanfit,
                                   parm = "nsmooth",
                                   dims = c("s","y")) %>% 
   left_join(.,str_link,by = c("s" = "strat")) %>% 
-  mutate(year = y+(start_year-1))
+  mutate(year = y+(first_year-1))
 
 
 n_samples <- gather_samples(fit = slope_stanfit,
                                   parm = "n",
                                   dims = c("s","y")) %>% 
   left_join(.,str_link,by = c("s" = "strat")) %>% 
-  mutate(year = y+(start_year-1))
+  mutate(year = y+(first_year-1))
 
 
 
@@ -384,7 +389,7 @@ nf <- ceiling(sqrt(nstrata))
 
 raw <- data.frame(count = stan_data$count,
                   strat = stan_data$strat,
-                  year = stan_data$year+(start_year-1)) %>% 
+                  year = stan_data$year+(first_year-1)) %>% 
   left_join(.,str_link,by = "strat")
 
 raw_means <- raw %>% group_by(year,strat,strat_name) %>% 
