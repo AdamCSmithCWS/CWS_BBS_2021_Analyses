@@ -33,7 +33,7 @@ model = "gamye"
 strat_data = stratify(by = strat)
 
 # load and stratify species data ---------------------------------------------
-species = "Cooper's Hawk"
+species = "Red-breasted Nuthatch"
 
 shiny_explore = FALSE # set to TRUE to automatically launch shinystan on model finish
 
@@ -103,9 +103,9 @@ stan_data[["nyears"]] <- max(jags_data$year)
 stan_data[["nknots_year"]] <- jags_data$nknots
 stan_data[["year_basispred"]] <- jags_data$X.basis
 
-stan_data[["N_edges"]] = car_stan_dat$N_edges
-stan_data[["node1"]] = car_stan_dat$node1
-stan_data[["node2"]] = car_stan_dat$node2
+# stan_data[["N_edges"]] = car_stan_dat$N_edges
+# stan_data[["node1"]] = car_stan_dat$node1
+# stan_data[["node2"]] = car_stan_dat$node2
 
 
 
@@ -139,7 +139,7 @@ parms = c("sdnoise",
 
 
 # # cmdStanR ----------------------------------------------------------------
-mod.file = "models/gamye_iCAR.stan"
+mod.file = "models/gamye_standard.stan"
 
 library(cmdstanr)
 ## compile model
@@ -183,31 +183,25 @@ slope_stanfit <- slope_model$sample(
 
 species_file = gsub(pattern = "([[:punct:]]|[[:blank:]])","",species)
 
-save(list = c("slope_stanfit","stan_data","jags_data","model"),
-     file = paste0("output/cmdStan_",species_file,"ten_yr__gamye_iCAR.RData"))
-
+save(list = c("stan_data","jags_data","model"),
+     file = paste0("output/cmdStan_",species_file,"_",nyears,"_gamye_standard.RData"))
 
 
 slope_stanfit$save_object(file = paste0("output/cmdStan_file",
-                                        species_file,"_",nyears,"_gamye_iCAR.RDS"))
+                                        species_file,"_",nyears,"_gamye_standard.RDS"))
 
 # export to csv and read in as rstan --------------------------------------
 
 slope_stanfit$save_output_files(dir = "output",
-                                basename = paste0(species_file,"_cmdStan_out_",nyears))
-csv_files <- dir("output/",pattern = paste0(species_file,"_cmdStan_out_",nyears),full.names = TRUE)
+                                basename = paste0(species_file,"_cmdStan_out_standard_",nyears))
+csv_files <- dir("output/",pattern = paste0(species_file,"_cmdStan_out_standard_",nyears),full.names = TRUE)
 
 #sl_rstan <- As.mcmc.list(read_stan_csv(csv_files))
 if(shiny_explore){
 sl_rstan <- rstan::read_stan_csv(csv_files)
 launch_shinystan(as.shinystan(sl_rstan))
-
-loo_stan = loo(sl_rstan)
 }
 # mod_sum = slope_stanfit$summary(variables = "n")
-
-
-
 
 
 
@@ -222,7 +216,7 @@ df = data.frame(count = stan_data$count,
 ploo = bind_cols(ploo,df)
 nyear_sqrt <- ceiling(sqrt(length(unique(ploo$year))))
 
-pdf(paste0("figures/",species_file,"loo_plots.pdf"),
+pdf(paste0("figures/",species_file,"loo_plots_standard.pdf"),
     width = 11,
     height = 8.5)
 
@@ -374,7 +368,7 @@ I_plot <- ggplot(data = Is,aes(x = year,y = mean))+
   labs(title = paste(species,"survey wide trajectory"))+
   scale_y_continuous(limits = c(0,NA))
 
-pdf(file = paste0("figures/",species_file,"trajectories.pdf"))
+pdf(file = paste0("figures/",species_file,"trajectories_standard.pdf"))
 
 print(I_plot)
 
@@ -424,7 +418,7 @@ trend_09 = tr_func(nsmooth_samples,start_year = 2009)
 trend_70 = tr_func(nsmooth_samples,start_year = 1970)
 
 
-pdf(paste0("Figures/",species_file,"trend_maps_spatial_GAMYE.pdf"),
+pdf(paste0("Figures/",species_file,"trend_maps_standard_GAMYE.pdf"),
     width = 11,
     height = 8.5)
 

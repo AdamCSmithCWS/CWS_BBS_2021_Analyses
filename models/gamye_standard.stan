@@ -1,13 +1,8 @@
 // This is a Stan implementation of the bbsBayes gamye model
-// with iCAR component for the stratum smooths
-//iCAR function
+// Consider moving annual index calculations outside of Stan to 
+// facilitate the ragged array issues
 
-functions {
-  real icar_normal_lpdf(vector bb, int ns, int[] n1, int[] n2) {
-    return -0.5 * dot_self(bb[n1] - bb[n2])
-      + normal_lpdf(sum(bb) | 0, 0.001 * ns); //soft sum to zero constraint on bb
- }
-}
+
 
 
 data {
@@ -37,13 +32,6 @@ data {
   // but throws an error if an incorrect strata-route combination is called
   real nonzeroweight[nstrata]; //proportion of the routes included - scaling factor
  
-  // spatial neighbourhood information
-  int<lower=1> N_edges;
-  int<lower=1, upper=nstrata> node1[N_edges];  // node1[i] adjacent to node2[i]
-  int<lower=1, upper=nstrata> node2[N_edges];  // and node1[i] < node2[i]
-
-
-
   // data for spline s(year)
   int<lower=1> nknots_year;  // number of knots in the basis function for year
   matrix[nyears, nknots_year] year_basispred; // basis function matrix
@@ -71,7 +59,7 @@ parameters {
   real<lower=0> sdstrata;    // sd of intercepts
   real<lower=0> sdBETA;    // sd of GAM coefficients
   real<lower=0> sdyear[nstrata];    // sd of year effects
-  real<lower=4> nu; // df of t-distribution > 4 so that it has a finite mean, variance, kurtosis
+ // real<lower=4,upper=500> nu; // df of t-distribution > 4 so that it has a finite mean, variance, kurtosis
   
   vector[nknots_year] BETA_raw;//_raw; 
   matrix[nstrata,nknots_year] beta_raw;         // GAM strata level parameters
@@ -128,9 +116,8 @@ for(s in 1:nstrata){
   
   
 model {
-  nu ~ gamma(2,0.1);
   sdnoise ~ normal(0,0.5); //prior on scale of extra Poisson log-normal variance
-  noise_raw ~ student_t(nu,0,1); //normal tailed extra Poisson log-normal variance
+  noise_raw ~ student_t(4,0,1);//student_t(nu,0,1); //normal tailed extra Poisson log-normal variance
    
   sdobs ~ normal(0,0.5); //prior on sd of observer effects
   sdrte ~ std_normal(); //prior on sd of route effects
@@ -148,13 +135,14 @@ model {
  for(s in 1:nstrata){
 
   yeareffect_raw[s,] ~ std_normal();
+  //soft sum to zero constraint on year effects within a stratum
   sum(yeareffect_raw[s,]) ~ normal(0,0.001*nyears);
   
  }
   
   BETA_raw ~ std_normal();// prior on fixed effect mean GAM parameters
   //sum to zero constraint
-  sum(BETA_raw) ~ normal(0,0.001*nknots_year);
+  //sum(BETA_raw) ~ normal(0,0.001*nknots_year);
   
   STRATA ~ std_normal();// prior on fixed effect mean intercept
   eta ~ normal(0,0.2);// prior on first-year observer effect
@@ -162,15 +150,12 @@ model {
   
   //spatial iCAR intercepts and gam parameters by strata
   sdstrata ~ std_normal(); //prior on sd of intercept variation
-  sdbeta ~ normal(0,0.1); //prior on sd of GAM parameter variation
+  sdbeta ~ normal(0,1); //prior on sd of GAM parameter variation
 
 for(k in 1:nknots_year){
-    beta_raw[,k] ~ icar_normal(nstrata, node1, node2);
-    //sum(beta_raw[,k]) ~ normal(0,nstrata*0.001);
+    beta_raw[,k] ~ std_normal();
 }
-   strata_raw ~ icar_normal(nstrata, node1, node2);
-   
-    //sum(strata_raw) ~ normal(0,nstrata*0.001);
+   strata_raw ~ std_normal();
 
 
   count ~ poisson_log(E); //vectorized count likelihood with log-transformation
@@ -191,8 +176,8 @@ for(k in 1:nknots_year){
   }
   
   
-retrans_noise = 0.5*(sdnoise^2);
-retrans_obs = 0.5*(sdobs^2);
+retrans_noise = 0.5*(sdnoise^2);//retransformation factor for sdnoise
+retrans_obs = 0.5*(sdobs^2);//retransformation factor for sdobs
 
 for(y in 1:nyears){
 
@@ -202,11 +187,14 @@ for(y in 1:nyears){
   real nsmooth_t[nroutes_strata[s]];
 
         for(t in 1:nroutes_strata[s]){
+            real retrans_yr = 0.5*(sdyear[s]^2); //retransformation factor for sdyear
+
       n_t[t] = exp(strata[s]+ year_pred[y,s] + rte[rte_mat[s,t]] + yeareffect[s,y] + retrans_noise + retrans_obs);
-      nsmooth_t[t] = exp(strata[s] + year_pred[y,s] + rte[rte_mat[s,t]] + retrans_noise + retrans_obs);
+      nsmooth_t[t] = exp(strata[s] + year_pred[y,s] + rte[rte_mat[s,t]] + retrans_yr + retrans_noise + retrans_obs);
         }
         n[s,y] = nonzeroweight[s] * mean(n_t);
         nsmooth[s,y] = nonzeroweight[s] * mean(nsmooth_t);
+
 
 
     }
