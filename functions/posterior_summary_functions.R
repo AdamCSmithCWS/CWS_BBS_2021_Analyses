@@ -39,7 +39,8 @@ dim_ext <- function(dim = 1,
 posterior_samples <- function(fit = cmdstanfit,
                         parm = "nsmooth",
                         dims = NULL,
-                        is_rstan = FALSE){
+                        is_rstan = FALSE,
+                        is_mcmc = FALSE){
   require(posterior)
   require(tidyverse)
   
@@ -49,13 +50,17 @@ posterior_samples <- function(fit = cmdstanfit,
     parm_ex <- parm
   }
   if(class(fit)[1] == "stanfit"){is_rstan <- TRUE}
-  if(is_rstan){
+  
+  if(class(fit)[1] == "mcmc"){is_mcmc <- TRUE}
+  
+  if(is_rstan | is_mcmc){
   samples <- as_draws_df(as.array(fit)) %>% 
-    select(starts_with(parm_ex,ignore.case = FALSE),
+    dplyr::select(starts_with(parm_ex,ignore.case = FALSE),
            .chain,
            .iteration,
            .draw)#,pars = c(parm)))
   }else{
+
     samples <- as_draws_df(fit$draws(variables = c(parm)))
     
   }

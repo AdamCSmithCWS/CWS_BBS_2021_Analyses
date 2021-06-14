@@ -10,7 +10,7 @@ library(spdep)
 
 
 source("functions/mungeCARdata4stan.R") ## function to modify the BUGS formatted spatial neighbourhood data to the required format for the Stan iCAR model
-source("functions/prepare-jags-data-alt.R") ## function to modify the BUGS formatted spatial neighbourhood data to the required format for the Stan iCAR model
+source("functions/prepare-jags-data-alt.R") ## 
 source("functions/neighbours_define.R")
 
 # spatial data load -------------------------------------------------------
