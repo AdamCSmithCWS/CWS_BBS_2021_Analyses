@@ -19,7 +19,7 @@ laea = st_crs("+proj=laea +lat_0=40 +lon_0=-95") # Lambert equal area coord refe
 
 locat = system.file("maps",
                     package = "bbsBayes")
-map.file = "BBS_CWS_strata" # the most standard BBS stratification, used here just to provide some spatial limits
+map.file = "BBS_USGS_strata" # the most standard BBS stratification, used here just to provide some spatial limits
 
 # reading in the strata spatial file (GIS shapefile)
 strata_map = read_sf(dsn = locat,
@@ -28,93 +28,28 @@ strata_map = st_transform(strata_map,crs = laea) #reprojecting the geographic co
 
 
 
-# BBS strata map ----------------------------------------------------------
-# 
-# strata_detail <- bbsBayes::get_composite_regions("bbs_cws")
-# strata_map_plot <- inner_join(strata_map,strata_detail,
-#                               by = c("ST_12" = "region")) %>% 
-#   mutate(bcr = factor(bcr))
-# st_demo = ggplot(data = strata_map_plot)+
-#   geom_sf(alpha = 0.1, aes(fill = bcr))+
-#   geom_sf_text(aes(label = ST_12,colour = bcr),
-#                size = 1)+
-#   theme_void()+
-#   theme(legend.position = "none")+
-#   scale_colour_viridis_d(end = 1,option = "turbo",
-#                          aesthetics = c("colour","fill"))
-# 
-# pdf(file = "BBS_strata_map.pdf",
-#     height = 8.5,
-#     width = 11)
-# print(st_demo)
-# dev.off()
-# 
-# all_strata = as.character(strata_map_plot$ST_12)
-# north_strata = all_strata[1:37] #includes Canada and Alaska
-# south_strata = all_strata[38:length(all_strata)]
-# northern_strata_map <- filter(strata_map_plot,ST_12 %in% north_strata)
-# southern_strata_map <- filter(strata_map_plot,ST_12 %in% south_strata)
-# 
-# st_demoN = ggplot(data = northern_strata_map)+
-#   geom_sf(alpha = 0.1, aes(fill = bcr))+
-#   geom_sf_text(aes(label = ST_12,colour = bcr),
-#                size = 2)+
-#   theme_void()+
-#   theme(legend.position = "none")+
-#   scale_colour_viridis_d(end = 1,option = "turbo",
-#                          aesthetics = c("colour","fill"))
-# 
-# pdf(file = "BBS_northern_strata_map.pdf",
-#     height = 8.5,
-#     width = 11)
-# print(st_demoN)
-# dev.off()
-# 
-# 
-# st_demoS = ggplot(data = southern_strata_map)+
-#   geom_sf(alpha = 0.4, aes(fill = bcr))+
-#   geom_sf_text(aes(label = ST_12),
-#                size = 2)+
-#   theme_void()+
-#   theme(legend.position = "none")+
-#   scale_colour_viridis_d(end = 1,option = "turbo",
-#                          aesthetics = c("colour","fill"))
-# 
-# pdf(file = "BBS_southern_strata_map.pdf",
-#     height = 8.5,
-#     width = 11)
-# print(st_demoS)
-# dev.off()
-# 
-# st_demoS2 = ggplot(data = southern_strata_map)+
-#   geom_sf(alpha = 0.4, aes(fill = bcr))+
-#   geom_sf_label(aes(label = ST_12),
-#                 colour = grey(0.2),
-#                size = 2,
-#                label.size = 0.15,
-#                label.padding = unit(0.1,"lines"))+
-#   theme_void()+
-#   theme(legend.position = "none")+
-#   scale_colour_viridis_d(end = 1,option = "turbo",
-#                          aesthetics = c("colour","fill"))
-# 
-# pdf(file = "BBS_southern_strata_map2.pdf",
-#     height = 8.5,
-#     width = 11)
-# print(st_demoS2)
-# dev.off()
-# 
 
 
-
-strat = "bbs_cws"
+strat = "bbs_usgs"
 model = "gamye"
 
 strat_data = stratify(by = strat)
 
 # load and stratify species data ---------------------------------------------
-species = "Cooper's Hawk"
 
+allspecies.eng = strat_data$species_strat$english
+
+cdn_trends <- read.csv("c:/BBS_summaries/2019 BBS trends for website.csv")
+
+cdn_t_sp = unique(cdn_trends$species)
+
+cdn_t_sp <- cdn_t_sp[-grep(pattern = "unid.",cdn_t_sp)]
+
+output_dir <- "G:/bbsStanBayes/output"
+
+
+
+for(species in cdn_t_sp){
 shiny_explore = FALSE # set to TRUE to automatically launch shinystan on model finish
 
 #first_year = 1970
@@ -250,8 +185,8 @@ init_def <- function(){ list(noise_raw = rnorm(ncounts,0,0.1),
 slope_stanfit <- slope_model$sample(
                           data=stan_data,
                           refresh=25,
-                          chains=3, iter_sampling=500,
-                          iter_warmup=800,
+                          chains=3, iter_sampling=1000,
+                          iter_warmup=1000,
                           parallel_chains = 3,
                           #pars = parms,
                           adapt_delta = 0.8,
@@ -263,19 +198,34 @@ slope_stanfit <- slope_model$sample(
 
 species_file = gsub(pattern = "([[:punct:]]|[[:blank:]])","",species)
 
-save(list = c("slope_stanfit","stan_data","jags_data","model"),
-     file = paste0("output/cmdStan_",species_file,"ten_yr__gamye_iCAR.RData"))
+
+out_base <- paste0(species_file,"_",nyears)
+
+# export to csv and read in as rstan --------------------------------------
+slope_stanfit$save_output_files(dir = output_dir,
+                                basename = out_base,
+                                random = FALSE,
+                                timestamp = FALSE)
+
+csv_files <- dir(output_dir,pattern = out_base,full.names = TRUE)
 
 
 
-slope_stanfit$save_object(file = paste0("output/cmdStan_file",
-                                        species_file,"_",nyears,"_gamye_iCAR.RDS"))
+save(list = c("slope_stanfit","stan_data","jags_data","csv_files","realized_strata_map"),
+     file = paste0(output_dir,"/",out_base,"_gamye_iCAR.RData"))
+
+
+
 
 # export to csv and read in as rstan --------------------------------------
 
-slope_stanfit$save_output_files(dir = "output",
-                                basename = paste0(species_file,"_cmdStan_out_",nyears))
-csv_files <- dir("output/",pattern = paste0(species_file,"_cmdStan_out_",nyears),full.names = TRUE)
+
+
+
+
+
+}# end of species loop
+
 
 #sl_rstan <- As.mcmc.list(read_stan_csv(csv_files))
 if(shiny_explore){
