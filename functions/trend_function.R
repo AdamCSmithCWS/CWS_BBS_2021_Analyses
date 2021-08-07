@@ -85,7 +85,7 @@ tr_func <- function(samples = nsmooth_samples,
     rename_with(.,~gsub(pattern = "reg",scale,.x,fixed = TRUE))
   }
   
-  tr_sm <- tr_sm %>% 
+  #tr_sm <- tr_sm %>% 
   return(tr_sm)
   
   
@@ -94,32 +94,32 @@ tr_func <- function(samples = nsmooth_samples,
 
 
 # 
-# trend_map <- function(base_map = realized_strata_map,
-#                       trends = trend_90){
-#   breaks <- c(-7, -4, -2, -1, -0.5, 0.5, 1, 2, 4, 7)
-#   labls = c(paste0("< ",breaks[1]),paste0(breaks[-c(length(breaks))],":", breaks[-c(1)]),paste0("> ",breaks[length(breaks)]))
-#   labls = paste0(labls, " %")
-#   map_palette <- c("#a50026", "#d73027", "#f46d43", "#fdae61", "#fee090", "#ffffbf",
-#                    "#e0f3f8", "#abd9e9", "#74add1", "#4575b4", "#313695")
-#   names(map_palette) <- labls
-#   
-#   tmap <- left_join(base_map,trends,by = c("ST_12" = "strat_name")) %>% 
-#     mutate(Tplot = cut(mean_trend,breaks = c(-Inf, breaks, Inf),labels = labls))
-#   
-#   fyear = unique(trends$start_year)
-#   lyear = unique(trends$end_year)
-#   tplot <- ggplot(data = tmap)+
-#     geom_sf(aes(fill = Tplot)) +
-#     labs(title = paste(species,"trends spatial GAMYE"))+
-#     scale_colour_manual(values = map_palette, 
-#                         aesthetics = c("fill"),
-#                         guide = ggplot2::guide_legend(reverse=TRUE),
-#                         name = paste0("Trend\n",fyear,"-",lyear))
-#   
-#   
-#   return(tplot)
-#   
-# }
+trend_map <- function(base_map = realized_strata_map,
+                      trends = trend_90){
+  breaks <- c(-7, -4, -2, -1, -0.5, 0.5, 1, 2, 4, 7)
+  labls = c(paste0("< ",breaks[1]),paste0(breaks[-c(length(breaks))],":", breaks[-c(1)]),paste0("> ",breaks[length(breaks)]))
+  labls = paste0(labls, " %")
+  map_palette <- c("#a50026", "#d73027", "#f46d43", "#fdae61", "#fee090", "#ffffbf",
+                   "#e0f3f8", "#abd9e9", "#74add1", "#4575b4", "#313695")
+  names(map_palette) <- labls
+
+  tmap <- left_join(base_map,trends,by = c("ST_12" = "strat_name")) %>%
+    mutate(Tplot = cut(mean_trend,breaks = c(-Inf, breaks, Inf),labels = labls))
+
+  fyear = unique(trends$start_year)
+  lyear = unique(trends$end_year)
+  tplot <- ggplot(data = tmap)+
+    geom_sf(aes(fill = Tplot)) +
+    labs(title = paste(species,"trends spatial GAMYE"))+
+    scale_colour_manual(values = map_palette,
+                        aesthetics = c("fill"),
+                        guide = ggplot2::guide_legend(reverse=TRUE),
+                        name = paste0("Trend\n",fyear,"-",lyear))
+
+
+  return(tplot)
+
+}
 
 
 

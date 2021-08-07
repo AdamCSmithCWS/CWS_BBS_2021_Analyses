@@ -26,6 +26,10 @@ strata_map = read_sf(dsn = locat,
                      layer = map.file)
 strata_map = st_transform(strata_map,crs = laea) #reprojecting the geographic coordinate file to an equal area projection
 
+if(any(grepl(names(strata_map),pattern = "AREA_1"))){
+  strata_map <- strata_map %>% 
+    rename(AREA = AREA_1)
+}
 
 
 
@@ -49,7 +53,13 @@ output_dir <- "G:/bbsStanBayes/output"
 
 
 
-for(species in cdn_t_sp){
+for(species in (cdn_t_sp)[-c(1:6)]){
+  
+  species_file = gsub(pattern = "([[:punct:]]|[[:blank:]])","",species)
+  
+  
+  
+  
 shiny_explore = FALSE # set to TRUE to automatically launch shinystan on model finish
 
 #first_year = 1970
@@ -184,7 +194,7 @@ init_def <- function(){ list(noise_raw = rnorm(ncounts,0,0.1),
 # write_stan_json(stan_data,file = data_file)
 slope_stanfit <- slope_model$sample(
                           data=stan_data,
-                          refresh=25,
+                          refresh=200,
                           chains=3, iter_sampling=1000,
                           iter_warmup=1000,
                           parallel_chains = 3,
@@ -195,8 +205,6 @@ slope_stanfit <- slope_model$sample(
                           init = init_def)
 
 
-
-species_file = gsub(pattern = "([[:punct:]]|[[:blank:]])","",species)
 
 
 out_base <- paste0(species_file,"_",nyears)
@@ -229,6 +237,12 @@ save(list = c("slope_stanfit","stan_data","jags_data","csv_files","realized_stra
 
 #sl_rstan <- As.mcmc.list(read_stan_csv(csv_files))
 if(shiny_explore){
+  
+  
+  csv_files <- dir(output_dir,pattern = out_base,full.names = TRUE)
+  
+  
+  
 sl_rstan <- rstan::read_stan_csv(csv_files)
 launch_shinystan(as.shinystan(sl_rstan))
 
@@ -303,19 +317,19 @@ print(plot_map_ploo)
 
 dev.off()
 
-source("functions/cmdstanr_gather.R")
+source("functions/posterior_summary_functions.R")
 source("functions/trend_function.R")
 
 # index and trend plotting ------------------------------------------------
 
-nsmooth_samples <- gather_samples(fit = slope_stanfit,
+nsmooth_samples <- posterior_samples(fit = sl_rstan,
                                   parm = "nsmooth",
                                   dims = c("s","y")) %>% 
   left_join(.,str_link,by = c("s" = "strat")) %>% 
   mutate(year = y+(first_year-1))
 
 
-n_samples <- gather_samples(fit = slope_stanfit,
+n_samples <- posterior_samples(fit = sl_rstan,
                                   parm = "n",
                                   dims = c("s","y")) %>% 
   left_join(.,str_link,by = c("s" = "strat")) %>% 
@@ -448,7 +462,6 @@ dev.off()
 
 
 
-
 trend_90 = tr_func(nsmooth_samples,start_year = 1990)
 trend_09 = tr_func(nsmooth_samples,start_year = 2009)
 trend_70 = tr_func(nsmooth_samples,start_year = 1970)
@@ -466,6 +479,15 @@ for(yy in c(1970,1990,2009)){
 print(m1)
 
 
+}
+for(yy in c(seq(1970,2000,by = 10),2009)){
+  trends_t = tr_func(nsmooth_samples,start_year = yy,
+                     end_year = yy+10)
+  
+  m1 = trend_map(trends = trends_t)
+  print(m1)
+  
+  
 }
 
 dev.off()
