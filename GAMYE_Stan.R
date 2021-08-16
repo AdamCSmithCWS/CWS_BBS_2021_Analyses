@@ -2,11 +2,14 @@
 
 library(bbsBayes)
 library(tidyverse)
-library(rstan)
-rstan_options(auto_write = TRUE,javascript = FALSE)
-library(shinystan)
+
+# library(rstan)
+# rstan_options(auto_write = TRUE,javascript = FALSE)
+#library(shinystan)
 library(sf)
 library(spdep)
+library(cmdstanr)
+
 
 
 source("functions/mungeCARdata4stan.R") ## function to modify the BUGS formatted spatial neighbourhood data to the required format for the Stan iCAR model
@@ -53,11 +56,13 @@ output_dir <- "G:/bbsStanBayes/output"
 
 
 
-for(species in (cdn_t_sp)[-c(1:6)]){
+for(species in rev(cdn_t_sp)){
   
   species_file = gsub(pattern = "([[:punct:]]|[[:blank:]])","",species)
   
+  spchk <- dir(output_dir,pattern = species_file,all.files = FALSE)
   
+  if(length(spchk) > 0){next}
   
   
 shiny_explore = FALSE # set to TRUE to automatically launch shinystan on model finish
@@ -166,7 +171,6 @@ parms = c("sdnoise",
 # # cmdStanR ----------------------------------------------------------------
 mod.file = "models/gamye_iCAR.stan"
 
-library(cmdstanr)
 ## compile model
 slope_model <- cmdstan_model(mod.file)
 
