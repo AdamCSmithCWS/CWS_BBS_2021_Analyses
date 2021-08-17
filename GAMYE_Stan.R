@@ -147,7 +147,7 @@ nyears = stan_data$nyears
 nknots_year = stan_data$nknots_year
 nobservers = stan_data$nobservers
 
-
+print(paste("beginning",species,"with",nstrata,"strata"))
 
 parms = c("sdnoise",
           "sdyear",
@@ -192,6 +192,7 @@ init_def <- function(){ list(noise_raw = rnorm(ncounts,0,0.1),
                             beta_raw = matrix(rnorm(nknots_year*nstrata,0,0.01),nrow = nstrata,ncol = nknots_year))}
 
 
+out_base <- paste0(species_file,"_",nyears)
 
 ## run sampler on model, data
 # data_file <- "tmpdata/tmp_data.json"
@@ -206,18 +207,15 @@ slope_stanfit <- slope_model$sample(
                           adapt_delta = 0.8,
                           max_treedepth = 14,
                           seed = 123,
-                          init = init_def)
+                          init = init_def,
+                          output_dir = output_dir,
+                          output_basename = out_base)
 
 
 
 
-out_base <- paste0(species_file,"_",nyears)
 
-# export to csv and read in as rstan --------------------------------------
-slope_stanfit$save_output_files(dir = output_dir,
-                                basename = out_base,
-                                random = FALSE,
-                                timestamp = FALSE)
+
 
 csv_files <- dir(output_dir,pattern = out_base,full.names = TRUE)
 

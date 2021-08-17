@@ -88,9 +88,9 @@ transformed parameters {
   matrix[nyears,nstrata] year_pred;
   vector[nyears] Y_pred;  
 
-  vector[nobservers] obs; //observer effects
+  //vector[nobservers] obs; //observer effects
   matrix[nstrata,nyears] yeareffect;
-  vector[ncounts] noise;             // over-dispersion
+  //vector[ncounts] noise;             // over-dispersion
   vector[nknots_year] BETA;
   
   
@@ -110,19 +110,20 @@ for(s in 1:nstrata){
 
 }
 
-     obs = sdobs*obs_raw;
      rte = sdrte*rte_raw;
 
 
 // intercepts and slopes
 
   strata = (sdstrata*strata_raw) + STRATA;
-  noise = sdnoise*noise_raw;
   
   
 
   for(i in 1:ncounts){
-    E[i] =  year_pred[year[i],strat[i]] + strata[strat[i]] + yeareffect[strat[i],year[i]] + obs[observer[i]] + rte[route[i]] + eta*firstyr[i] + noise[i];
+    real noise = sdnoise*noise_raw[i];
+    real obs = sdobs*obs_raw[observer[i]];
+
+    E[i] =  year_pred[year[i],strat[i]] + strata[strat[i]] + yeareffect[strat[i],year[i]] + rte[route[i]] + obs + eta*firstyr[i] + noise;
   }
   
   }
