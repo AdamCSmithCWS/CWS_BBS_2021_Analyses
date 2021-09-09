@@ -56,7 +56,7 @@ output_dir <- "G:/bbsStanBayes/output"
 
 
 
-for(species in rev(cdn_t_sp)){
+for(species in (cdn_t_sp)[c(200:300)]){
   
   species_file = gsub(pattern = "([[:punct:]]|[[:blank:]])","",species)
   
@@ -93,7 +93,7 @@ buff_dist <- 10000
 ### re-arrange GEOBUGS formated nb_info into appropriate format for Stan model
 car_stan_dat <- neighbours_define(real_strata_map = realized_strata_map,
                                    strat_link_fill = buff_dist,
-                                   species = species,
+                                   species = species_file,
                                   voronoi = FALSE)
 
 
@@ -242,82 +242,82 @@ if(shiny_explore){
   
   
   csv_files <- dir(output_dir,pattern = out_base,full.names = TRUE)
-  
+  csv_files <- csv_files[1:3]
   
   
 sl_rstan <- rstan::read_stan_csv(csv_files)
 launch_shinystan(as.shinystan(sl_rstan))
 
-loo_stan = loo(sl_rstan)
+loo_sum = loo(sl_rstan)
 }
 # mod_sum = slope_stanfit$summary(variables = "n")
 
 
 
-
-
-
-loo_sum = slope_stanfit$loo()
-ploo = as.data.frame(loo_sum$pointwise)
-ploo$k_cat <- cut(ploo$influence_pareto_k,breaks = c(-Inf,0.5,0.7,1,Inf),levels = c("good","ok","bad","very_bad"))
-df = data.frame(count = stan_data$count,
-                route = stan_data$route,
-                observer = stan_data$observer,
-                strat = stan_data$strat,
-                year = stan_data$year)
-ploo = bind_cols(ploo,df)
-nyear_sqrt <- ceiling(sqrt(length(unique(ploo$year))))
-
-pdf(paste0("figures/",species_file,"loo_plots.pdf"),
-    width = 11,
-    height = 8.5)
-
-
-k_count = ggplot(data = ploo,aes(x = count,y = influence_pareto_k,colour = k_cat))+
-  geom_point()+
-  facet_wrap(~year,nrow = nyear_sqrt,scales = "fixed")+
-geom_abline(slope = 0,intercept = 0.7,colour = "red")
-print(k_count)
-
-looic_count = ggplot(data = ploo,aes(x = count,y = looic,colour = k_cat))+
-  geom_point()+
-  facet_wrap(~year,nrow = nyear_sqrt,scales = "fixed")
-print(looic_count)
-
-
-k_looic = ggplot(data = ploo,aes(x = looic,y = influence_pareto_k,colour = k_cat))+
-  geom_point()+
-  facet_wrap(~year,nrow = nyear_sqrt,scales = "fixed")+
-  geom_abline(slope = 0,intercept = 0.7,colour = "red")
-print(k_looic)
-
-looic_strat = ggplot(data = ploo,aes(x = strat,y = looic,colour = k_cat))+
-  geom_point()+
-  facet_wrap(~year,nrow = nyear_sqrt,scales = "fixed")
-print(looic_strat)
-
-strat_loo_sum <- ploo %>% group_by(strat) %>% 
-  summarise(m_k = mean(influence_pareto_k),
-            m_looic = mean(looic),
-            m_ploo = mean(p_loo),
-            md_k = median(influence_pareto_k),
-            md_looic = median(looic),
-            md_ploo = median(p_loo))
-
-map_loo <- inner_join(realized_strata_map,strat_loo_sum,by = "strat")
-plot_map_loo = ggplot(data = map_loo,aes(fill = md_looic))+
-  geom_sf()
-print(plot_map_loo)
-
-plot_map_k = ggplot(data = map_loo,aes(fill = md_k))+
-  geom_sf()
-print(plot_map_k)
-
-plot_map_ploo = ggplot(data = map_loo,aes(fill = md_ploo))+
-  geom_sf()
-print(plot_map_ploo)
-
-dev.off()
+# 
+# 
+# 
+# loo_sum = slope_stanfit$loo()
+# ploo = as.data.frame(loo_sum$pointwise)
+# ploo$k_cat <- cut(ploo$influence_pareto_k,breaks = c(-Inf,0.5,0.7,1,Inf),levels = c("good","ok","bad","very_bad"))
+# df = data.frame(count = stan_data$count,
+#                 route = stan_data$route,
+#                 observer = stan_data$observer,
+#                 strat = stan_data$strat,
+#                 year = stan_data$year)
+# ploo = bind_cols(ploo,df)
+# nyear_sqrt <- ceiling(sqrt(length(unique(ploo$year))))
+# 
+# pdf(paste0("figures/",species_file,"loo_plots.pdf"),
+#     width = 11,
+#     height = 8.5)
+# 
+# 
+# k_count = ggplot(data = ploo,aes(x = count,y = influence_pareto_k,colour = k_cat))+
+#   geom_point()+
+#   facet_wrap(~year,nrow = nyear_sqrt,scales = "fixed")+
+# geom_abline(slope = 0,intercept = 0.7,colour = "red")
+# print(k_count)
+# 
+# looic_count = ggplot(data = ploo,aes(x = count,y = looic,colour = k_cat))+
+#   geom_point()+
+#   facet_wrap(~year,nrow = nyear_sqrt,scales = "fixed")
+# print(looic_count)
+# 
+# 
+# k_looic = ggplot(data = ploo,aes(x = looic,y = influence_pareto_k,colour = k_cat))+
+#   geom_point()+
+#   facet_wrap(~year,nrow = nyear_sqrt,scales = "fixed")+
+#   geom_abline(slope = 0,intercept = 0.7,colour = "red")
+# print(k_looic)
+# 
+# looic_strat = ggplot(data = ploo,aes(x = strat,y = looic,colour = k_cat))+
+#   geom_point()+
+#   facet_wrap(~year,nrow = nyear_sqrt,scales = "fixed")
+# print(looic_strat)
+# 
+# strat_loo_sum <- ploo %>% group_by(strat) %>% 
+#   summarise(m_k = mean(influence_pareto_k),
+#             m_looic = mean(looic),
+#             m_ploo = mean(p_loo),
+#             md_k = median(influence_pareto_k),
+#             md_looic = median(looic),
+#             md_ploo = median(p_loo))
+# 
+# map_loo <- inner_join(realized_strata_map,strat_loo_sum,by = "strat")
+# plot_map_loo = ggplot(data = map_loo,aes(fill = md_looic))+
+#   geom_sf()
+# print(plot_map_loo)
+# 
+# plot_map_k = ggplot(data = map_loo,aes(fill = md_k))+
+#   geom_sf()
+# print(plot_map_k)
+# 
+# plot_map_ploo = ggplot(data = map_loo,aes(fill = md_ploo))+
+#   geom_sf()
+# print(plot_map_ploo)
+# 
+# dev.off()
 
 source("functions/posterior_summary_functions.R")
 source("functions/trend_function.R")
