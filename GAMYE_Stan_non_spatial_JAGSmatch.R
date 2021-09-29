@@ -62,28 +62,28 @@ stan_data = jags_data[c("ncounts",
                          "year",
                          "firstyr",
                         "nonzeroweight")]
- stan_data[["observer"]] <- as.integer(factor(jags_data[["ObsN"]]))
+ stan_data[["observer"]] <- as.integer(factor(paste0(jags_data[["ObsN"]],"-",jags_data[["route"]])))
   stan_data[["nobservers"]] <- max(stan_data[["observer"]])
 
-stan_data[["route"]] <- as.integer(factor(jags_data$route))
-stan_data[["nroutes"]] <- max(stan_data[["route"]])
-strat_route <- unique(data.frame(strat = stan_data$strat,
-                                 route = stan_data$route))
-strat_route <- strat_route %>% arrange(strat)
+#stan_data[["route"]] <- as.integer(factor(jags_data$route))
+#stan_data[["nroutes"]] <- max(stan_data[["route"]])
+strat_routeobs <- unique(data.frame(strat = stan_data$strat,
+                                 obs = stan_data$observer))
+strat_routeobs <- strat_routeobs %>% arrange(strat)
 
-nroutes_strata <- as.integer(table(strat_routeobs$strat))
-maxnroutes_strata <- max(nroutes_strata)
-stan_data[["nroutes_strata"]] <- nroutes_strata
-stan_data[["maxnroutes_strata"]] <- maxnroutes_strata
+nobservers_strata <- as.integer(table(strat_routeobs$strat))
+maxnobservers_strata <- max(nobservers_strata)
+stan_data[["nobservers_strata"]] <- nobservers_strata
+stan_data[["maxnobservers_strata"]] <- maxnobservers_strata
 
-rte_mat <- matrix(data = 0,
+rteobs_mat <- matrix(data = 0,
                   nrow = stan_data$nstrata,
-                  ncol = maxnroutes_strata)
+                  ncol = maxnobservers_strata)
 for(i in 1:stan_data$nstrata){
-  rte_mat[i,1:nroutes_strata[i]] <- strat_route[which(strat_route$strat == i),"route"]
+  rteobs_mat[i,1:nobservers_strata[i]] <- strat_routeobs[which(strat_routeobs$strat == i),"obs"]
 }
 
-stan_data[["rte_mat"]] <- rte_mat
+stan_data[["rteobs_mat"]] <- rteobs_mat
 
 stan_data[["nyears"]] <- max(jags_data$year)
 stan_data[["nknots_year"]] <- jags_data$nknots
@@ -92,7 +92,7 @@ stan_data[["year_basispred"]] <- jags_data$X.basis
 
 
 ncounts = stan_data$ncounts
-nroutes = stan_data$nroutes
+#nroutes = stan_data$nroutes
 nstrata = stan_data$nstrata
 nyears = stan_data$nyears
 nknots_year = stan_data$nknots_year
@@ -103,7 +103,7 @@ nobservers = stan_data$nobservers
 
 
 # # cmdStanR ----------------------------------------------------------------
-mod.file = "models/gamye.stan"
+mod.file = "models/gamye_jagsmatch.stan"
 
 ## compile model
 model <- cmdstan_model(mod.file)
@@ -114,10 +114,10 @@ init_def <- function(){ list(noise_raw = rnorm(ncounts,0,0.1),
                             eta = 0,
                             yeareffect_raw = matrix(rnorm(nstrata*nyears,0,0.1),nrow = nstrata,ncol = nyears),
                             obs_raw = rnorm(nobservers,0,0.1),
-                            rte_raw = rnorm(nroutes,0,0.1),
+                            #rte_raw = rnorm(nroutes,0,0.1),
                             sdnoise = 0.2,
                             sdobs = 0.1,
-                            sdrte = 0.2,
+                            #sdrte = 0.2,
                             sdbeta = runif(nknots_year,0.01,0.1),
                             sdBETA = 0.1,
                             sdyear = runif(nstrata,0.01,0.1),
