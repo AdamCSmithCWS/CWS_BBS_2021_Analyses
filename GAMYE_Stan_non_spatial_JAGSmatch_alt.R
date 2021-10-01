@@ -103,7 +103,7 @@ nobservers = stan_data$nobservers
 
 
 # # cmdStanR ----------------------------------------------------------------
-mod.file = "models/gamye_jagsmatch.stan"
+mod.file = "models/gamye_jagsmatch_alt.stan"
 
 ## compile model
 model <- cmdstan_model(mod.file)
@@ -118,7 +118,7 @@ init_def <- function(){ list(noise_raw = rnorm(ncounts,0,0.1),
                             sdnoise = 0.2,
                             sdobs = 0.1,
                             #sdrte = 0.2,
-                            sdbeta = runif(nknots_year,0.01,0.1),
+                            sdbeta = runif(nstrata,0.01,0.1),
                             sdBETA = 0.1,
                             sdyear = runif(nstrata,0.01,0.1),
                             #nu = 10,
@@ -126,7 +126,7 @@ init_def <- function(){ list(noise_raw = rnorm(ncounts,0,0.1),
                             beta_raw = matrix(rnorm(nknots_year*nstrata,0,0.01),nrow = nstrata,ncol = nknots_year))}
 
 
-species_file = gsub(pattern = "([[:punct:]]|[[:blank:]])","",species)
+species_file = gsub(pattern = "([[:punct:]]|[[:blank:]])","",species,"_alt")
 out_base <- paste0(species_file,"_",nyears)
 ## run sampler on model, data
 # data_file <- "tmpdata/tmp_data.json"
@@ -149,7 +149,7 @@ model_stanfit <- model$sample(
 
 
 save(list = c("stan_data","jags_data","model_stanfit"),
-     file = paste0("output/cmdStan_",species_file,"_",nyears,"_gamye_standard.RData"))
+     file = paste0("output/cmdStan_",species_file,"_",nyears,"_gamye_standard_alt.RData"))
 
 
 
@@ -330,7 +330,7 @@ I_plot <- ggplot(data = Is,aes(x = year,y = mean))+
   labs(title = paste(species,"survey wide trajectory"))+
   scale_y_continuous(limits = c(0,NA))
 
-pdf(file = paste0("figures/",species_file,"trajectories_standard.pdf"))
+pdf(file = paste0("figures/",species_file,"trajectories_standard_alt.pdf"))
 
 print(I_plot)
 
@@ -380,9 +380,9 @@ my_sso <- shinystan::launch_shinystan(
   shinystan::as.shinystan(gamye_sdpriors$samples, 
                           model_name = "gamye_sdpriors"))
 
-inds = generate_indices(gamye_sdpriors,jags_data = jags_data)
-indsmooth = generate_indices(gamye_sdpriors,
-                             jags_data = jags_data,
+inds = generate_indices(mod_alt_constr7,jags_data = jags_data_alt)
+indsmooth = generate_indices(mod_alt_constr7,
+                             jags_data = jags_data_alt,
                              alternate_n = "nsmooth")
 plots = plot_indices(inds)
 library(tidyverse)
