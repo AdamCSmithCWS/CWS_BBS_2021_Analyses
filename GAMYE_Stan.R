@@ -54,6 +54,7 @@ cdn_t_sp <- cdn_t_sp[-grep(pattern = "unid.",cdn_t_sp)]
 
 output_dir <- "G:/bbsStanBayes/output"
 
+output_dir <- "output"
 
 
 for(species in (cdn_t_sp)[c(200:300)]){

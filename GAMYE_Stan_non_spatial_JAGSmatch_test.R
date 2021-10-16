@@ -32,20 +32,19 @@ model = "gamye"
 strat_data = stratify(by = strat)
 
 # load and stratify species data ---------------------------------------------
-species = "Fox Sparrow"
+species = "Northwestern Crow"
 
 shiny_explore = FALSE # set to TRUE to automatically launch shinystan on model finish
 
-#first_year = 1970
+first_year = 1990
 
 jags_data = prepare_jags_data(strat_data = strat_data,
                              species_to_run = species,
                              model = model,
                              min_max_route_years = 3,
-                             #min_year = first_year,
-                             n_knots = 13)
+                             #n_knots = 4,
+                             min_year = first_year)
 
-first_year = min(jags_data$r_year)
 
 str_link <- unique(data.frame(strat = jags_data$strat,
                               strat_name = jags_data$strat_name))
@@ -103,7 +102,7 @@ nobservers = stan_data$nobservers
 
 
 # # cmdStanR ----------------------------------------------------------------
-mod.file = "models/gamye_jagsmatch.stan"
+mod.file = "models/gamye_jagsmatch_inform_prior_year.stan"
 
 ## compile model
 model <- cmdstan_model(mod.file)
@@ -120,7 +119,8 @@ init_def <- function(){ list(noise_raw = rnorm(ncounts,0,0.1),
                             #sdrte = 0.2,
                             sdbeta = runif(nknots_year,0.01,0.1),
                             sdBETA = 0.1,
-                            sdyear = runif(nstrata,0.01,0.1),
+                            # logsdyear = runif(nstrata,-0.01,0.1),
+                            sdyear = runif(nstrata,0,0.2),
                             #nu = 10,
                             BETA_raw = rnorm(nknots_year,0,0.1),
                             beta_raw = matrix(rnorm(nknots_year*nstrata,0,0.01),nrow = nstrata,ncol = nknots_year))}
@@ -155,7 +155,7 @@ summr = as_draws_df(model_stanfit$draws(format = "draws_list" ,
   summary()
 
 save(list = c("stan_data","jags_data","model_stanfit"),
-     file = paste0("output/cmdStan_",species_file,"_",nyears,"_gamye_standard.RData"))
+     file = paste0("output/cmdStan_",species_file,"_",nyears,"_gamye_inform_prior.RData"))
 
 
 
