@@ -129,7 +129,7 @@ loo_out <- stanfit$loo()
 save(list = c("stanfit","stan_data","csv_files",
               "out_base","loo_out"),
      file = paste0(output_dir,"/",out_base,"_fit.RData"))
-}
+
 
 
 
