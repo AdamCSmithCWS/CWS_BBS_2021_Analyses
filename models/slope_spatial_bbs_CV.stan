@@ -10,7 +10,7 @@
 // Spatial and Spatio-temporal Epidemiology 31:100301.
 
  functions {
-   real icar_normal_lpdf(vector bb, int ns, int[] n1, int[] n2) {
+   real icar_normal_lpdf(vector bb, int ns, array[] int n1, array[] int n2) {
      return -0.5 * dot_self(bb[n1] - bb[n2])
        + normal_lpdf(sum(bb) | 0, 0.001 * ns); //soft sum to zero constraint on bb
   }
@@ -41,6 +41,10 @@ data {
   // but throws an error if an incorrect strata-site combination is called
   array[nstrata] real nonzeroweight; //proportion of the sites included - scaling factor
 
+  //data for spatial iCAR among strata
+  int<lower=1> N_edges;
+  array [N_edges] int<lower=1, upper=nstrata> node1;  // node1[i] adjacent to node2[i]
+  array [N_edges] int<lower=1, upper=nstrata> node2;  // and node1[i] < node2[i]
 
   // Extra Poisson variance options
   int<lower=0,upper=1> heavy_tailed; //indicator if extra poisson variance should be t-distributed or normal (yes = 1, no = 0 and therefore normal)
@@ -148,7 +152,7 @@ for(s in 1:nstrata){
     noise = 0;
     }
     
-    E[i] =  beta[strat_tr]*(year[i] - fixedyear) + strata + yeareffect[strat_tr[i],year_tr[i]] + eta*firstyr_tr[i] + ste + obs + noise;
+    E[i] =  beta[strat_tr[i]]*(year[i] - fixedyear) + strata + yeareffect[strat_tr[i],year_tr[i]] + eta*firstyr_tr[i] + ste + obs + noise;
   }
   
 

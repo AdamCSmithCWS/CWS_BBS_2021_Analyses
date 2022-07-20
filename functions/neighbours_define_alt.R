@@ -1,4 +1,4 @@
-# voronoi polygon neighbourhood function ----------------------------------
+# voronoi or polygon neighbourhood function ----------------------------------
 
 
 neighbours_define <- function(real_strata_map = realized_strata_map, #sf map of strata
