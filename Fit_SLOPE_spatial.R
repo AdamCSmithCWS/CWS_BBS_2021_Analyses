@@ -73,6 +73,7 @@ stan_data[["node2"]] <- neighbours$node2
 
 stan_data[["stratify_by"]] <- NULL
 stan_data[["model"]] <- NULL
+stan_data[["alt_data"]] <- NULL
 
 
 
@@ -83,15 +84,15 @@ mod.file = "models/slope_spatial_bbs_CV.stan"
 model <- cmdstan_model(mod.file)
 
 out_base <- paste(species_f,sp_data$model,"BBS",sep = "_")
+output_dir <- "output/"
 
-
-init_def <- function(){ list(noise_raw = rnorm(ncounts*stan_data$use_pois,0,0.1),
+init_def <- function(){ list(noise_raw = rnorm(stan_data$ncounts*stan_data$use_pois,0,0.1),
                              strata_raw = rnorm(stan_data$nstrata,0,0.1),
                              STRATA = 0,
                              nu = 10,
                              sdstrata = runif(1,0.01,0.1),
                              eta = 0,
-                             yeareffect_raw = matrix(rnorm(stan_data$nstrata*nyears,0,0.1),nrow = stan_data$nstrata,ncol = stan_data$nyears),
+                             yeareffect_raw = matrix(rnorm(stan_data$nstrata*stan_data$nyears,0,0.1),nrow = stan_data$nstrata,ncol = stan_data$nyears),
                              obs_raw = rnorm(stan_data$nobservers,0,0.1),
                              ste_raw = rnorm(stan_data$nsites,0,0.1),
                              sdnoise = runif(1,0.3,1.3),

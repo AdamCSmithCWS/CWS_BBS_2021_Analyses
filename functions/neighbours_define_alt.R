@@ -1,4 +1,4 @@
-# voronoi or polygon neighbourhood function ----------------------------------
+# voronoi polygon neighbourhood function ----------------------------------
 
 
 neighbours_define <- function(real_strata_map = realized_strata_map, #sf map of strata
@@ -80,11 +80,14 @@ neighbours_define <- function(real_strata_map = realized_strata_map, #sf map of 
 
         for(i in w_rep){
           wm <- nn[[1]][i,c(1,2)]
-          j <- 0
-      for(wwm in wm){
-        j <- j+1
-          nb_db[[i]] <- ifelse(j > 1,c(nb_db[[i]],wwm),wwm)
-          nb_db[[wwm]] <- c(nb_db[[wwm]],i)
+          
+      for(jjt in c(1,2)){
+          wwm <- wm[jjt]
+          
+          nb_db[[i]] <- as.integer(unique(c(nb_db[[i]],wwm)))
+          if(nb_db[[i]][1] == 0){nb_db[[i]] <- nb_db[[i]][-1]}
+          nb_db[[wwm]] <- as.integer(unique(c(nb_db[[wwm]],i)))
+          if(nb_db[[wwm]][1] == 0){nb_db[[wwm]] <- nb_db[[wwm]][-1]}
           }
 
         }
@@ -112,8 +115,8 @@ neighbours_define <- function(real_strata_map = realized_strata_map, #sf map of 
             #ww2 are the strata that should be linked to the isolated group
             for(i in ww2){
               
-              nb_db[[i]] <- c(nb_db[[i]],as.integer(wwcl))
-              nb_db[[as.integer(wwcl)]] <- c(nb_db[[as.integer(wwcl)]],i)
+              nb_db[[i]] <- unique(c(nb_db[[i]],as.integer(wwcl)))
+              nb_db[[as.integer(wwcl)]] <- unique(c(nb_db[[as.integer(wwcl)]],i))
               
               
             }
@@ -190,11 +193,7 @@ neighbours_define <- function(real_strata_map = realized_strata_map, #sf map of 
     
     if(min(nb_info$num) == 0){stop("ERROR some strata have no neighbours")}
     
-    if(fill_v){
-      
-      
-      
-    }
+    
     
   }#end if voronoi
   
