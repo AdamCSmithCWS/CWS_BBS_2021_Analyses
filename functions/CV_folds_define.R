@@ -5,7 +5,7 @@
 
 cv_folds <- function(orig_df = NULL, # original full observational dataframe of BBS data
                      K = 10,  # number of folds
-                     fold_groups = "Observer_Factored"){  # set to FALSE to have folds move forwards in time
+                     fold_groups = "Observer_Factored"){  
   
   if(is.null(orig_df)){
     stop("orig_df must be supplied")
@@ -16,6 +16,9 @@ cv_folds <- function(orig_df = NULL, # original full observational dataframe of 
   # easy to do if first-year observations are always kept in the training fold
   # possibly problematic because no way to compare the predictions for first years
   # for each stratum, split observers in to K groups
+  
+  ## perhaps it would also work if firstyears are always kept in a different fold from the rest of the 
+  ## observer's data. 
   
   orig_df <- orig_df %>% 
     rename_with(.,~ gsub(pattern = fold_groups,replacement = "grouping",.x)) 
@@ -33,7 +36,7 @@ cv_folds <- function(orig_df = NULL, # original full observational dataframe of 
   orig_df <- orig_df %>% 
     left_join(.,grps,by = "grouping") %>% 
     group_by(grouping) %>% 
-    mutate(fold2 = fold+First_Year,
+    mutate(fold2 = fold+First_Year, #bumps first-year observations to the next fold
            fold = ifelse(fold2 > K,1,fold2)) %>% 
     rename_with(.,~ gsub(replacement = fold_groups,pattern = "grouping",.x))
   
