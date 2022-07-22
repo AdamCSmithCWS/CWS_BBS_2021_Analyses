@@ -1,20 +1,6 @@
-// This is a Stan implementation of the slope model that uses a spatial iCAR structure to share information among strata on the intercepts and slopes
+// This is a Stan implementation of the slope model that shares information among strata on the intercepts and slopes
 
-// Consider moving annual index calculations outside of Stan to 
-// facilitate the ragged array issues and to reduce the model output size (greatly)
-// althought nice to have them here where Rhat and ess_ are calculated
 
-// iCAR function, from Morris et al. 2019
-// Morris, M., K. Wheeler-Martin, D. Simpson, S. J. Mooney, A. Gelman, and C. DiMaggio (2019). 
-// Bayesian hierarchical spatial models: Implementing the Besag York Mollié model in stan. 
-// Spatial and Spatio-temporal Epidemiology 31:100301.
-
- functions {
-   real icar_normal_lpdf(vector bb, int ns, array[] int n1, array[] int n2) {
-     return -0.5 * dot_self(bb[n1] - bb[n2])
-       + normal_lpdf(sum(bb) | 0, 0.001 * ns); //soft sum to zero constraint on bb
-  }
- }
 
 
 data {
@@ -40,11 +26,6 @@ data {
   // above is actually a ragged array, but filled with 0 values so that it works
   // but throws an error if an incorrect strata-site combination is called
   array[nstrata] real nonzeroweight; //proportion of the sites included - scaling factor
-
-  //data for spatial iCAR among strata
-  int<lower=1> N_edges;
-  array [N_edges] int<lower=1, upper=nstrata> node1;  // node1[i] adjacent to node2[i]
-  array [N_edges] int<lower=1, upper=nstrata> node2;  // and node1[i] < node2[i]
 
   // Extra Poisson variance options
   int<lower=0,upper=1> heavy_tailed; //indicator if extra poisson variance should be t-distributed or normal (yes = 1, no = 0 and therefore normal)
@@ -210,9 +191,9 @@ model {
   sdstrata ~ student_t(3,0,1); //prior on sd of intercept variation
   
 
-    beta_raw ~ icar_normal(nstrata, node1, node2);
+    beta_raw ~ std_normal();
 
-   strata_raw ~ icar_normal(nstrata, node1, node2);
+   strata_raw ~ std_normal();
    
 if(use_pois){
   count_tr ~ poisson_log(E); //vectorized count likelihood with log-transformation
@@ -227,8 +208,11 @@ if(use_pois){
 
    array[nstrata,nyears] real<lower=0> n; //full annual indices
    array[nstrata,nyears] real<lower=0> nslope; //just the smooth component
+   array[nstrata,nyears] real<lower=0> n2; //full annual indices calculated assuming site-effects are log-normal and the same among strata
+   array[nstrata,nyears] real<lower=0> nslope2; //smooth component of annual indices calculated assuming site-effects are log-normal and the same among strata
    real<lower=0> retrans_noise;
    real<lower=0> retrans_obs;
+   real<lower=0> retrans_ste;
    vector[ncounts*calc_log_lik] log_lik; // alternative value to track the observervation level log-likelihood
    vector[ntest*calc_CV] log_lik_cv; // alternative value to track the log-likelihood of the coutns in the test dataset
    real adj;
@@ -295,6 +279,7 @@ if(use_pois){
 }
      
 retrans_obs = 0.5*(sdobs^2);
+retrans_ste = 0.5*(sdste^2);
 
 // Annual indices of abundance - strata-level annual predicted counts
 
@@ -323,7 +308,9 @@ for(y in 1:nyears){
           // 1 - assumes that sdste is equal among all strata
           // 2 - assumes that the distribution of site-effects is normal
         // As a result, these annual indices reflect predictions of mean annual abundance within strata of the routes that are included in the stratum
-
+        n2[s,y] = nonzeroweight[s] * exp(strata + beta[s]*(y-fixedyear) + retrans_ste + yeareffect[s,y] + retrans_noise + retrans_obs);//mean of exponentiated predictions across sites in a stratum
+        nslope2[s,y] = nonzeroweight[s] * exp(strata + beta[s]*(y-fixedyear) + retrans_ste + retrans_yr + retrans_noise + retrans_obs);//mean of exponentiated predictions across sites in a stratum
+        
 
     }
   }
