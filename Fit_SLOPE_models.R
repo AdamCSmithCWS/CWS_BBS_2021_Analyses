@@ -28,7 +28,8 @@ jagsfit <- bbsBayes::run_model(jags_data = jags_data,
                                parallel = TRUE,
                                modules = "glm")
 
-
+save(list = c("jagsfit","jags_data","species"),
+     file = paste("output/saved_bbsBayes_fit_data_",species_f,".RData",sep = "_"))
 ## the bbsBayes prepare_data function doesn't create all of the objects required for the Stan versions of the models
 ## this source() call over-writes the bbsBayes function prepare_data()
 source("Functions/prepare-data-alt.R")
@@ -133,8 +134,8 @@ init_def <- function(){ list(noise_raw = rnorm(stan_data$ncounts*stan_data$use_p
 stanfit <- model$sample(
   data=stan_data,
   refresh=100,
-  chains=3, iter_sampling=1000,
-  iter_warmup=1000,
+  chains=3, iter_sampling=500,
+  iter_warmup=500,
   parallel_chains = 3,
   #pars = parms,
   adapt_delta = 0.95,
