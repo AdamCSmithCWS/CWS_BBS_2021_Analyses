@@ -8,28 +8,29 @@ bbs_data <- stratify(by = "bbs_usgs")
 #setwd("C:/GitHub/bbsStanBayes")
 
 
-fit_spatial <- FALSE # TRUE = spatial sharing of information and FALSE = non-spatial sharing
+fit_spatial <- TRUE # TRUE = spatial sharing of information and FALSE = non-spatial sharing
 
 species <- "Pacific Wren"
 species_f <- gsub(species,pattern = " ",replacement = "_") # species name without spaces
 
+sel_model <- "gamye"
 
 # fit using JAGS ----------------------------------------------------------
 jags_data <- prepare_data(strat_data = bbs_data,
                           species_to_run = species,
-                          model = "slope",
+                          model = sel_model,
                           min_max_route_years = 10,
                           heavy_tailed = TRUE)
 
 jagsfit <- bbsBayes::run_model(jags_data = jags_data,
-                               parameters_to_save = c("n","nslope",
-                                                      "BETA","beta","STRATA",
-                                                      "sdobs","sdbeta","eta"),
+                               parameters_to_save = c("n","nsmooth",
+                                                      "B.X","beta.X","STRATA",
+                                                      "sdobs","sdbeta","sdX","eta"),
                                parallel = TRUE,
                                modules = "glm")
 
 save(list = c("jagsfit","jags_data","species"),
-     file = paste("output/saved_bbsBayes_fit_data_",species_f,".RData",sep = "_"))
+     file = paste("output/saved_bbsBayes_fit",model,species_f,".RData",sep = "_"))
 ## the bbsBayes prepare_data function doesn't create all of the objects required for the Stan versions of the models
 ## this source() call over-writes the bbsBayes function prepare_data()
 source("Functions/prepare-data-alt.R")
@@ -41,8 +42,10 @@ source("Functions/neighbours_define_alt.R") # function to generate spatial neigh
 
 sp_data <- prepare_data(bbs_data,
                         species_to_run = species,
-                        model = "slope",
-                        min_max_route_years = 10)
+                        model = sel_model,
+                        min_max_route_years = 10,
+                        basis = "mgcv")
+
 
 
 stan_data <- sp_data
@@ -102,11 +105,11 @@ stan_data[["alt_data"]] <- NULL
 
 if(fit_spatial){
   
-mod.file = "models/slope_spatial_bbs_CV.stan"
+mod.file = paste0("models/",sel_model,"_spatial_bbs_CV.stan")
 out_base <- paste(species_f,sp_data$model,"Spatial","BBS",sep = "_") # text string to identify the saved output from the Stan process unique to species and model, but probably something the user wants to control
 
 }else{
-  mod.file = "models/slope_bbs_CV.stan"
+  mod.file = paste0("models/",sel_model,"_bbs_CV.stan")
   out_base <- paste(species_f,sp_data$model,"BBS",sep = "_")
   
 }
@@ -119,6 +122,7 @@ output_dir <- "output/" # Stan writes output to files as it samples. This is gre
 ### this init_def is something that the JAGS versions don't need. It's a function definition, so perhaps something we'll have to build
 ### into the fit_model function
 ### the slightly annoying thing is that it's model-specific, so we'll need to have a few versions of it
+
 init_def <- function(){ list(noise_raw = rnorm(stan_data$ncounts*stan_data$use_pois,0,0.1),
                              strata_raw = rnorm(stan_data$nstrata,0,0.1),
                              STRATA = 0,
@@ -131,10 +135,13 @@ init_def <- function(){ list(noise_raw = rnorm(stan_data$ncounts*stan_data$use_p
                              sdnoise = runif(1,0.3,1.3),
                              sdobs = runif(1,0.01,0.1),
                              sdste = runif(1,0.01,0.2),
+                             #sdbeta = runif(stan_data$nstrata,0.01,0.1),
                              sdbeta = runif(1,0.01,0.1),
+                             sdBETA = runif(1,0.01,0.1),
                              sdyear = runif(stan_data$nstrata,0.01,0.1),
-                             BETA = rnorm(1,0,0.1),
-                             beta_raw = rnorm(stan_data$nstrata,0,0.1))}
+                             BETA_raw = rnorm(stan_data$nknots_year,0,0.1),
+                             beta_raw = matrix(rnorm(stan_data$nknots_year*stan_data$nstrata,0,0.01),nrow = stan_data$nstrata,ncol = stan_data$nknots_year))}
+
 
 
 
