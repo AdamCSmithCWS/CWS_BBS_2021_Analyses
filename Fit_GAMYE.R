@@ -11,7 +11,7 @@ setwd("C:/GitHub/bbsStanBayes")
 source("Functions/prepare-data-alt.R")
 
 
-species <- "Barn Swallow"
+species <- "Golden-winged Warbler"
 
 
 species_f <- gsub(species,pattern = " ",replacement = "_")
@@ -26,6 +26,11 @@ sp_data <- prepare_data(bbs_data,
 
 stan_data <- sp_data
 
+tmp_stratify_by <- stan_data[["stratify_by"]]  
+tmp_model <- stan_data[["model"]]
+tmp_alt_data <- stan_data[["alt_data"]]
+
+
 stan_data[["stratify_by"]] <- NULL
 stan_data[["alt_data"]] <- NULL
 stan_data[["model"]] <- NULL
@@ -38,15 +43,15 @@ mod.file = "models/gamye_bbs_CV.stan"
 model <- cmdstan_model(mod.file)
 
 out_base <- paste(species_f,sp_data$model,"BBS",sep = "_")
+output_dir <- "output"
 
-
-init_def <- function(){ list(noise_raw = rnorm(ncounts*stan_data$use_pois,0,0.1),
+init_def <- function(){ list(noise_raw = rnorm(stan_data$ncounts*stan_data$use_pois,0,0.1),
                              strata_raw = rnorm(stan_data$nstrata,0,0.1),
                              STRATA = 0,
                              nu = 10,
                              sdstrata = runif(1,0.01,0.1),
                              eta = 0,
-                             yeareffect_raw = matrix(rnorm(stan_data$nstrata*nyears,0,0.1),nrow = stan_data$nstrata,ncol = stan_data$nyears),
+                             yeareffect_raw = matrix(rnorm(stan_data$nstrata*stan_data$nyears,0,0.1),nrow = stan_data$nstrata,ncol = stan_data$nyears),
                              obs_raw = rnorm(stan_data$nobservers,0,0.1),
                              ste_raw = rnorm(stan_data$nsites,0,0.1),
                              sdnoise = runif(1,0.3,1.3),
@@ -80,11 +85,18 @@ stanfit <- model$sample(
 
 loo_out <- stanfit$loo()
 
+fit_summary <- stanfit$summary()
 
-save(list = c("stanfit","stan_data","csv_files",
-              "out_base","loo_out"),
+stan_data[["stratify_by"]] <- tmp_stratify_by 
+stan_data[["model"]] <- tmp_model
+stan_data[["alt_data"]] <- tmp_alt_data
+stan_data[["strat_name"]] <- tmp_alt_data$strat_name
+
+
+save(list = c("stanfit","stan_data",
+              "out_base","loo_out",
+              "fit_summary"),
      file = paste0(output_dir,"/",out_base,"_fit.RData"))
-}
 
 
 

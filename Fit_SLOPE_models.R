@@ -85,7 +85,14 @@ stan_data[["node1"]] <- neighbours$node1
 stan_data[["node2"]] <- neighbours$node2
 }#end of if fit_spatial
 
+
+
 # extra list elements not required by Stan
+tmp_stratify_by <- stan_data[["stratify_by"]]  
+tmp_model <- stan_data[["model"]]
+tmp_alt_data <- stan_data[["alt_data"]]
+
+
 stan_data[["stratify_by"]] <- NULL 
 stan_data[["model"]] <- NULL
 stan_data[["alt_data"]] <- NULL
@@ -134,8 +141,8 @@ init_def <- function(){ list(noise_raw = rnorm(stan_data$ncounts*stan_data$use_p
 stanfit <- model$sample(
   data=stan_data,
   refresh=100,
-  chains=3, iter_sampling=500,
-  iter_warmup=500,
+  chains=3, iter_sampling=1000,
+  iter_warmup=1000,
   parallel_chains = 3,
   #pars = parms,
   adapt_delta = 0.95,
@@ -145,18 +152,23 @@ stanfit <- model$sample(
   output_dir = output_dir,
   output_basename = out_base)
 
-
-#stanfit1 <- as_cmdstan_fit(files = paste0(output_dir,csv_files))
-
-# loo_out <- stanfit$loo()
+# shinystan::launch_shinystan(shinystan::as.shinystan(stanfit))
 
 
-summary <- stanfit$summary()
+ loo_out <- stanfit$loo()
+
+
+fit_summary <- stanfit$summary()
+
+stan_data[["stratify_by"]] <- tmp_stratify_by 
+stan_data[["model"]] <- tmp_model
+stan_data[["alt_data"]] <- tmp_alt_data
+stan_data[["strat_name"]] <- tmp_alt_data$strat_name
 
 save(list = c("stanfit","stan_data",
               "out_base","loo_out",
-              "summary"),
-     file = paste0(output_dir,"/",out_base,"_fit.RData"))
+              "fit_summary"),
+     file = paste0(output_dir,"/",out_base,"_Stan_fit.RData"))
 
 
 
