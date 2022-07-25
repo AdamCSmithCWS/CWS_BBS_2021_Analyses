@@ -2,54 +2,94 @@ library(bbsBayes)
 library(tidyverse)
 library(cmdstanr)
 
-bbs_data <- stratify(by = "bbs_usgs")
+stratified_data <- stratify(by = "bbs_usgs")
 
+
+allspecies.eng = stratified_data$species_strat$english
+allspecies.fre = stratified_data$species_strat$french
+allspecies.num = stratified_data$species_strat$sp.bbs
+
+allspecies.file = str_replace_all(str_replace_all(allspecies.eng,"[:punct:]",replacement = ""),
+                                  "\\s",replacement = "_")
+
+###################################################
+# Analysis by Species X Model Combination
+###################################################
+
+
+nspecies = length(allspecies.eng)
+
+name_simpl_function <- function(y){
+  new <- gsub("[[:punct:]]", x = y, replacement = "")
+  new <- gsub("\\s", x = new, replacement = "_")
+  return(new)
+}
+
+nrecs_sp <- stratified_data$bird_strat %>% 
+  group_by(AOU) %>% 
+  summarise(num_counts = n(),
+            num_routes = length(unique(Route))) %>% 
+  left_join(.,stratified_data$species_strat,by = c("AOU" = "sp.bbs")) %>% 
+  filter(num_counts > 200,
+         !grepl("unid",english)) %>% 
+  mutate(species_file = name_simpl_function(english),
+         grouping = rep_len(1:6,length.out = length(unique(species_file)))) %>% 
+  arrange(num_counts)
+
+
+# split species groups that can't be separated in the early years ---------
+splitters = c("Clark's Grebe","Western Grebe","Alder Flycatcher","Willow Flycatcher")
+split_miny = c(1990,1990,1978,1978)
+names(split_miny) <- splitters
+
+
+save(list = c("nrecs_sp","splitters","stratified_data"),
+     file = "species_lists.RData")
+
+
+
+# Run in separate R sessions ----------------------------------------------
+
+GG <- 1
+
+library(bbsBayes)
+library(tidyverse)
+library(cmdstanr)
 
 #setwd("C:/GitHub/bbsStanBayes")
 setwd("C:/Users/SmithAC/Documents/GitHub/bbsStanBayes")
 
+load("species_lists.RData")
+model = "gamye"
+
+
+species_to_run <- nrecs_sp %>% 
+  filter(grouping == GG)
 
 fit_spatial <- TRUE # TRUE = spatial sharing of information and FALSE = non-spatial sharing
-
-species <- "Golden-winged Warbler"
-species_f <- gsub(species,pattern = " ",replacement = "_") # species name without spaces
-
-sel_model <- "gamye"
-
-# fit using JAGS ----------------------------------------------------------
-jags_data <- prepare_data(strat_data = bbs_data,
-                          species_to_run = species,
-                          model = sel_model,
-                          min_max_route_years = 10,
-                          heavy_tailed = TRUE)
-
-jagsfit <- bbsBayes::run_model(jags_data = jags_data,
-                               parameters_to_save = c("n","nsmooth",
-                                                      "B.X","beta.X","STRATA",
-                                                      "sdobs","sdbeta","sdX","eta"),
-                               parallel = TRUE,
-                               modules = "glm")
-
-save(list = c("jagsfit","jags_data","species"),
-     file = paste("output/saved_bbsBayes_fit",model,species_f,".RData",sep = "_"))
-## the bbsBayes prepare_data function doesn't create all of the objects required for the Stan versions of the models
-## this source() call over-writes the bbsBayes function prepare_data()
-
-
 source("Functions/prepare-data-alt.R")
 if(fit_spatial){
-source("Functions/neighbours_define_alt.R") # function to generate spatial neighbourhoods to add to the spatial applications of the models
+  source("Functions/neighbours_define_alt.R") # function to generate spatial neighbourhoods to add to the spatial applications of the models
 }
+output_dir <- "output/" # Stan writes output to files as it samples. This is great because it's really stable, but the user needs to think about where to store that output
 
 
+for(jj in 1:nrow(species_to_run)){
 
-sp_data <- prepare_data(bbs_data,
+species <- as.character(species_to_run[jj,"english"])
+species_f <- as.character(species_to_run[jj,"species_file"])
+
+## replaces the bbsBayes prepare_dta function because it includes additional infor required for Stan models
+
+
+sp_data <- prepare_data(stratified_data,
                         species_to_run = species,
-                        model = sel_model,
+                        model = model,
                         min_max_route_years = 10,
                         basis = "mgcv")
 
 
+if(sp_data$nstrata < 3){next}
 
 stan_data <- sp_data
 
@@ -73,7 +113,7 @@ neighbours <- neighbours_define(real_strata_map = realized_strata_map, #sf map o
                                 buffer = TRUE,
                                 convex_hull = FALSE,
                                 plot_neighbours = TRUE,
-                                species = "Pacific Wren",
+                                species = species,
                                 plot_dir = "maps/",
                                 plot_file = "_strata_map",
                                 save_plot_data = TRUE,
@@ -108,19 +148,18 @@ stan_data[["alt_data"]] <- NULL
 
 if(fit_spatial){
   
-mod.file = paste0("models/",sel_model,"_spatial_bbs_CV.stan")
-out_base <- paste(species_f,sp_data$model,"Spatial","BBS",sep = "_") # text string to identify the saved output from the Stan process unique to species and model, but probably something the user wants to control
+mod.file = paste0("models/",model,"_spatial_bbs_CV.stan")
+out_base <- paste(species_f,model,"Spatial","BBS",sep = "_") # text string to identify the saved output from the Stan process unique to species and model, but probably something the user wants to control
 
 }else{
-  mod.file = paste0("models/",sel_model,"_bbs_CV.stan")
-  out_base <- paste(species_f,sp_data$model,"BBS",sep = "_")
+  mod.file = paste0("models/",model,"_bbs_CV.stan")
+  out_base <- paste(species_f,model,"BBS",sep = "_")
   
 }
 
 ## compiles Stan model (this is only necessary if the model has been changed since it was last run on this machine)
-model <- cmdstan_model(mod.file)
+stan_model <- cmdstan_model(mod.file)
 
-output_dir <- "output/" # Stan writes output to files as it samples. This is great because it's really stable, but the user needs to think about where to store that output
 
 ### this init_def is something that the JAGS versions don't need. It's a function definition, so perhaps something we'll have to build
 ### into the fit_model function
@@ -149,7 +188,7 @@ init_def <- function(){ list(noise_raw = rnorm(stan_data$ncounts*stan_data$use_p
 
 
 
-stanfit <- model$sample(
+stanfit <- stan_model$sample(
   data=stan_data,
   refresh=100,
   chains=3, iter_sampling=1000,
@@ -181,7 +220,7 @@ save(list = c("stanfit","stan_data",
               "fit_summary"),
      file = paste0(output_dir,"/",out_base,"_Stan_fit.RData"))
 
-
+}
 
 
 

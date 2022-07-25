@@ -94,7 +94,9 @@ prepare_data <- function(strat_data = NULL,
                          sampler = "Stan",
                          basis = "mgcv",
                          use_pois = FALSE,
-                         calculate_nu = TRUE,
+                         calculate_nu = FALSE,
+                         calculate_log_lik = FALSE,     
+                         calculate_CV = FALSE,
                          ...)
 {
   x <- NULL; rm(x)
@@ -382,6 +384,19 @@ prepare_data <- function(strat_data = NULL,
    use_p <- 0
  }
   
+  if(calculate_log_lik){
+    calc_log_lik <- 1
+  }else{
+    calc_log_lik <- 0
+  }
+  if(calculate_CV){
+    calc_CV <- 1
+  }else{
+    calc_CV <- 0
+  }
+    
+  
+  
   to_return <- list(model = model,
                     
                     nsites = nsites,
@@ -420,8 +435,8 @@ prepare_data <- function(strat_data = NULL,
                     use_pois = use_p, # if 1 then use over-dispersed poisson else use Negatvei Binomial
                     
                     #loo and Cross validation options
-                    calc_log_lik = 1, #calculate log_lik point wise log-likelihood of data given model
-                    calc_CV = 0, # do data and model include cross-validation training and test data? TRUE = 1, FALSE = 0
+                    calc_log_lik = calc_log_lik, #calculate log_lik point wise log-likelihood of data given model
+                    calc_CV = calc_CV, # do data and model include cross-validation training and test data? TRUE = 1, FALSE = 0
                     train = as.integer(1:ncounts), # indices of observations in the training dataset
                     test = as.integer(1), # indices of observations in the test dataset
                     ntrain = ncounts, # number of training data - must == ncounts if calc_CV == 0
