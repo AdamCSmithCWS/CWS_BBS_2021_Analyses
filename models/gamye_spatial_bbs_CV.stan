@@ -9,12 +9,13 @@
 // Bayesian hierarchical spatial models: Implementing the Besag York Mollié model in stan. 
 // Spatial and Spatio-temporal Epidemiology 31:100301.
 
-// functions {
-//   real icar_normal_lpdf(vector bb, int ns, int[] n1, int[] n2) {
-//     return -0.5 * dot_self(bb[n1] - bb[n2])
-//       + normal_lpdf(sum(bb) | 0, 0.001 * ns); //soft sum to zero constraint on bb
-//  }
-// }
+ functions {
+   real icar_normal_lpdf(vector bb, int ns, array[] int n1, array[] int n2) {
+     return -0.5 * dot_self(bb[n1] - bb[n2])
+       + normal_lpdf(sum(bb) | 0, 0.001 * ns); //soft sum to zero constraint on bb
+  }
+ }
+
 
 
 data {
@@ -44,6 +45,11 @@ data {
   // data for spline s(year)
   int<lower=1> nknots_year;  // number of knots in the basis function for year
   matrix[nyears, nknots_year] year_basis; // basis function matrix
+
+  //data for spatial iCAR among strata
+  int<lower=1> N_edges;
+  array [N_edges] int<lower=1, upper=nstrata> node1;  // node1[i] adjacent to node2[i]
+  array [N_edges] int<lower=1, upper=nstrata> node2;  // and node1[i] < node2[i]
 
 
   // Extra Poisson variance options
@@ -103,7 +109,8 @@ parameters {
   real<lower=0> sdnoise;    // sd of over-dispersion
   real<lower=0> sdobs;    // sd of observer effects
   real<lower=0> sdste;    // sd of site effects
-  array[nstrata] real<lower=0> sdbeta;    // sd of GAM coefficients among strata 
+  //array[nknots_year] real<lower=0> sdbeta;    // sd of GAM coefficients among strata 
+  real<lower=0> sdbeta;    // sd of GAM coefficients among strata - one value across all k and strata
   real<lower=0> sdstrata;    // sd of intercepts
   real<lower=0> sdBETA;    // sd of GAM coefficients
   array[nstrata] real<lower=0> sdyear;    // sd of year effects
@@ -133,14 +140,14 @@ transformed parameters {
   
   BETA = sdBETA*BETA_raw;
   
-  // for(k in 1:nknots_year){
-  //   beta[,k] = (sdbeta[k] * beta_raw[,k]) + BETA[k];
-  // }
+  for(k in 1:nknots_year){
+    beta[,k] = (sdbeta * beta_raw[,k]) + BETA[k];
+  }
   SMOOTH_pred = year_basis * BETA; 
   
-  for(s in 1:nstrata){
-    beta[s,] = (sdbeta[s] * beta_raw[s,]) + transpose(BETA);
-  } 
+  // for(s in 1:nstrata){
+  //   beta[s,] = (sdbeta[s] * beta_raw[s,]) + transpose(BETA);
+  // } 
   
   for(s in 1:nstrata){
      smooth_pred[,s] = year_basis * transpose(beta[s,]);
@@ -219,17 +226,17 @@ model {
   //sum to zero constraint built into the basis function
 
   
-  STRATA ~ std_normal();// prior on fixed effect mean intercept
+  STRATA ~ normal(0,1);// prior on fixed effect mean intercept
   eta ~ normal(0,0.5);// prior on first-year observer effect
   
   
   sdstrata ~ student_t(3,0,1); //prior on sd of intercept variation
   
-for(s in 1:nstrata){
-    beta_raw[s,] ~ normal(0,1);
+for(k in 1:nknots_year){
+    beta_raw[,k] ~ icar_normal(nstrata, node1, node2);;
 }
-   strata_raw ~ normal(0,1);
-    sum(strata_raw) ~ normal(0,0.001*nstrata);
+   strata_raw ~ icar_normal(nstrata, node1, node2);
+    //sum(strata_raw) ~ normal(0,0.001*nstrata);
  
 if(use_pois){
   count_tr ~ poisson_log(E); //vectorized count likelihood with log-transformation

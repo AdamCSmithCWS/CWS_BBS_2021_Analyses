@@ -1,20 +1,6 @@
-// This is a Stan implementation of the gamye model
+// This is a Stan implementation of the slope model that shares information among strata on the intercepts and slopes
 
-// Consider moving annual index calculations outside of Stan to 
-// facilitate the ragged array issues and to reduce the model output size (greatly)
-// althought nice to have them here where Rhat and ess_ are calculated
 
-// iCAR function, from Morris et al. 2019
-// Morris, M., K. Wheeler-Martin, D. Simpson, S. J. Mooney, A. Gelman, and C. DiMaggio (2019). 
-// Bayesian hierarchical spatial models: Implementing the Besag York Mollié model in stan. 
-// Spatial and Spatio-temporal Epidemiology 31:100301.
-
-// functions {
-//   real icar_normal_lpdf(vector bb, int ns, int[] n1, int[] n2) {
-//     return -0.5 * dot_self(bb[n1] - bb[n2])
-//       + normal_lpdf(sum(bb) | 0, 0.001 * ns); //soft sum to zero constraint on bb
-//  }
-// }
 
 
 data {
@@ -22,6 +8,7 @@ data {
   int<lower=1> nstrata;
   int<lower=1> ncounts;
   int<lower=1> nyears;
+  int<lower=1> fixedyear;
   
   array[ncounts] int<lower=0> count;              // count observations
   array[ncounts] int<lower=1> strat;               // strata indicators
@@ -39,12 +26,6 @@ data {
   // above is actually a ragged array, but filled with 0 values so that it works
   // but throws an error if an incorrect strata-site combination is called
   array[nstrata] real nonzeroweight; //proportion of the sites included - scaling factor
- 
-
-  // data for spline s(year)
-  int<lower=1> nknots_year;  // number of knots in the basis function for year
-  matrix[nyears, nknots_year] year_basis; // basis function matrix
-
 
   // Extra Poisson variance options
   int<lower=0,upper=1> heavy_tailed; //indicator if extra poisson variance should be t-distributed or normal (yes = 1, no = 0 and therefore normal)
@@ -67,7 +48,9 @@ data {
 }
 
 transformed data {
-   
+   //These statements split the data into training and testing sets for cross-validation
+   // if calc_CV == 0 (and so no CV is required), then ntrain = ncount and all data are included in the training set
+   // in that case, ntest = 1, but all values of xxx_te are ignored for the remainder of the model
      array[ntrain] int count_tr = count[train];
      array[ntrain] int strat_tr = strat[train];
      array[ntrain] int year_tr = year[train];
@@ -91,37 +74,32 @@ transformed data {
 parameters {
   vector[ntrain*use_pois] noise_raw;             // over-dispersion if use_pois == 1
  
- vector[nstrata] strata_raw;
-   real STRATA; 
+ vector[nstrata] strata_raw; // strata intercepts
+   real STRATA; // hyperparameter intercepts
 
-  real eta; //first-year intercept
+  real eta; //first-year effect
   
-  matrix[nstrata,nyears] yeareffect_raw;
+  matrix[nstrata,nyears] yeareffect_raw; // year effects within each strata
 
-  vector[nobservers] obs_raw;    // sd of year effects
-  vector[nsites] ste_raw;   // 
-  real<lower=0> sdnoise;    // sd of over-dispersion
+  vector[nobservers] obs_raw;    // observer effects
+  vector[nsites] ste_raw;   // site (route) effects
+  real<lower=0> sdnoise;    // sd of over-dispersion, if use_pois == 1
   real<lower=0> sdobs;    // sd of observer effects
-  real<lower=0> sdste;    // sd of site effects
-  array[nstrata] real<lower=0> sdbeta;    // sd of GAM coefficients among strata 
-  real<lower=0> sdstrata;    // sd of intercepts
-  real<lower=0> sdBETA;    // sd of GAM coefficients
+  real<lower=0> sdste;    // sd of site (route) effects
+  real<lower=0> sdstrata;    // sd of intercepts among strata
+  real<lower=0> sdbeta;    // sd of slope coefficients among strata
   array[nstrata] real<lower=0> sdyear;    // sd of year effects
-  real<lower=3> nu; // df of t-distribution > 3 so that it has a finite mean, variance, kurtosis
+  real<lower=3> nu; // df of t-distribution, if calc_nu == 1, > 3 so that it has a finite mean, variance, kurtosis
   
-  vector[nknots_year] BETA_raw;//_raw; 
-  matrix[nstrata,nknots_year] beta_raw;         // GAM strata level parameters
-
+  vector[nstrata] beta_raw;//strata level slopes non-centered; 
+  real BETA; //hyperparameter slope
 }
 
 transformed parameters { 
   vector[ntrain] E;           // log_scale additive likelihood
-  matrix[nstrata,nknots_year] beta;         // spatial effect slopes (0-centered deviation from continental mean slope B)
-  matrix[nyears,nstrata] smooth_pred;
-  vector[nyears] SMOOTH_pred; 
+  vector[nstrata] beta;         // spatial effect slopes (0-centered deviation from continental mean slope B)
   matrix[nstrata,nyears] yeareffect;
-  vector[nknots_year] BETA;
-  real<lower=0> phi; //transformed sdnoise
+  real<lower=0> phi; //transformed sdnoise if use_pois == 0 (and therefore Negative Binomial)
   
   
   if(use_pois){
@@ -131,21 +109,9 @@ transformed parameters {
   }
   
   
-  BETA = sdBETA*BETA_raw;
+    beta = (sdbeta * beta_raw) + BETA;
   
-  // for(k in 1:nknots_year){
-  //   beta[,k] = (sdbeta[k] * beta_raw[,k]) + BETA[k];
-  // }
-  SMOOTH_pred = year_basis * BETA; 
   
-  for(s in 1:nstrata){
-    beta[s,] = (sdbeta[s] * beta_raw[s,]) + transpose(BETA);
-  } 
-  
-  for(s in 1:nstrata){
-     smooth_pred[,s] = year_basis * transpose(beta[s,]);
-}
-
 for(s in 1:nstrata){
     yeareffect[s,] = sdyear[s]*yeareffect_raw[s,];
 
@@ -167,7 +133,7 @@ for(s in 1:nstrata){
     noise = 0;
     }
     
-    E[i] =  smooth_pred[year_tr[i],strat_tr[i]] + strata + yeareffect[strat_tr[i],year_tr[i]] + eta*firstyr_tr[i] + ste + obs + noise;
+    E[i] =  beta[strat_tr[i]]*(year[i] - fixedyear) + strata + yeareffect[strat_tr[i],year_tr[i]] + eta*firstyr_tr[i] + ste + obs + noise;
   }
   
 
@@ -197,7 +163,6 @@ model {
   sdobs ~ student_t(3,0,1); //prior on sd of observer effects
   sdste ~ student_t(3,0,1); //prior on sd of site effects
   sdyear ~ gamma(2,2); // prior on sd of yeareffects - stratum specific, and boundary-avoiding with a prior mode at 0.5 (1/2) - recommended by https://doi.org/10.1007/s11336-013-9328-2 
-  sdBETA ~ student_t(3,0,1); // prior on sd of GAM parameters
   sdbeta ~ student_t(3,0,1); // prior on sd of GAM parameters
 
  
@@ -215,7 +180,7 @@ model {
   
  }
   
-  BETA_raw ~ std_normal();// prior on fixed effect mean GAM parameters
+  BETA ~ normal(0,0.2);// prior on fixed effect mean GAM parameters
   //sum to zero constraint built into the basis function
 
   
@@ -225,12 +190,11 @@ model {
   
   sdstrata ~ student_t(3,0,1); //prior on sd of intercept variation
   
-for(s in 1:nstrata){
-    beta_raw[s,] ~ normal(0,1);
-}
-   strata_raw ~ normal(0,1);
-    sum(strata_raw) ~ normal(0,0.001*nstrata);
- 
+
+    beta_raw ~ std_normal();
+
+   strata_raw ~ std_normal();
+   
 if(use_pois){
   count_tr ~ poisson_log(E); //vectorized count likelihood with log-transformation
 }else{
@@ -242,10 +206,13 @@ if(use_pois){
 
  generated quantities {
 
-   array[nstrata,nyears] real<lower=0> n;
-   array[nstrata,nyears] real<lower=0> nsmooth;
+   array[nstrata,nyears] real<lower=0> n; //full annual indices
+   array[nstrata,nyears] real<lower=0> nslope; //just the smooth component
+   array[nstrata,nyears] real<lower=0> n2; //full annual indices calculated assuming site-effects are log-normal and the same among strata
+   array[nstrata,nyears] real<lower=0> nslope2; //smooth component of annual indices calculated assuming site-effects are log-normal and the same among strata
    real<lower=0> retrans_noise;
    real<lower=0> retrans_obs;
+   real<lower=0> retrans_ste;
    vector[ncounts*calc_log_lik] log_lik; // alternative value to track the observervation level log-likelihood
    vector[ntest*calc_CV] log_lik_cv; // alternative value to track the log-likelihood of the coutns in the test dataset
    real adj;
@@ -283,11 +250,11 @@ if(use_pois){
       }
    
       
-   log_lik_cv[i] = poisson_log_lpmf(count_te[i] | smooth_pred[year_te[i],strat_te[i]] + strata + yeareffect[strat_te[i],year_te[i]] + eta*firstyr_te[i] + ste + obs + noise);
+   log_lik_cv[i] = poisson_log_lpmf(count_te[i] | beta[strat_te[i]]*(year_te[i] - fixedyear) + strata + yeareffect[strat_te[i],year_te[i]] + eta*firstyr_te[i] + ste + obs + noise);
   
    }else{
      noise = 0;
-  log_lik_cv[i] = neg_binomial_2_log_lpmf(count_te[i] | smooth_pred[year_te[i],strat_te[i]] + strata + yeareffect[strat_te[i],year_te[i]] + eta*firstyr_te[i] + ste + obs + noise, phi);
+  log_lik_cv[i] = neg_binomial_2_log_lpmf(count_te[i] | beta[strat_te[i]]*(year_te[i] - fixedyear) + strata + yeareffect[strat_te[i],year_te[i]] + eta*firstyr_te[i] + ste + obs + noise, phi);
   
    }
   
@@ -312,6 +279,7 @@ if(use_pois){
 }
      
 retrans_obs = 0.5*(sdobs^2);
+retrans_ste = 0.5*(sdste^2);
 
 // Annual indices of abundance - strata-level annual predicted counts
 
@@ -321,7 +289,7 @@ for(y in 1:nyears){
       for(s in 1:nstrata){
 
   array[nsites_strata[s]] real n_t;
-  array[nsites_strata[s]] real nsmooth_t;
+  array[nsites_strata[s]] real nslope_t;
   real retrans_yr = 0.5*(sdyear[s]^2);
   real strata = (sdstrata*strata_raw[s]) + STRATA;
   
@@ -330,17 +298,19 @@ for(y in 1:nyears){
   real ste = sdste*ste_raw[ste_mat[s,t]]; // site intercepts
 
 
-      n_t[t] = exp(strata+ smooth_pred[y,s] + ste + yeareffect[s,y] + retrans_noise + retrans_obs);
-      nsmooth_t[t] = exp(strata + smooth_pred[y,s] + ste + retrans_yr + retrans_noise + retrans_obs);
+      n_t[t] = exp(strata + beta[s]*(y-fixedyear) + ste + yeareffect[s,y] + retrans_noise + retrans_obs);
+      nslope_t[t] = exp(strata + beta[s]*(y-fixedyear) + ste + retrans_yr + retrans_noise + retrans_obs);
         }
         n[s,y] = nonzeroweight[s] * mean(n_t);//mean of exponentiated predictions across sites in a stratum
-        nsmooth[s,y] = nonzeroweight[s] * mean(nsmooth_t);//mean of exponentiated predictions across sites in a stratum
+        nslope[s,y] = nonzeroweight[s] * mean(nslope_t);//mean of exponentiated predictions across sites in a stratum
         //using the mean of hte exponentiated values, instead of including the log-normal
         // retransformation factor (0.5*sdste^2), because this retransformation makes 2 questionable assumptions:
           // 1 - assumes that sdste is equal among all strata
           // 2 - assumes that the distribution of site-effects is normal
         // As a result, these annual indices reflect predictions of mean annual abundance within strata of the routes that are included in the stratum
-
+        n2[s,y] = nonzeroweight[s] * exp(strata + beta[s]*(y-fixedyear) + retrans_ste + yeareffect[s,y] + retrans_noise + retrans_obs);//mean of exponentiated predictions across sites in a stratum
+        nslope2[s,y] = nonzeroweight[s] * exp(strata + beta[s]*(y-fixedyear) + retrans_ste + retrans_yr + retrans_noise + retrans_obs);//mean of exponentiated predictions across sites in a stratum
+        
 
     }
   }
