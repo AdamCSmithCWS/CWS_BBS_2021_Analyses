@@ -18,7 +18,8 @@ load(paste0(output_dir,"/",out_base,"_fit.RData"))
 inds <- generate_indices(jags_mod = stanfit,
                          jags_data = stan_data,
                          backend = "Stan",
-                         stratify_by = "bbs_usgs")
+                         stratify_by = "bbs_usgs",
+                         alternate_n = "nsmooth")
 
 
 trajs <- plot_indices(inds,add_observed_means = TRUE,add_number_routes = TRUE)

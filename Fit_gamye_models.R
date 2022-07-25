@@ -10,7 +10,7 @@ bbs_data <- stratify(by = "bbs_usgs")
 
 fit_spatial <- TRUE # TRUE = spatial sharing of information and FALSE = non-spatial sharing
 
-species <- "Pacific Wren"
+species <- "Golden-winged Warbler"
 species_f <- gsub(species,pattern = " ",replacement = "_") # species name without spaces
 
 sel_model <- "gamye"
