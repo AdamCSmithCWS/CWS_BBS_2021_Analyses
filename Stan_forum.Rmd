@@ -1,0 +1,114 @@
+---
+title: "Stan_Users_R_crash"
+output: html_document
+date: '2022-07-12'
+---
+
+## The problem
+
+R-session crashes after successfully fitting a large model using cmdstanr. I think it's something to do with how cmdstanr summarises or assesses the sampling. A clean R-session will also crash when trying to read the stored csv files using `cmdstanr::read_cmdstan_csv()` or `cmdstanr::as_cmdstan_fit()`. However, the same stored csv files can be read successfully with rstan `rstan::read_stan_csv()`, and so I'm confident that the model-fitting was successful. I'd like to be able to stick with cmdstanr for the entire workflow, and of course I'd also like it if the R-session didn't crash after fitting the model.
+
+### Big data and many parameters
+There are many data: There are >100,000 observations, and almost 300,000 parameters, when the observation-level log_lik values are calculated.
+The stored csv files (3-chains) are each > 2GB in size (~300,000 * 1000, matrix).
+I've placed the stored csv files in a Google Drive https://drive.google.com/file/d/1mBngW79AcnwmEB9ewFQvdv6_edF09I5Z/view?usp=sharing. The zipped file includes the 3 csv files and a saved .RData file that loads an R-object "stanfit" created with rstan using the following code.
+```{r rstan-load}
+csv_files <- paste0("Barn_Swallow_BBS-",1:3,".csv")
+stanfit <- rstan::read_stan_csv(csv_files, col_major = TRUE) ## successful reading of csv files with rstan
+```
+
+### reading with cmdstanr causes R-crash
+
+With the following two attempts to read in the csv files with cmdstanr cause the R-session to crash. The crash happens quickly (a few seconds), there is no indication from the operating system of a memory issue or any other issue, and no other indication of an error. The sesion crashes both within a stand-alone R-session, and in RStudio.
+
+```{r crash-read}
+### this as_cmdstan_fit call crashes the R-session
+# stanfit <- as_cmdstan_fit(files = csv_files)
+
+### similarly, this read_cmdstan_csv call crashes the R-session
+# stanfit <- read_cmdstan_csv(
+#  files = paste0(output_dir,"/",csv_files),
+#  variables = "",
+#  sampler_diagnostics = NULL,
+#  format = "draws_list") # following note about efficiency in ?cmdstanr::draws
+
+
+```
+
+
+
+### Relatively complex model but it works fine for smaller datasets
+
+I don't think the model is terribly relevant, but here's some information, if useful. 
+The model is a hierarchical GAM that estimates temporal population trajectories for a species of bird (e.g., Barn Swallow) using the North American Breeding Bird Survey data (US and Canada-wide annual monitoring program for birds). It includes many varying parameters to adjust for variation among observers, survey-sites, spatial strata, and years. It's relatively complex and takes a long time to fit for large datasets (like days!!!).
+
+I don't think the model itself is a problem (although I'm sure it could be improved). I've applied the model successfully to many species with more moderate numbers of observations (50K), without any crashing. When I try to model the most data-rich species (e.g., Barn Swallow with > 100K observations), the model samples fine, stores everything in the csv files, and then the R-session crashes. 
+I could remove the log_lik calculations and other values from the generated quantities block, which would help with the size of the saved files, but for many practical reasons, I'd like to be able to keep all of the generated quantities. 
+
+This GitHub repo has all of the models and data related to the project. https://github.com/AdamCSmithCWS/bbsStanBayes 
+
+the following snippet of code is where the crash happens, it can be found in this R-script in teh above repo: https://github.com/AdamCSmithCWS/bbsStanBayes/blob/main/Fit_GAMYE.R 
+I don't suggest re-running the model fit necessarily, because it requires ~3 days to sample for data-rich species (I know, I'm probably doing something super-inefficient)!
+
+
+```{r crash_after_fitting}
+
+# mod.file = "models/gamye_bbs_CV.stan"
+# 
+# ## compile model
+# model <- cmdstan_model(mod.file)
+# 
+# 
+# ## this call to model$sample crashes the R-session after sampling is complete.
+# stanfit <- model$sample(
+#   data=stan_data,
+#   refresh=100,
+#   chains=3, iter_sampling=1000,
+#   iter_warmup=1000,
+#   parallel_chains = 3,
+#   #pars = parms,
+#   adapt_delta = 0.95,
+#   max_treedepth = 14,
+#   seed = 123,
+#   init = init_def,
+#   output_dir = output_dir,
+#   output_basename = out_base)
+
+
+```
+
+### Session info
+Running on a Windows computer with 16 cores and 128GB of RAM
+```{r session}
+
+utils::sessionInfo()
+```
+
+R version 4.2.0 (2022-04-22 ucrt)
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+Running under: Windows 10 x64 (build 18363)
+
+Matrix products: default
+
+locale:
+[1] LC_COLLATE=English_United States.utf8  LC_CTYPE=English_United States.utf8    LC_MONETARY=English_United States.utf8 LC_NUMERIC=C                          
+[5] LC_TIME=English_United States.utf8    
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] rstan_2.21.5         ggplot2_3.3.6        StanHeaders_2.21.0-7 cmdstanr_0.5.2      
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_1.0.8.3         pillar_1.7.0         compiler_4.2.0       prettyunits_1.1.1    tools_4.2.0          pkgbuild_1.3.1       jsonlite_1.8.0       lifecycle_1.0.1     
+ [9] tibble_3.1.7         gtable_0.3.0         checkmate_2.1.0      pkgconfig_2.0.3      rlang_1.0.2          cli_3.3.0            DBI_1.1.3            parallel_4.2.0      
+[17] xfun_0.31            loo_2.5.1            gridExtra_2.3        withr_2.5.0          dplyr_1.0.9          knitr_1.39           generics_0.1.2       vctrs_0.4.1         
+[25] stats4_4.2.0         grid_4.2.0           tidyselect_1.1.2     inline_0.3.19        glue_1.6.2           R6_2.5.1             processx_3.6.1       fansi_1.0.3         
+[33] distributional_0.3.0 tensorA_0.36.2       callr_3.7.0          farver_2.1.0         purrr_0.3.4          posterior_1.2.2      magrittr_2.0.3       codetools_0.2-18    
+[41] matrixStats_0.62.0   ps_1.7.1             backports_1.4.1      scales_1.2.0         ellipsis_0.3.2       abind_1.4-5          assertthat_0.2.1     colorspace_2.0-3    
+[49] utf8_1.2.2           RcppParallel_5.1.5   munsell_0.5.0        crayon_1.5.1  
+
+
+
+
