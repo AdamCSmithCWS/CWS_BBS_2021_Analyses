@@ -23,7 +23,7 @@ inds <- generate_indices(jags_mod = stanfit,
 
 
 trajs <- plot_indices(inds,add_observed_means = TRUE,add_number_routes = TRUE)
-pdf("temp_trajectories.pdf",
+pdf(paste0("Figures/",species_f,"_temp_trajectories.pdf"),
     width = 8,
     height = 8)
 for(i in 1:length(trajs)){
@@ -33,7 +33,7 @@ dev.off()
 
 
 trends <- generate_trends(inds)
-trends_short <- generate_trends(inds,Min_year = 2009)
+trends_short <- generate_trends(inds,Min_year = 2004)
 
 map <- generate_map(trends,select = TRUE,stratify_by = "bbs_usgs",species = species)
 print(map)
