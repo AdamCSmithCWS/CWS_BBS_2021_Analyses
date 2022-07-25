@@ -33,7 +33,7 @@ dev.off()
 
 
 trends <- generate_trends(inds)
-trends_short <- generate_trends(inds,Min_year = 2009)
+trends_short <- generate_trends(inds,Min_year = 2004)
 
 map <- generate_map(trends,select = TRUE,stratify_by = "bbs_usgs",species = species)
 print(map)
