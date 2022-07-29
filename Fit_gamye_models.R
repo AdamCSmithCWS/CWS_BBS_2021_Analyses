@@ -9,9 +9,8 @@ bbs_data <- stratify(by = "bbs_usgs")
 setwd("C:/Users/SmithAC/Documents/GitHub/bbsStanBayes")
 
 
-fit_spatial <- TRUE # TRUE = spatial sharing of information and FALSE = non-spatial sharing
 
-species <- "Golden-winged Warbler"
+species <- "Pacific Wren"
 species_f <- gsub(species,pattern = " ",replacement = "_") # species name without spaces
 
 sel_model <- "gamye"
@@ -20,7 +19,7 @@ sel_model <- "gamye"
 jags_data <- prepare_data(strat_data = bbs_data,
                           species_to_run = species,
                           model = sel_model,
-                          min_max_route_years = 10,
+                          min_max_route_years = 2,
                           heavy_tailed = TRUE)
 
 jagsfit <- bbsBayes::run_model(jags_data = jags_data,
@@ -36,9 +35,16 @@ save(list = c("jagsfit","jags_data","species"),
 ## this source() call over-writes the bbsBayes function prepare_data()
 
 
-source("Functions/prepare-data-alt.R")
+
+
+# Stan models -------------------------------------------------------------
+
+
+fit_spatial <- TRUE # TRUE = spatial sharing of information and FALSE = non-spatial sharing
+
+source("Functions/prepare-data-Stan.R")
 if(fit_spatial){
-source("Functions/neighbours_define_alt.R") # function to generate spatial neighbourhoods to add to the spatial applications of the models
+  source("Functions/neighbours_define.R") # function to generate spatial neighbourhoods to add to the spatial applications of the models
 }
 
 
@@ -46,7 +52,7 @@ source("Functions/neighbours_define_alt.R") # function to generate spatial neigh
 sp_data <- prepare_data(bbs_data,
                         species_to_run = species,
                         model = sel_model,
-                        min_max_route_years = 10,
+                        min_max_route_years = 2,
                         basis = "mgcv")
 
 
@@ -125,7 +131,7 @@ output_dir <- "output/" # Stan writes output to files as it samples. This is gre
 ### this init_def is something that the JAGS versions don't need. It's a function definition, so perhaps something we'll have to build
 ### into the fit_model function
 ### the slightly annoying thing is that it's model-specific, so we'll need to have a few versions of it
-
+if(fit_spatial){
 init_def <- function(){ list(noise_raw = rnorm(stan_data$ncounts*stan_data$use_pois,0,0.1),
                              strata_raw = rnorm(stan_data$nstrata,0,0.1),
                              STRATA = 0,
@@ -145,7 +151,27 @@ init_def <- function(){ list(noise_raw = rnorm(stan_data$ncounts*stan_data$use_p
                              BETA_raw = rnorm(stan_data$nknots_year,0,0.1),
                              beta_raw = matrix(rnorm(stan_data$nknots_year*stan_data$nstrata,0,0.01),nrow = stan_data$nstrata,ncol = stan_data$nknots_year))}
 
-
+}else{
+  init_def <- function(){ list(noise_raw = rnorm(stan_data$ncounts*stan_data$use_pois,0,0.1),
+                               strata_raw = rnorm(stan_data$nstrata,0,0.1),
+                               STRATA = 0,
+                               nu = 10,
+                               sdstrata = runif(1,0.01,0.1),
+                               eta = 0,
+                               yeareffect_raw = matrix(rnorm(stan_data$nstrata*stan_data$nyears,0,0.1),nrow = stan_data$nstrata,ncol = stan_data$nyears),
+                               obs_raw = rnorm(stan_data$nobservers,0,0.1),
+                               ste_raw = rnorm(stan_data$nsites,0,0.1),
+                               sdnoise = runif(1,0.3,1.3),
+                               sdobs = runif(1,0.01,0.1),
+                               sdste = runif(1,0.01,0.2),
+                               sdbeta = runif(stan_data$nstrata,0.01,0.1),
+                               #sdbeta = runif(1,0.01,0.1),
+                               sdBETA = runif(1,0.01,0.1),
+                               sdyear = runif(stan_data$nstrata,0.01,0.1),
+                               BETA_raw = rnorm(stan_data$nknots_year,0,0.1),
+                               beta_raw = matrix(rnorm(stan_data$nknots_year*stan_data$nstrata,0,0.01),nrow = stan_data$nstrata,ncol = stan_data$nknots_year))}
+  
+}
 
 
 
@@ -166,7 +192,7 @@ stanfit <- model$sample(
 # shinystan::launch_shinystan(shinystan::as.shinystan(stanfit))
 
 
- loo_out <- stanfit$loo()
+# loo_out <- stanfit$loo()
 
 
 fit_summary <- stanfit$summary()
@@ -177,7 +203,7 @@ stan_data[["alt_data"]] <- tmp_alt_data
 stan_data[["strat_name"]] <- tmp_alt_data$strat_name
 
 save(list = c("stanfit","stan_data",
-              "out_base","loo_out",
+              "out_base",
               "fit_summary"),
      file = paste0(output_dir,"/",out_base,"_Stan_fit.RData"))
 

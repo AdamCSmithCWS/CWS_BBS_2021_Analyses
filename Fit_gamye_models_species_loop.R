@@ -66,14 +66,14 @@ model = "gamye"
 species_to_run <- nrecs_sp %>% 
   filter(grouping == GG)
 
-source("Functions/prepare-data-alt2.R")
+source("Functions/prepare-data-Stan.R")
 if(fit_spatial){
-  source("Functions/neighbours_define_alt.R") # function to generate spatial neighbourhoods to add to the spatial applications of the models
+  source("Functions/neighbours_define.R") # function to generate spatial neighbourhoods to add to the spatial applications of the models
 }
 output_dir <- "output/" # Stan writes output to files as it samples. This is great because it's really stable, but the user needs to think about where to store that output
 
 
-for(jj in 6:nrow(species_to_run)){
+for(jj in 1:nrow(species_to_run)){
 
 species <- as.character(species_to_run[jj,"english"])
 species_f <- as.character(species_to_run[jj,"species_file"])
@@ -152,8 +152,8 @@ stan_data[["alt_data"]] <- NULL
 
 if(fit_spatial){
   
-mod.file = paste0("models/",model,"_spatial_bbs_CV2.stan")
-out_base <- paste(species_f,model,"Spatial2","BBS",sep = "_") # text string to identify the saved output from the Stan process unique to species and model, but probably something the user wants to control
+mod.file = paste0("models/",model,"_spatial_bbs_CV.stan")
+out_base <- paste(species_f,model,"Spatial","BBS",sep = "_") # text string to identify the saved output from the Stan process unique to species and model, but probably something the user wants to control
 
 }else{
   mod.file = paste0("models/",model,"_bbs_CV.stan")
