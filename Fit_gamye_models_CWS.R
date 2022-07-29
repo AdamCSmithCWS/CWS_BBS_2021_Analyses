@@ -66,15 +66,14 @@ model = "gamye"
 species_to_run <- nrecs_sp %>% 
   filter(grouping == GG)
 
-fit_spatial <- TRUE # TRUE = spatial sharing of information and FALSE = non-spatial sharing
-source("Functions/prepare-data-alt.R")
+source("Functions/prepare-data-alt2.R")
 if(fit_spatial){
   source("Functions/neighbours_define_alt.R") # function to generate spatial neighbourhoods to add to the spatial applications of the models
 }
 output_dir <- "output/" # Stan writes output to files as it samples. This is great because it's really stable, but the user needs to think about where to store that output
 
 
-for(jj in 1:nrow(species_to_run)){
+for(jj in 6:nrow(species_to_run)){
 
 species <- as.character(species_to_run[jj,"english"])
 species_f <- as.character(species_to_run[jj,"species_file"])
@@ -82,14 +81,19 @@ species_f <- as.character(species_to_run[jj,"species_file"])
 ## replaces the bbsBayes prepare_dta function because it includes additional infor required for Stan models
 
 
-sp_data <- prepare_data(stratified_data,
+sp_data <- prepare_data(strat_data = stratified_data,
                         species_to_run = species,
                         model = model,
-                        min_max_route_years = 10,
+                        min_max_route_years = 2,
                         basis = "mgcv")
 
 
-if(sp_data$nstrata < 3){next}
+if(sp_data$nstrata > 5){
+  fit_spatial <- TRUE # TRUE = spatial sharing of information and FALSE = non-spatial sharing
+  
+}else{
+  fit_spatial <- FALSE # TRUE = spatial sharing of information and FALSE = non-spatial sharing
+}
 
 stan_data <- sp_data
 
@@ -149,7 +153,7 @@ stan_data[["alt_data"]] <- NULL
 if(fit_spatial){
   
 mod.file = paste0("models/",model,"_spatial_bbs_CV.stan")
-out_base <- paste(species_f,model,"Spatial","BBS",sep = "_") # text string to identify the saved output from the Stan process unique to species and model, but probably something the user wants to control
+out_base <- paste(species_f,model,"Spatial2","BBS",sep = "_") # text string to identify the saved output from the Stan process unique to species and model, but probably something the user wants to control
 
 }else{
   mod.file = paste0("models/",model,"_bbs_CV.stan")
@@ -205,7 +209,7 @@ stanfit <- stan_model$sample(
 # shinystan::launch_shinystan(shinystan::as.shinystan(stanfit))
 
 
- loo_out <- stanfit$loo()
+# loo_out <- stanfit$loo()
 
 
 fit_summary <- stanfit$summary()
@@ -216,7 +220,7 @@ stan_data[["alt_data"]] <- tmp_alt_data
 stan_data[["strat_name"]] <- tmp_alt_data$strat_name
 
 save(list = c("stanfit","stan_data",
-              "out_base","loo_out",
+              "out_base",
               "fit_summary"),
      file = paste0(output_dir,"/",out_base,"_Stan_fit.RData"))
 
