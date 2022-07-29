@@ -1,19 +1,25 @@
 ## plotting
 
+### NOTE: this script depends on a development version of bbsBayes at the following repo: https://github.com/AdamCSmithCWS/bbsBayes/tree/testing_Stan 
+## the specific changes in that branch are in the two functions
+## generate_indices() and extract_index_data() (the second is called within generate_indices())
+
+
 library(bbsBayes)
 library(tidyverse)
 library(cmdstanr)
 library(patchwork)
 
 
-load("species_lists.RData")
+load("species_lists.RData") # loads objects created at the beginning of the script Fit_gamye_models_cws.R
+
 model = "gamye"
 
 
 species_to_run <- nrecs_sp 
 
 fit_spatial <- TRUE # TRUE = spatial sharing of information and FALSE = non-spatial sharing
-source("Functions/prepare-data-alt.R")
+source("Functions/prepare-data-alt.R") # this replaces the prepare data function in teh development version of Stan with 
 if(fit_spatial){
   source("Functions/neighbours_define_alt.R") # function to generate spatial neighbourhoods to add to the spatial applications of the models
 }
@@ -86,6 +92,11 @@ inds <- generate_indices(jags_mod = stanfit,
                          backend = "Stan",
                          stratify_by = "bbs_usgs",
                          alternate_n = "nsmooth")
+ind <- generate_indices(jags_mod = stanfit,
+                         jags_data = stan_data,
+                         backend = "Stan",
+                         stratify_by = "bbs_usgs",
+                         alternate_n = "n")
 
 
 trajs <- plot_indices(inds,
@@ -100,8 +111,33 @@ trajshort <- plot_indices(inds,
                       min_year = 2004)
 
 #pdf(file = "temp.pdf",width = 11,height = 8.5)
-for(i in 1:length(trajs)){
-  print(trajs[[i]] + trajshort[[i]])
+for(i in names(trajs)){
+  t1 <- trajs[[i]] 
+  # st <- str_trunc(t1$labels$title, width = 8,
+  #                 side = "left",
+  #                 ellipsis = "")
+  
+  n1 <- ind$data_summary %>% 
+    filter(Region == gsub(i,pattern = "_",replacement = "-")) #,
+  #Region_type == "stratum"
+  t1 <- t1 +
+    geom_ribbon(data = n1, aes(x = Year,y = Index,ymin = Index_q_0.025,ymax = Index_q_0.975),
+                fill = grey(0.5),alpha = 0.2)+
+    geom_line(data = n1, aes(x = Year,y = Index),
+              colour = grey(0.5))
+  
+  t2 <- trajshort[[i]]
+  n2 <- ind$data_summary %>% 
+    filter(Region == gsub(i,pattern = "_",replacement = "-"),
+           #Region_type == "stratum",
+           Year > 2004)
+  t2 <- t2 +
+    geom_ribbon(data = n2, aes(x = Year,y = Index,ymin = Index_q_0.025,ymax = Index_q_0.975),
+                fill = grey(0.5),alpha = 0.2)+
+    geom_line(data = n2, aes(x = Year,y = Index),
+              colour = grey(0.5))
+  
+  print(t1 + t2)
 }
 
 

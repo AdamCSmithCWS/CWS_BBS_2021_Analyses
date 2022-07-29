@@ -152,7 +152,7 @@ stan_data[["alt_data"]] <- NULL
 
 if(fit_spatial){
   
-mod.file = paste0("models/",model,"_spatial_bbs_CV.stan")
+mod.file = paste0("models/",model,"_spatial_bbs_CV2.stan")
 out_base <- paste(species_f,model,"Spatial2","BBS",sep = "_") # text string to identify the saved output from the Stan process unique to species and model, but probably something the user wants to control
 
 }else{

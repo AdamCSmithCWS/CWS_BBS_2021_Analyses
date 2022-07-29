@@ -1,8 +1,4 @@
-// This is a Stan implementation of the slope model that uses a spatial iCAR structure to share information among strata on the intercepts and slopes
-
-// Consider moving annual index calculations outside of Stan to 
-// facilitate the ragged array issues and to reduce the model output size (greatly)
-// althought nice to have them here where Rhat and ess_ are calculated
+// This is a Stan implementation of the slope model that shares information among strata on the intercepts and slopes
 
 // iCAR function, from Morris et al. 2019
 // Morris, M., K. Wheeler-Martin, D. Simpson, S. J. Mooney, A. Gelman, and C. DiMaggio (2019). 
@@ -15,6 +11,8 @@
        + normal_lpdf(sum(bb) | 0, 0.001 * ns); //soft sum to zero constraint on bb
   }
  }
+
+
 
 
 data {
@@ -33,12 +31,14 @@ data {
   
   int<lower=1> nobservers;// number of observers
 
-  array[nstrata] int<lower=0> nsites_strata; // number of sites in each stratum
-  int<lower=0> maxnsites_strata; //largest value of nsites_strata
-
-  array[nstrata,maxnsites_strata] int ste_mat; //matrix identifying which sites are in each stratum
-  // above is actually a ragged array, but filled with 0 values so that it works
+  // array data to estimate annual indices using only observer-site combinations that are in each stratum
+  array[nstrata] int<lower=0> nobs_sites_strata; // number of observer-site combinations in each stratum
+  int<lower=0> maxnobs_sites_strata; //largest value of nobs_sites_strata 
+  array[nstrata,maxnobs_sites_strata] int ste_mat; //matrix identifying which sites are in each stratum
+  array[nstrata,maxnobs_sites_strata] int obs_mat; //matrix identifying which sites are in each stratum
+  // above are effectively ragged arrays, but filled with 0 values so that Stan will accept it as data
   // but throws an error if an incorrect strata-site combination is called
+
   array[nstrata] real nonzeroweight; //proportion of the sites included - scaling factor
 
   //data for spatial iCAR among strata
@@ -179,7 +179,7 @@ model {
   }else{
   sdnoise ~ student_t(3,0,1); //prior on scale of extra Poisson log-normal variance or inverse sqrt(phi) for negative binomial
   }  
-  sdobs ~ student_t(3,0,1); //prior on sd of observer effects
+  sdobs ~ normal(0,0.3); // informative prior on scale of observer effects - suggests observer variation larger than 3-4-fold differences is unlikely
   sdste ~ student_t(3,0,1); //prior on sd of site effects
   sdyear ~ gamma(2,2); // prior on sd of yeareffects - stratum specific, and boundary-avoiding with a prior mode at 0.5 (1/2) - recommended by https://doi.org/10.1007/s11336-013-9328-2 
   sdbeta ~ student_t(3,0,1); // prior on sd of GAM parameters
@@ -204,7 +204,7 @@ model {
 
   
   STRATA ~ std_normal();// prior on fixed effect mean intercept
-  eta ~ normal(0,0.5);// prior on first-year observer effect
+  eta ~ normal(0,1);// prior on first-year observer effect
   
   
   sdstrata ~ student_t(3,0,1); //prior on sd of intercept variation
@@ -213,7 +213,7 @@ model {
     beta_raw ~ icar_normal(nstrata, node1, node2);
 
    strata_raw ~ icar_normal(nstrata, node1, node2);
-   
+    
 if(use_pois){
   count_tr ~ poisson_log(E); //vectorized count likelihood with log-transformation
 }else{
@@ -227,8 +227,11 @@ if(use_pois){
 
    array[nstrata,nyears] real<lower=0> n; //full annual indices
    array[nstrata,nyears] real<lower=0> nslope; //just the smooth component
+//   array[nstrata*calc_n2,nyears*calc_n2] real<lower=0> n2; //full annual indices calculated assuming site-effects are log-normal and the same among strata
+//   array[nstrata*calc_n2,nyears*calc_n2] real<lower=0> nslope2; //smooth component of annual indices calculated assuming site-effects are log-normal and the same among strata
    real<lower=0> retrans_noise;
    real<lower=0> retrans_obs;
+   real<lower=0> retrans_ste;
    vector[ncounts*calc_log_lik] log_lik; // alternative value to track the observervation level log-likelihood
    vector[ntest*calc_CV] log_lik_cv; // alternative value to track the log-likelihood of the coutns in the test dataset
    real adj;
@@ -295,6 +298,7 @@ if(use_pois){
 }
      
 retrans_obs = 0.5*(sdobs^2);
+retrans_ste = 0.5*(sdste^2);
 
 // Annual indices of abundance - strata-level annual predicted counts
 
@@ -303,18 +307,20 @@ for(y in 1:nyears){
 
       for(s in 1:nstrata){
 
-  array[nsites_strata[s]] real n_t;
-  array[nsites_strata[s]] real nslope_t;
+  array[nobs_sites_strata[s]] real n_t;
+  array[nobs_sites_strata[s]] real nslope_t;
   real retrans_yr = 0.5*(sdyear[s]^2);
   real strata = (sdstrata*strata_raw[s]) + STRATA;
   
-        for(t in 1:nsites_strata[s]){
+        for(t in 1:nobs_sites_strata[s]){
 
   real ste = sdste*ste_raw[ste_mat[s,t]]; // site intercepts
+  real obs = sdobs*obs_raw[obs_mat[s,t]]; // observer intercepts
 
 
-      n_t[t] = exp(strata + beta[s]*(y-fixedyear) + ste + yeareffect[s,y] + retrans_noise + retrans_obs);
-      nslope_t[t] = exp(strata + beta[s]*(y-fixedyear) + ste + retrans_yr + retrans_noise + retrans_obs);
+
+      n_t[t] = exp(strata + beta[s]*(y-fixedyear) + yeareffect[s,y] + retrans_noise + ste + obs);
+      nslope_t[t] = exp(strata + beta[s]*(y-fixedyear) + retrans_yr + retrans_noise + ste + obs);
         }
         n[s,y] = nonzeroweight[s] * mean(n_t);//mean of exponentiated predictions across sites in a stratum
         nslope[s,y] = nonzeroweight[s] * mean(nslope_t);//mean of exponentiated predictions across sites in a stratum
@@ -323,7 +329,10 @@ for(y in 1:nyears){
           // 1 - assumes that sdste is equal among all strata
           // 2 - assumes that the distribution of site-effects is normal
         // As a result, these annual indices reflect predictions of mean annual abundance within strata of the routes that are included in the stratum
-
+        // if(calc_n2){
+        // n2[s,y] = nonzeroweight[s] * exp(strata + beta[s]*(y-fixedyear) + retrans_ste + yeareffect[s,y] + retrans_noise + retrans_obs);//mean of exponentiated predictions across sites in a stratum
+        // nslope2[s,y] = nonzeroweight[s] * exp(strata + beta[s]*(y-fixedyear) + retrans_ste + retrans_yr + retrans_noise + retrans_obs);//mean of exponentiated predictions across sites in a stratum
+        // }
 
     }
   }

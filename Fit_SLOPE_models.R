@@ -8,17 +8,15 @@ bbs_data <- stratify(by = "bbs_usgs")
 #setwd("C:/GitHub/bbsStanBayes")
 
 
-fit_spatial <- FALSE # TRUE = spatial sharing of information and FALSE = non-spatial sharing
-
 species <- "Pacific Wren"
 species_f <- gsub(species,pattern = " ",replacement = "_") # species name without spaces
 
 
-# fit using JAGS ----------------------------------------------------------
+# Initial fit using JAGS for comparison of some key parameters (see parameters_to_save argument in run_model()) ----------------------------------------------------------
 jags_data <- prepare_data(strat_data = bbs_data,
                           species_to_run = species,
                           model = "slope",
-                          min_max_route_years = 10,
+                          min_max_route_years = 2,
                           heavy_tailed = TRUE)
 
 jagsfit <- bbsBayes::run_model(jags_data = jags_data,
@@ -30,11 +28,20 @@ jagsfit <- bbsBayes::run_model(jags_data = jags_data,
 
 save(list = c("jagsfit","jags_data","species"),
      file = paste("output/saved_bbsBayes_fit_data_",species_f,".RData",sep = "_"))
+
+
+
+
+# Stan models -------------------------------------------------------------
+
+## spatial versions of both teh slope and gamye exist for the Stan models and can be fit with this script 
+fit_spatial <- FALSE # TRUE = spatial sharing of information and FALSE = non-spatial sharing
+
 ## the bbsBayes prepare_data function doesn't create all of the objects required for the Stan versions of the models
 ## this source() call over-writes the bbsBayes function prepare_data()
-source("Functions/prepare-data-alt.R")
+source("Functions/prepare-data-Stan.R")
 if(fit_spatial){
-source("Functions/neighbours_define_alt.R") # function to generate spatial neighbourhoods to add to the spatial applications of the models
+source("Functions/neighbours_define.R") # function to generate spatial neighbourhoods to add to the spatial applications of the models
 }
 
 
@@ -42,7 +49,7 @@ source("Functions/neighbours_define_alt.R") # function to generate spatial neigh
 sp_data <- prepare_data(bbs_data,
                         species_to_run = species,
                         model = "slope",
-                        min_max_route_years = 10)
+                        min_max_route_years = 2)
 
 
 stan_data <- sp_data
