@@ -163,7 +163,7 @@ stanfit <- model$sample(
 # shinystan::launch_shinystan(shinystan::as.shinystan(stanfit))
 
 
- loo_out <- stanfit$loo()
+# loo_out <- stanfit$loo()
 
 
 fit_summary <- stanfit$summary()
@@ -174,7 +174,7 @@ stan_data[["alt_data"]] <- tmp_alt_data
 stan_data[["strat_name"]] <- tmp_alt_data$strat_name
 
 save(list = c("stanfit","stan_data",
-              "out_base","loo_out",
+              "out_base",
               "fit_summary"),
      file = paste0(output_dir,"/",out_base,"_Stan_fit.RData"))
 

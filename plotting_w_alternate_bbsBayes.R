@@ -13,7 +13,8 @@ library(patchwork)
 
 load("species_lists.RData") # loads objects created at the beginning of the script Fit_gamye_models_cws.R
 
-model = "gamye"
+sel_model = "gamye"
+sel_model = "slope"
 
 
 species_to_run <- nrecs_sp 
@@ -43,10 +44,10 @@ output_dir <- "output"
 
 if(fit_spatial){
   
-  out_base <- paste(species_f,model,"Spatial","BBS",sep = "_") # text string to identify the saved output from the Stan process unique to species and model, but probably something the user wants to control
+  out_base <- paste(species_f,sel_model,"Spatial","BBS",sep = "_") # text string to identify the saved output from the Stan process unique to species and model, but probably something the user wants to control
   
 }else{
-  out_base <- paste(species_f,model,"BBS",sep = "_")
+  out_base <- paste(species_f,sel_model,"BBS",sep = "_")
   
 }
 
@@ -87,11 +88,16 @@ obs_weird <- stan_data$alt_data[[1]] %>%
   filter(ObsN %in% weird_obs$ObsN)
 
 }
+if(sel_model == "gamye"){alt_n <- "nsmooth"}
+if(sel_model == "slope"){alt_n <- "nslope"}
+
+
 inds <- generate_indices(jags_mod = stanfit,
                          jags_data = stan_data,
                          backend = "Stan",
                          stratify_by = "bbs_usgs",
-                         alternate_n = "nsmooth")
+                         alternate_n = alt_n)
+
 ind <- generate_indices(jags_mod = stanfit,
                          jags_data = stan_data,
                          backend = "Stan",
