@@ -22,7 +22,7 @@ species_to_run <- nrecs_sp
 fit_spatial <- TRUE # TRUE = spatial sharing of information and FALSE = non-spatial sharing
 source("Functions/prepare-data-alt.R") # this replaces the prepare data function in teh development version of Stan with 
 if(fit_spatial){
-  source("Functions/neighbours_define_alt.R") # function to generate spatial neighbourhoods to add to the spatial applications of the models
+  source("Functions/neighbours_define.R") # function to generate spatial neighbourhoods to add to the spatial applications of the models
 }
 output_dir <- "output/" # Stan writes output to files as it samples. This is great because it's really stable, but the user needs to think about where to store that output
 
@@ -116,7 +116,7 @@ trajshort <- plot_indices(inds,
                       add_number_routes = TRUE,
                       min_year = 2004)
 
-#pdf(file = "temp.pdf",width = 11,height = 8.5)
+#pdf(file = paste0("Figures/",species_f,".pdf"),width = 11,height = 8.5)
 for(i in names(trajs)){
   t1 <- trajs[[i]] 
   # st <- str_trunc(t1$labels$title, width = 8,
@@ -147,12 +147,24 @@ for(i in names(trajs)){
 }
 
 
-trends <- generate_trends(inds)
-trends_short <- generate_trends(inds,Min_year = 2004)
 
+trends <- generate_trends(inds)
+trends_short <- generate_trends(inds,Min_year = 2011)
 map <- generate_map(trends,select = TRUE,stratify_by = "bbs_usgs",species = species)
 mapshort <- generate_map(trends_short,select = TRUE,stratify_by = "bbs_usgs",species = species)
 print(map + mapshort)
+
+starts <- seq(1971,2011,by = 5)
+maps <- vector("list",length = length(starts))
+names(maps) <- paste(starts)
+
+for(dd in starts){
+trends_10temp <- generate_trends(inds,Min_year = dd,Max_year = dd+10)
+maps[[paste(dd)]] <- generate_map(trends_10temp,select = TRUE,stratify_by = "bbs_usgs",species = species)
+print(maps[[paste(dd)]])
+}
+
+#dev.off()
 
 
 }
