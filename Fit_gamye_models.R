@@ -10,7 +10,7 @@ setwd("C:/Users/SmithAC/Documents/GitHub/bbsStanBayes")
 
 
 
-species <- "Pacific Wren"
+species <- "Chestnut-collared Longspur"
 species_f <- gsub(species,pattern = " ",replacement = "_") # species name without spaces
 
 sel_model <- "gamye"
@@ -116,15 +116,17 @@ if(fit_spatial){
   
 mod.file = paste0("models/",sel_model,"_spatial_bbs_CV.stan")
 out_base <- paste(species_f,sp_data$model,"Spatial","BBS",sep = "_") # text string to identify the saved output from the Stan process unique to species and model, but probably something the user wants to control
+model <- cmdstan_model(mod.file, stanc_options = list("O1"))
 
 }else{
   mod.file = paste0("models/",sel_model,"_bbs_CV.stan")
   out_base <- paste(species_f,sp_data$model,"BBS",sep = "_")
+  model <- cmdstan_model(mod.file)
   
 }
 
 ## compiles Stan model (this is only necessary if the model has been changed since it was last run on this machine)
-model <- cmdstan_model(mod.file)
+#model <- cmdstan_model(mod.file, stanc_options = list("O1"))
 
 output_dir <- "output/" # Stan writes output to files as it samples. This is great because it's really stable, but the user needs to think about where to store that output
 
