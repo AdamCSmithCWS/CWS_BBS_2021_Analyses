@@ -2,7 +2,7 @@ library(bbsBayes)
 library(tidyverse)
 library(cmdstanr)
 
-stratified_data <- stratify(by = "bbs_usgs")
+stratified_data <- stratify(by = "bbs_cws")
 
 
 allspecies.eng = stratified_data$species_strat$english
@@ -33,7 +33,7 @@ nrecs_sp <- stratified_data$bird_strat %>%
   filter(num_counts > 200,
          !grepl("unid",english)) %>% 
   mutate(species_file = name_simpl_function(english),
-         grouping = rep_len(1:6,length.out = length(unique(species_file)))) %>% 
+         grouping = rep_len(1:9,length.out = length(unique(species_file)))) %>% 
   arrange(num_counts)
 
 
@@ -56,6 +56,9 @@ library(bbsBayes)
 library(tidyverse)
 library(cmdstanr)
 
+consider_spatial <- FALSE
+
+
 #setwd("C:/GitHub/bbsStanBayes")
 setwd("C:/Users/SmithAC/Documents/GitHub/bbsStanBayes")
 
@@ -67,10 +70,10 @@ species_to_run <- nrecs_sp %>%
   filter(grouping == GG)
 
 source("Functions/prepare-data-Stan.R")
-if(fit_spatial){
+if(consider_spatial){
   source("Functions/neighbours_define.R") # function to generate spatial neighbourhoods to add to the spatial applications of the models
 }
-output_dir <- "output/" # Stan writes output to files as it samples. This is great because it's really stable, but the user needs to think about where to store that output
+output_dir <- "F:/bbsStanBayes/output/" # Stan writes output to files as it samples. This is great because it's really stable, but the user needs to think about where to store that output
 
 
 for(jj in 1:nrow(species_to_run)){
@@ -81,25 +84,40 @@ species_f <- as.character(species_to_run[jj,"species_file"])
 ## replaces the bbsBayes prepare_dta function because it includes additional infor required for Stan models
 
 
-sp_data <- prepare_data(strat_data = stratified_data,
-                        species_to_run = species,
-                        model = model,
-                        min_max_route_years = 2,
-                        basis = "mgcv")
 
-
+if(consider_spatial){
 if(sp_data$nstrata > 5){
   fit_spatial <- TRUE # TRUE = spatial sharing of information and FALSE = non-spatial sharing
   
 }else{
   fit_spatial <- FALSE # TRUE = spatial sharing of information and FALSE = non-spatial sharing
 }
+}else{
+  fit_spatial <- FALSE
+}
 
+if(fit_spatial){
+  out_base <- paste(species_f,model,"Spatial","BBS",sep = "_") # text string to identify the saved output from the Stan process unique to species and model, but probably something the user wants to control
+  
+}else{
+  out_base <- paste(species_f,model,"BBS",sep = "_")
+  
+} 
+
+if(!file.exists(paste0(output_dir,"/",out_base,"_Stan_fit.RData"))){
+  
+  sp_data <- prepare_data(strat_data = stratified_data,
+                          species_to_run = species,
+                          model = model,
+                          min_max_route_years = 2,
+                          basis = "mgcv")
+  
+  
 stan_data <- sp_data
 
 # Spatial neighbourhoods --------------------------------------------------
 if(fit_spatial){
-  
+
 base_strata_map <- bbsBayes::load_map(stratify_by = stan_data[["stratify_by"]])
 
 alt_df <- stan_data[["alt_data"]][[1]]
@@ -155,20 +173,6 @@ if(fit_spatial){
 mod.file = paste0("models/",model,"_spatial_bbs_CV.stan")
 out_base <- paste(species_f,model,"Spatial","BBS",sep = "_") # text string to identify the saved output from the Stan process unique to species and model, but probably something the user wants to control
 
-}else{
-  mod.file = paste0("models/",model,"_bbs_CV.stan")
-  out_base <- paste(species_f,model,"BBS",sep = "_")
-  
-}
-
-## compiles Stan model (this is only necessary if the model has been changed since it was last run on this machine)
-stan_model <- cmdstan_model(mod.file)
-
-
-### this init_def is something that the JAGS versions don't need. It's a function definition, so perhaps something we'll have to build
-### into the fit_model function
-### the slightly annoying thing is that it's model-specific, so we'll need to have a few versions of it
-
 init_def <- function(){ list(noise_raw = rnorm(stan_data$ncounts*stan_data$use_pois,0,0.1),
                              strata_raw = rnorm(stan_data$nstrata,0,0.1),
                              STRATA = 0,
@@ -178,7 +182,7 @@ init_def <- function(){ list(noise_raw = rnorm(stan_data$ncounts*stan_data$use_p
                              yeareffect_raw = matrix(rnorm(stan_data$nstrata*stan_data$nyears,0,0.1),nrow = stan_data$nstrata,ncol = stan_data$nyears),
                              obs_raw = rnorm(stan_data$nobservers,0,0.1),
                              ste_raw = rnorm(stan_data$nsites,0,0.1),
-                             sdnoise = runif(1,0.3,1.3),
+                             sdnoise = runif(1,0.03,1.3),
                              sdobs = runif(1,0.01,0.1),
                              sdste = runif(1,0.01,0.2),
                              #sdbeta = runif(stan_data$nstrata,0.01,0.1),
@@ -187,6 +191,44 @@ init_def <- function(){ list(noise_raw = rnorm(stan_data$ncounts*stan_data$use_p
                              sdyear = runif(stan_data$nstrata,0.01,0.1),
                              BETA_raw = rnorm(stan_data$nknots_year,0,0.1),
                              beta_raw = matrix(rnorm(stan_data$nknots_year*stan_data$nstrata,0,0.01),nrow = stan_data$nstrata,ncol = stan_data$nknots_year))}
+
+
+
+}else{
+  mod.file = paste0("models/",model,"_bbs_CV.stan")
+  out_base <- paste(species_f,model,"BBS",sep = "_")
+  
+  init_def <- function(){ list(noise_raw = rnorm(stan_data$ncounts*stan_data$use_pois,0,0.1),
+                               strata_raw = rnorm(stan_data$nstrata,0,0.1),
+                               STRATA = 0,
+                               nu = 10,
+                               sdstrata = runif(1,0.01,0.1),
+                               eta = 0,
+                               yeareffect_raw = matrix(rnorm(stan_data$nstrata*stan_data$nyears,0,0.1),nrow = stan_data$nstrata,ncol = stan_data$nyears),
+                               obs_raw = rnorm(stan_data$nobservers,0,0.1),
+                               ste_raw = rnorm(stan_data$nsites,0,0.1),
+                               sdnoise = runif(1,0.03,1.3),
+                               sdobs = runif(1,0.01,0.1),
+                               sdste = runif(1,0.01,0.2),
+                               sdbeta = runif(stan_data$nstrata,0.01,0.1),
+                               #sdbeta = runif(1,0.01,0.1),
+                               sdBETA = runif(1,0.01,0.1),
+                               sdyear = runif(stan_data$nstrata,0.01,0.1),
+                               BETA_raw = rnorm(stan_data$nknots_year,0,0.1),
+                               beta_raw = matrix(rnorm(stan_data$nknots_year*stan_data$nstrata,0,0.01),nrow = stan_data$nstrata,ncol = stan_data$nknots_year))}
+  
+  
+  
+}
+
+## compiles Stan model (this is only necessary if the model has been changed since it was last run on this machine)
+stan_model <- cmdstan_model(mod.file, stanc_options = list("Oexperimental"))
+
+
+### this init_def is something that the JAGS versions don't need. It's a function definition, so perhaps something we'll have to build
+### into the fit_model function
+### the slightly annoying thing is that it's model-specific, so we'll need to have a few versions of it
+
 
 
 
@@ -199,8 +241,8 @@ stanfit <- stan_model$sample(
   iter_warmup=1000,
   parallel_chains = 3,
   #pars = parms,
-  adapt_delta = 0.95,
-  max_treedepth = 14,
+  adapt_delta = 0.9,
+  max_treedepth = 12,
   seed = 123,
   init = init_def,
   output_dir = output_dir,
@@ -224,6 +266,12 @@ save(list = c("stanfit","stan_data",
               "fit_summary"),
      file = paste0(output_dir,"/",out_base,"_Stan_fit.RData"))
 
+
+print(paste("Completed",out_base))
+}else{
+  print(paste("Skipped",out_base,"already run"))
+  
+}
 }
 
 
