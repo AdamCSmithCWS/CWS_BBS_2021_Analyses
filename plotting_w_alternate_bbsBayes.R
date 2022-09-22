@@ -4,6 +4,9 @@
 ## the specific changes in that branch are in the two functions
 ## generate_indices() and extract_index_data() (the second is called within generate_indices())
 
+setwd("C:/Users/SmithAC/Documents/GitHub/bbsStanBayes")
+
+strat_sel <- "bbs_cws"
 
 library(bbsBayes)
 library(tidyverse)
@@ -14,20 +17,21 @@ library(patchwork)
 load("species_lists.RData") # loads objects created at the beginning of the script Fit_gamye_models_cws.R
 
 sel_model = "gamye"
-sel_model = "slope"
+#sel_model = "slope"
 
 
 species_to_run <- nrecs_sp 
 
-fit_spatial <- TRUE # TRUE = spatial sharing of information and FALSE = non-spatial sharing
-source("Functions/prepare-data-alt.R") # this replaces the prepare data function in teh development version of Stan with 
+fit_spatial <- FALSE # TRUE = spatial sharing of information and FALSE = non-spatial sharing
+source("Functions/prepare-data-Stan.R")
 if(fit_spatial){
   source("Functions/neighbours_define.R") # function to generate spatial neighbourhoods to add to the spatial applications of the models
 }
-output_dir <- "output/" # Stan writes output to files as it samples. This is great because it's really stable, but the user needs to think about where to store that output
+#output_dir <- "output/" # Stan writes output to files as it samples. This is great because it's really stable, but the user needs to think about where to store that output
+output_dir <- "F:/bbsStanBayes/output" # Stan writes output to files as it samples. This is great because it's really stable, but the user needs to think about where to store that output
 
 
-pdf(paste0("Figures/temp_trajectories.pdf"),
+pdf(paste0("Figures/temp_trajectories2.pdf"),
     width = 11,
     height = 8.5)
 
@@ -36,9 +40,6 @@ for(jj in 1:nrow(species_to_run)){
   species <- as.character(species_to_run[jj,"english"])
   species_f <- as.character(species_to_run[jj,"species_file"])
   
-
-output_dir <- "output"
-
 
 
 
@@ -95,13 +96,13 @@ if(sel_model == "slope"){alt_n <- "nslope"}
 inds <- generate_indices(jags_mod = stanfit,
                          jags_data = stan_data,
                          backend = "Stan",
-                         stratify_by = "bbs_usgs",
+                         stratify_by = strat_sel,
                          alternate_n = alt_n)
 
 ind <- generate_indices(jags_mod = stanfit,
                          jags_data = stan_data,
                          backend = "Stan",
-                         stratify_by = "bbs_usgs",
+                         stratify_by = strat_sel,
                          alternate_n = "n")
 
 
@@ -150,8 +151,8 @@ for(i in names(trajs)){
 
 trends <- generate_trends(inds)
 trends_short <- generate_trends(inds,Min_year = 2011)
-map <- generate_map(trends,select = TRUE,stratify_by = "bbs_usgs",species = species)
-mapshort <- generate_map(trends_short,select = TRUE,stratify_by = "bbs_usgs",species = species)
+map <- generate_map(trends,select = TRUE,stratify_by = strat_sel,species = species)
+mapshort <- generate_map(trends_short,select = TRUE,stratify_by = strat_sel,species = species)
 print(map + mapshort)
 
 starts <- seq(1971,2011,by = 5)
@@ -160,7 +161,7 @@ names(maps) <- paste(starts)
 
 for(dd in starts){
 trends_10temp <- generate_trends(inds,Min_year = dd,Max_year = dd+10)
-maps[[paste(dd)]] <- generate_map(trends_10temp,select = TRUE,stratify_by = "bbs_usgs",species = species)
+maps[[paste(dd)]] <- generate_map(trends_10temp,select = TRUE,stratify_by = strat_sel,species = species)
 print(maps[[paste(dd)]])
 }
 
@@ -176,6 +177,6 @@ dev.off()
 
 
 ## doesn't yet work
-#gfacet <- geofacet_plot(inds,select = TRUE,trends = trends,add_observed_means = TRUE,stratify_by = "bbs_usgs")
+#gfacet <- geofacet_plot(inds,select = TRUE,trends = trends,add_observed_means = TRUE,stratify_by = strat_sel)
 
 

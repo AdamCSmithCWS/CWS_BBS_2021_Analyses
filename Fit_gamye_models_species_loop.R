@@ -76,7 +76,7 @@ if(consider_spatial){
 output_dir <- "F:/bbsStanBayes/output/" # Stan writes output to files as it samples. This is great because it's really stable, but the user needs to think about where to store that output
 
 
-for(jj in 1:nrow(species_to_run)){
+for(jj in nrow(species_to_run):1){
 
 species <- as.character(species_to_run[jj,"english"])
 species_f <- as.character(species_to_run[jj,"species_file"])
@@ -238,10 +238,10 @@ stanfit <- stan_model$sample(
   data=stan_data,
   refresh=100,
   chains=3, iter_sampling=1000,
-  iter_warmup=1000,
+  iter_warmup=1200,
   parallel_chains = 3,
   #pars = parms,
-  adapt_delta = 0.9,
+  adapt_delta = 0.95,
   max_treedepth = 12,
   seed = 123,
   init = init_def,
