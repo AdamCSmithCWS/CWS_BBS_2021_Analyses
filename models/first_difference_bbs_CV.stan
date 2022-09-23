@@ -200,7 +200,7 @@ model {
   //sum(ste_raw) ~ normal(0,0.001*nsites); //constraint isn't useful here
  
 
-  BETA ~ std_normal();// prior on fixed effect mean intercept
+  BETA_raw ~ std_normal();// prior on fixed effect mean intercept
 
   STRATA ~ std_normal();// prior on fixed effect mean intercept
   eta ~ std_normal();// prior on first-year observer effect
