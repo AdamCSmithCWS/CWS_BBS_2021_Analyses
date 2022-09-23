@@ -216,9 +216,10 @@ model {
   ste_raw ~ std_normal();//site effects
   //sum(ste_raw) ~ normal(0,0.001*nsites); //constraint isn't useful here
  
+  BETA ~ std_normal();// prior on fixed effect mean intercept
 
   STRATA ~ std_normal();// prior on fixed effect mean intercept
-  eta ~ normal(0,1);// prior on first-year observer effect
+  eta ~ std_normal();// prior on first-year observer effect
   
   
   sdstrata ~ student_t(3,0,1); //prior on sd of intercept variation
