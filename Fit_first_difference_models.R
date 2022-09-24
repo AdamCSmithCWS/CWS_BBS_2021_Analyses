@@ -36,7 +36,7 @@ save(list = c("jagsfit","jags_data","species"),
 # Stan models -------------------------------------------------------------
 
 ## spatial versions of both teh slope and gamye exist for the Stan models and can be fit with this script 
-fit_spatial <- TRUE # TRUE = spatial sharing of information and FALSE = non-spatial sharing
+fit_spatial <- FALSE # TRUE = spatial sharing of information and FALSE = non-spatial sharing
 
 ## the bbsBayes prepare_data function doesn't create all of the objects required for the Stan versions of the models
 ## this source() call over-writes the bbsBayes function prepare_data()
@@ -161,7 +161,7 @@ stanfit <- model$sample(
   parallel_chains = 3,
   #pars = parms,
   adapt_delta = 0.95,
-  max_treedepth = 14,
+  max_treedepth = 12,
   seed = 123,
   init = init_def,
   output_dir = output_dir,

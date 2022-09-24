@@ -8,6 +8,8 @@ setwd("C:/Users/SmithAC/Documents/GitHub/bbsStanBayes")
 
 strat_sel <- "bbs_cws"
 
+strat_sel <- "bbs_usgs"
+
 library(bbsBayes)
 library(tidyverse)
 library(cmdstanr)
@@ -16,8 +18,9 @@ library(patchwork)
 
 load("species_lists.RData") # loads objects created at the beginning of the script Fit_gamye_models_cws.R
 
-sel_model = "gamye"
-#sel_model = "slope"
+model_sel = "gamye"
+model_sel = "firstdiff"
+#model_sel = "slope"
 
 
 species_to_run <- nrecs_sp 
@@ -45,10 +48,10 @@ for(jj in 1:nrow(species_to_run)){
 
 if(fit_spatial){
   
-  out_base <- paste(species_f,sel_model,"Spatial","BBS",sep = "_") # text string to identify the saved output from the Stan process unique to species and model, but probably something the user wants to control
+  out_base <- paste(species_f,model_sel,"Spatial","BBS",sep = "_") # text string to identify the saved output from the Stan process unique to species and model, but probably something the user wants to control
   
 }else{
-  out_base <- paste(species_f,sel_model,"BBS",sep = "_")
+  out_base <- paste(species_f,model_sel,"BBS",sep = "_")
   
 }
 
@@ -89,21 +92,27 @@ obs_weird <- stan_data$alt_data[[1]] %>%
   filter(ObsN %in% weird_obs$ObsN)
 
 }
-if(sel_model == "gamye"){alt_n <- "nsmooth"}
-if(sel_model == "slope"){alt_n <- "nslope"}
+if(model_sel == "gamye"){alt_n <- "nsmooth"}
+if(model_sel == "slope"){alt_n <- "nslope"}
+
+if(model_sel == "firstdiff"){alt_n <- NA}
+ind <- generate_indices(jags_mod = stanfit,
+                        jags_data = stan_data,
+                        backend = "Stan",
+                        stratify_by = strat_sel,
+                        alternate_n = "n")
 
 
+if(!is.na(alt_n)){
+  
 inds <- generate_indices(jags_mod = stanfit,
                          jags_data = stan_data,
                          backend = "Stan",
                          stratify_by = strat_sel,
                          alternate_n = alt_n)
-
-ind <- generate_indices(jags_mod = stanfit,
-                         jags_data = stan_data,
-                         backend = "Stan",
-                         stratify_by = strat_sel,
-                         alternate_n = "n")
+}else{
+  inds <- ind
+}
 
 
 trajs <- plot_indices(inds,
@@ -117,13 +126,15 @@ trajshort <- plot_indices(inds,
                       add_number_routes = TRUE,
                       min_year = 2004)
 
-#pdf(file = paste0("Figures/",species_f,".pdf"),width = 11,height = 8.5)
+pdf(file = paste0("Figures/",out_base,".pdf"),width = 11,height = 8.5)
 for(i in names(trajs)){
   t1 <- trajs[[i]] 
+  t2 <- trajshort[[i]]
+  
   # st <- str_trunc(t1$labels$title, width = 8,
   #                 side = "left",
   #                 ellipsis = "")
-  
+  if(!is.na(alt_n)){
   n1 <- ind$data_summary %>% 
     filter(Region == gsub(i,pattern = "_",replacement = "-")) #,
   #Region_type == "stratum"
@@ -133,7 +144,6 @@ for(i in names(trajs)){
     geom_line(data = n1, aes(x = Year,y = Index),
               colour = grey(0.5))
   
-  t2 <- trajshort[[i]]
   n2 <- ind$data_summary %>% 
     filter(Region == gsub(i,pattern = "_",replacement = "-"),
            #Region_type == "stratum",
@@ -143,8 +153,9 @@ for(i in names(trajs)){
                 fill = grey(0.5),alpha = 0.2)+
     geom_line(data = n2, aes(x = Year,y = Index),
               colour = grey(0.5))
-  
+  }
   print(t1 + t2)
+  
 }
 
 
@@ -165,7 +176,7 @@ maps[[paste(dd)]] <- generate_map(trends_10temp,select = TRUE,stratify_by = stra
 print(maps[[paste(dd)]])
 }
 
-#dev.off()
+dev.off()
 
 
 }
