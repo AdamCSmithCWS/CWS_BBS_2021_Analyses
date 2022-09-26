@@ -8,6 +8,8 @@ bbs_data <- stratify(by = "bbs_usgs")
 setwd("C:/GitHub/bbsStanBayes")
 
 model_sel <- "firstdiff"
+Non_hierarchical <- TRUE
+
 
 species <- "Pacific Wren"
 species_f <- gsub(species,pattern = " ",replacement = "_") # species name without spaces
@@ -120,9 +122,13 @@ mod.file = "models/first_difference_spatial_bbs_CV.stan"
 out_base <- paste(species_f,sp_data$model,"Spatial","BBS",sep = "_") # text string to identify the saved output from the Stan process unique to species and model, but probably something the user wants to control
 
 }else{
+  if(Non_hierarchical){
+  mod.file = "models/first_difference_NonHier_bbs_CV.stan"
+  out_base <- paste(species_f,sp_data$model,"NonHier_BBS",sep = "_")
+  }else{
   mod.file = "models/first_difference_bbs_CV.stan"
   out_base <- paste(species_f,sp_data$model,"BBS",sep = "_")
-  
+  }
 }
 
 ## compiles Stan model (this is only necessary if the model has been changed since it was last run on this machine)
@@ -146,11 +152,25 @@ init_def <- function(){ list(noise_raw = rnorm(stan_data$ncounts*stan_data$use_p
                              sdste = runif(1,0.01,0.2),
                              sdbeta = runif(1,0.01,0.1),
                              sdBETA = runif(1,0.01,0.1),
-                             sdyear = runif(stan_data$nstrata,0.01,0.1),
                              BETA_raw = rnorm((stan_data$nyears-1),0,0.1),
                              beta_raw = matrix(rnorm(stan_data$nstrata*(stan_data$nyears-1),0,0.1),nrow = stan_data$nstrata,ncol = stan_data$nyears-1))}
 
-
+if(Non_hierarchical){
+  init_def <- function(){ list(noise_raw = rnorm(stan_data$ncounts*stan_data$use_pois,0,0.1),
+                               strata_raw = rnorm(stan_data$nstrata,0,0.1),
+                               STRATA = 0,
+                               nu = 10,
+                               sdstrata = runif(1,0.01,0.1),
+                               eta = 0,
+                               obs_raw = rnorm(stan_data$nobservers,0,0.1),
+                               ste_raw = rnorm(stan_data$nsites,0,0.1),
+                               sdnoise = runif(1,0.3,1.3),
+                               sdobs = runif(1,0.01,0.1),
+                               sdste = runif(1,0.01,0.2),
+                               sdbeta = runif(stan_data$nstrata,0.01,0.1),
+                               beta_raw = matrix(rnorm(stan_data$nstrata*(stan_data$nyears-1),0,0.1),nrow = stan_data$nstrata,ncol = stan_data$nyears-1))}
+  
+}
 
 
 stanfit <- model$sample(

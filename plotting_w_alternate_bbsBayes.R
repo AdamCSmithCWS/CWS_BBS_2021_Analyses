@@ -21,6 +21,7 @@ load("species_lists.RData") # loads objects created at the beginning of the scri
 model_sel = "gamye"
 model_sel = "firstdiff"
 #model_sel = "slope"
+model_sel = "gam"
 
 
 species_to_run <- nrecs_sp 
@@ -30,7 +31,7 @@ source("Functions/prepare-data-Stan.R")
 if(fit_spatial){
   source("Functions/neighbours_define.R") # function to generate spatial neighbourhoods to add to the spatial applications of the models
 }
-#output_dir <- "output/" # Stan writes output to files as it samples. This is great because it's really stable, but the user needs to think about where to store that output
+output_dir <- "output/" # Stan writes output to files as it samples. This is great because it's really stable, but the user needs to think about where to store that output
 output_dir <- "F:/bbsStanBayes/output" # Stan writes output to files as it samples. This is great because it's really stable, but the user needs to think about where to store that output
 
 
@@ -95,7 +96,7 @@ obs_weird <- stan_data$alt_data[[1]] %>%
 if(model_sel == "gamye"){alt_n <- "nsmooth"}
 if(model_sel == "slope"){alt_n <- "nslope"}
 
-if(model_sel == "firstdiff"){alt_n <- NA}
+if(model_sel %in% c("firstdiff","gam")){alt_n <- NA}
 ind <- generate_indices(jags_mod = stanfit,
                         jags_data = stan_data,
                         backend = "Stan",
