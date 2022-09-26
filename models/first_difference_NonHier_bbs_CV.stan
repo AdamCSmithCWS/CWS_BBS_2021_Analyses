@@ -237,7 +237,6 @@ if(use_pois){
    real<lower=0> retrans_noise;
    real<lower=0> retrans_obs;
    real<lower=0> retrans_ste;
-   vector<lower=0>[nyears] Hyper_N; // hyperparameter mean survey-wide population trajectory - only for the first difference model
    vector[ncounts*calc_log_lik] log_lik; // alternative value to track the observervation level log-likelihood
    vector[ntest*calc_CV] log_lik_cv; // alternative value to track the log-likelihood of the coutns in the test dataset
    real adj;
@@ -332,7 +331,6 @@ for(y in 1:nyears){
         // if(calc_n2){
         // n2[s,y] = nonzeroweight[s] * exp(strata + beta[s]*(y-fixedyear) + retrans_ste + yeareffect[s,y] + retrans_noise + retrans_obs);//mean of exponentiated predictions across sites in a stratum
         // }
-      Hyper_N[y] = exp(STRATA + YearEffect[y] + retrans_noise + 0.5*sdobs^2 + 0.5*sdste^2);
 
     }
   }
