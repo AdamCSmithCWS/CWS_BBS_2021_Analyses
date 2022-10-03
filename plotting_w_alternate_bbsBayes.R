@@ -20,6 +20,8 @@ load("species_lists.RData") # loads objects created at the beginning of the scri
 
 model_sel = "gamye"
 model_sel = "firstdiff"
+Non_hierarchical <- TRUE
+
 #model_sel = "slope"
 model_sel = "gam"
 
@@ -47,13 +49,16 @@ for(jj in 1:nrow(species_to_run)){
 
 
 
+ 
 if(fit_spatial){
   
   out_base <- paste(species_f,model_sel,"Spatial","BBS",sep = "_") # text string to identify the saved output from the Stan process unique to species and model, but probably something the user wants to control
   
 }else{
   out_base <- paste(species_f,model_sel,"BBS",sep = "_")
-  
+  if(Non_hierarchical){
+    out_base <- paste(species_f,model_sel,"NonHier_BBS",sep = "_")
+  }
 }
 
 if(!file.exists(paste0(output_dir,"/",out_base,"_Stan_fit.RData"))){next}
