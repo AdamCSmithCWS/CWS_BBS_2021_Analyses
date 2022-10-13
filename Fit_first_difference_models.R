@@ -2,7 +2,7 @@ library(bbsBayes)
 library(tidyverse)
 library(cmdstanr)
 
-bbs_data <- stratify(by = "bbs_usgs")
+bbs_data <- stratify(by = "bbs_cws")
 
 
 setwd("C:/GitHub/bbsStanBayes")
@@ -11,7 +11,7 @@ model_sel <- "firstdiff"
 Non_hierarchical <- TRUE
 
 
-species <- "Pacific Wren"
+species <- "Connecticut Warbler"
 species_f <- gsub(species,pattern = " ",replacement = "_") # species name without spaces
 
 
@@ -38,7 +38,7 @@ save(list = c("jagsfit","jags_data","species"),
 # Stan models -------------------------------------------------------------
 
 ## spatial versions of both teh slope and gamye exist for the Stan models and can be fit with this script 
-fit_spatial <- FALSE # TRUE = spatial sharing of information and FALSE = non-spatial sharing
+fit_spatial <- TRUE # TRUE = spatial sharing of information and FALSE = non-spatial sharing
 
 ## the bbsBayes prepare_data function doesn't create all of the objects required for the Stan versions of the models
 ## this source() call over-writes the bbsBayes function prepare_data()
@@ -180,7 +180,7 @@ stanfit <- model$sample(
   iter_warmup=1000,
   parallel_chains = 3,
   #pars = parms,
-  adapt_delta = 0.95,
+  adapt_delta = 0.8,
   max_treedepth = 12,
   seed = 123,
   init = init_def,
