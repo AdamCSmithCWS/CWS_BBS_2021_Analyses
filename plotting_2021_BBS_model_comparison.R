@@ -12,7 +12,8 @@ library(bbsBayes)
 library(tidyverse)
 library(cmdstanr)
 library(patchwork)
-
+source("Functions/animated_maps.R")
+source("Functions/generate_map_data.R")
 
 load("species_lists.RData") # loads objects created at the beginning of the script Fit_gamye_models_cws.R
 
@@ -22,7 +23,7 @@ models_sel = c("gamye","gamye_Spatial",
 species <- "Connecticut Warbler"
 
 
-output_dir <- "output/" # Stan writes output to files as it samples. This is great because it's really stable, but the user needs to think about where to store that output
+output_dir <- "output" # Stan writes output to files as it samples. This is great because it's really stable, but the user needs to think about where to store that output
 #output_dir <- "F:/bbsStanBayes/output" # Stan writes output to files as it samples. This is great because it's really stable, but the user needs to think about where to store that output
 
 
@@ -35,10 +36,9 @@ regs_to_estimate <- c("stratum","continental","national","prov_state","bcr")
   trends_roll_out <- NULL
   
   trends_ann_out <- NULL
-  ann_trends_maps_out <- vector(mode = "list",length = length(models_sel))
-  names(ann_trends_maps_out) <- models_sel
+
   
-for(model_sel in models_sel[3:4]){
+for(model_sel in models_sel){
  
   out_base <- paste(species_f,model_sel,"BBS",sep = "_") # text string to identify the saved output from the Stan process unique to species and model, but probably something the user wants to control
   
@@ -193,42 +193,20 @@ t_roll_plot <- ggplot(data = t_roll,
 
 print(t_roll_plot)
 
+dev.off()
 # Animated annual trend maps
 
-starts <- c(1970:2020)
-if(!is.na(alt_n)){
-  
-  inds2 <- generate_indices(jags_mod = stanfit,
-                            jags_data = stan_data,
-                            backend = "Stan",
-                            stratify_by = strat_sel,
-                            alternate_n = alt_n)
-  
-}else{
-  inds2 <- generate_indices(jags_mod = stanfit,
-                            jags_data = stan_data,
-                            backend = "Stan",
-                            stratify_by = strat_sel)
-}
 
-ann_trends_maps <- vector(mode = "list",length = length(starts))
-names(ann_trends_maps) <- starts
-
-trends_ann <- NULL
-for(dd in starts){
-  trends_anntemp <- generate_trends(inds2,Min_year = dd,Max_year = dd+1)
-  trends_ann <- bind_rows(trends_ann,trends_anntemp)
-  ann_trends_maps[[dd]] <- generate_map(trends_anntemp,select = TRUE,stratify_by = strat_sel,
-                                        species = paste0(species," ",model_sel))
-}
-trends_ann <- trends_ann %>% 
-  mutate(model = model_sel,
-         species = species)
-
-trends_ann_out <- bind_rows(trends_ann_out,trends_ann)
-ann_trends_maps_out[[model_sel]] <- ann_trends_maps 
-
-dev.off()
+animated_trend_map(fit = stanfit,
+                               rawdata = stan_data,
+                               stratification = strat_sel,
+                               alt_n = alt_n,
+                               firstYear = NULL,
+                               lastYear = NULL,
+                               res_mag = 3,
+                               dir_out = "Figures/",
+                   file_name_prefix = paste0(model_sel,"_"),
+                               species = species)
 
 
 }
