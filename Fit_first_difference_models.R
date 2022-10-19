@@ -5,7 +5,10 @@ library(cmdstanr)
 bbs_data <- stratify(by = "bbs_cws")
 
 
-setwd("C:/GitHub/bbsStanBayes")
+#setwd("C:/GitHub/bbsStanBayes")
+
+setwd("C:/Users/SmithAC/Documents/GitHub/bbsStanBayes")
+
 
 model_sel <- "firstdiff"
 Non_hierarchical <- TRUE
@@ -15,30 +18,52 @@ species <- "Connecticut Warbler"
 species_f <- gsub(species,pattern = " ",replacement = "_") # species name without spaces
 
 
-# Initial fit using JAGS for comparison of some key parameters (see parameters_to_save argument in run_model()) ----------------------------------------------------------
+# # Initial fit using JAGS for comparison of some key parameters (see parameters_to_save argument in run_model()) ----------------------------------------------------------
 jags_data <- prepare_data(strat_data = bbs_data,
                           species_to_run = species,
                           model = model_sel,
                           min_max_route_years = 2,
                           heavy_tailed = TRUE)
 
+# model_to_file(model = model_sel,heavy_tailed = TRUE,filename = "temp_firstdif.R")
+# model_to_file(model = model_sel,heavy_tailed = FALSE,filename = "temp_firstdif2.R")
+
 jagsfit <- bbsBayes::run_model(jags_data = jags_data,
                                parameters_to_save = c("n","nslope",
                                                       "yeareffect","STRATA",
-                                                      "sdobs","sdbeta","eta"),
+                                                      "sdobs","sdbeta","eta",
+                                                      "sdnoise","nu",
+                                                      "sdyear"),
                                parallel = TRUE,
-                               modules = "glm")
+                               modules = "glm",
+                               model_file_path = "temp_firstdif.R")
 
-save(list = c("jagsfit","jags_data","species"),
-     file = paste("output/saved_bbsBayes_fit_data_",species_f,"_",model,".RData",sep = "_"))
 
+inds <- generate_indices(jagsfit, jags_data,
+                         stratify_by = "bbs_cws",
+                         regions = c("stratum","continental","prov_state"))
+
+
+plots <- plot_indices(inds,add_observed_means = TRUE,add_number_routes = TRUE)
+
+pdf("temp.pdf")
+for(i in 1:length(plots)){
+  print(plots[[i]])
+}
+
+dev.off()
+
+# 
+# save(list = c("jagsfit","jags_data","species"),
+#      file = paste("output/saved_bbsBayes_fit_data_",species_f,"_",model,".RData",sep = "_"))
+# 
 
 
 
 # Stan models -------------------------------------------------------------
 
 ## spatial versions of both teh slope and gamye exist for the Stan models and can be fit with this script 
-fit_spatial <- TRUE # TRUE = spatial sharing of information and FALSE = non-spatial sharing
+fit_spatial <- FALSE # TRUE = spatial sharing of information and FALSE = non-spatial sharing
 
 ## the bbsBayes prepare_data function doesn't create all of the objects required for the Stan versions of the models
 ## this source() call over-writes the bbsBayes function prepare_data()

@@ -189,8 +189,8 @@ model {
   }  
   sdobs ~ normal(0,0.3); // informative prior on scale of observer effects - suggests observer variation larger than 3-4-fold differences is unlikely
   sdste ~ student_t(3,0,1); //prior on sd of site effects
-  sdbeta ~ student_t(3,0,0.1); // prior on sd of differences among strata
-  sdBETA ~ student_t(3,0,0.1); // prior on sd of mean hyperparameter differences
+  sdbeta ~ student_t(3,0,0.2); // prior on sd of differences among strata
+  sdBETA ~ student_t(3,0,0.5); // prior on sd of mean hyperparameter differences
 
  
   obs_raw ~ std_normal();//observer effects

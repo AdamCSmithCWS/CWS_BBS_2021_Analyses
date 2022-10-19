@@ -87,13 +87,14 @@ species_f <- as.character(species_to_run[jj,"species_file"])
 ## Temporarily prepare the data for the species to see how many strata are likely
 start_year <- NULL
 
-sp_data <- prepare_data(strat_data = stratified_data,
-                        species_to_run = species,
-                        model = model,
-                         min_year = start_year,
-                        min_max_route_years = 2,
-                        basis = "mgcv")
+
 if(consider_spatial){
+  sp_data <- prepare_data(strat_data = stratified_data,
+                          species_to_run = species,
+                          model = model,
+                          min_year = start_year,
+                          min_max_route_years = 2,
+                          basis = "mgcv")
 if(sp_data$nstrata > 5){
   fit_spatial <- TRUE # TRUE = spatial sharing of information and FALSE = non-spatial sharing
   
