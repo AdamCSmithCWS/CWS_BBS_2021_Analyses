@@ -419,3 +419,51 @@ print(t_roll_plot)
 dev.off()  
 
 
+
+
+## panel rolling trends by prov state
+
+t_roll <- trends_roll_out %>% 
+  filter(Region_type %in% c("prov_state"),
+         model != "firstdiff_NonHier") %>% 
+  mutate(Region_order = factor(Region,ordered = TRUE,levels = region_order)) %>% 
+  arrange(Region_order) 
+
+
+
+t_roll_plot <- ggplot(data = t_roll,
+                      aes(x = End_year,
+                          y = Trend,
+                          colour = model))+
+  geom_errorbar(aes(ymin = Trend_Q0.025,
+                    ymax = Trend_Q0.975),
+                width = 0,alpha = 0.2,
+                position = position_dodge(width = 0.2))+
+  geom_errorbar(aes(ymin = Trend_Q0.25,
+                    ymax = Trend_Q0.75),
+                width = 0,alpha = 0.3,
+                position = position_dodge(width = 0.2))+
+  geom_point(position = position_dodge(width = 0.2))+
+  labs(title = paste(species,model_sel,"Rolling ten-year trends through time"))+
+  ylab("Trend %/year")+
+  xlab("End of ten-year trend")+
+  geom_hline(yintercept = 0)+
+  geom_hline(yintercept = 100*(0.7^(1/10)-1),colour = "darkorange")+
+  geom_hline(yintercept = 100*(0.5^(1/10)-1),colour = "darkred")+
+  theme_bw()+
+  theme(legend.position = "bottom")+
+  scale_colour_viridis_d(begin = 0.3,end = 0.9,aesthetics = c("fill","colour"),
+                         guide = guide_legend(title = "Alternative Trend Models",reverse = TRUE))+
+  facet_wrap(facets = vars(Region_order),nrow = 3,
+             scales = "free_y")
+
+#print(t_roll_plot)
+
+pdf(paste0("Figures/",species_f,"_state_prov_rolling_trends.pdf"),
+    width = 11,
+    height = 8.5) 
+print(t_roll_plot)
+dev.off()  
+
+
+
