@@ -60,7 +60,7 @@ consider_spatial <- TRUE
 
 
 #setwd("C:/GitHub/bbsStanBayes")
-setwd("C:/Users/SmithAC/Documents/GitHub/bbsStanBayes")
+#setwd("C:/Users/SmithAC/Documents/GitHub/bbsStanBayes")
 
 load("species_lists.RData")
 model = "gamye"
@@ -73,13 +73,18 @@ source("Functions/prepare-data-Stan.R")
 if(consider_spatial){
   source("Functions/neighbours_define.R") # function to generate spatial neighbourhoods to add to the spatial applications of the models
 }
-output_dir <- "F:/bbsStanBayes/output/" # Stan writes output to files as it samples. This is great because it's really stable, but the user needs to think about where to store that output
+#output_dir <- "F:/bbsStanBayes/output/" # Stan writes output to files as it samples. This is great because it's really stable, but the user needs to think about where to store that output
 
+output_dir <- "output/" # Stan writes output to files as it samples. This is great because it's really stable, but the user needs to think about where to store that output
 
 for(jj in (1:nrow(species_to_run))){
 
 species <- as.character(species_to_run[jj,"english"])
 species_f <- as.character(species_to_run[jj,"species_file"])
+
+jj <- which(nrecs_sp$english == "Golden-winged Warbler")
+species <- as.character(nrecs_sp[jj,"english"])
+species_f <- as.character(nrecs_sp[jj,"species_file"])
 
 ## replaces the bbsBayes prepare_dta function because it includes additional infor required for Stan models
 

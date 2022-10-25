@@ -21,7 +21,10 @@ models_sel = c("gamye","gamye_Spatial",
                "firstdiff_Spatial","firstdiff_NonHier",
                "firstdiff")
 
-species <- "Connecticut Warbler"
+models_sel = c("gamye_Spatial",
+               "firstdiff_Spatial")
+
+species <- "Golden-winged Warbler"
 
 
 output_dir <- "output" # Stan writes output to files as it samples. This is great because it's really stable, but the user needs to think about where to store that output
@@ -33,7 +36,7 @@ regs_to_estimate <- c("stratum","continental","national","prov_state","bcr")
 
   jj <- which(nrecs_sp[,"english"] == species)
   species_f <- as.character(nrecs_sp[jj,"species_file"])
-  
+  #species_f <- gsub(pattern = "[[:punct:]]|[[:blank:]]",replacement = "",species)
   trends_roll_out <- NULL
   
   trends_ann_out <- NULL

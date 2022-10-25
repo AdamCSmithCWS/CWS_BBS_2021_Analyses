@@ -11,10 +11,10 @@ setwd("C:/Users/SmithAC/Documents/GitHub/bbsStanBayes")
 
 
 model_sel <- "firstdiff"
-Non_hierarchical <- TRUE
+Non_hierarchical <- FALSE
 
 
-species <- "Connecticut Warbler"
+species <- "Golden-winged Warbler"
 species_f <- gsub(species,pattern = " ",replacement = "_") # species name without spaces
 
 
@@ -63,7 +63,7 @@ dev.off()
 # Stan models -------------------------------------------------------------
 
 ## spatial versions of both teh slope and gamye exist for the Stan models and can be fit with this script 
-fit_spatial <- FALSE # TRUE = spatial sharing of information and FALSE = non-spatial sharing
+fit_spatial <- TRUE # TRUE = spatial sharing of information and FALSE = non-spatial sharing
 
 ## the bbsBayes prepare_data function doesn't create all of the objects required for the Stan versions of the models
 ## this source() call over-writes the bbsBayes function prepare_data()
@@ -102,7 +102,7 @@ neighbours <- neighbours_define(real_strata_map = realized_strata_map, #sf map o
                                 buffer = TRUE,
                                 convex_hull = FALSE,
                                 plot_neighbours = TRUE,
-                                species = "Pacific Wren",
+                                species = species,
                                 plot_dir = "maps/",
                                 plot_file = "_strata_map",
                                 save_plot_data = TRUE,
