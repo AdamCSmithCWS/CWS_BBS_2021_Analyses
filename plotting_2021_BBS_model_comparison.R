@@ -14,6 +14,10 @@ library(cmdstanr)
 library(patchwork)
 source("Functions/animated_maps_function.R")
 source("Functions/generate_map_data.R")
+## overwriting two of the bbsBayes functions with versions that accept Stan output
+source("Functions/extract-index-data-alt.R")
+source("Functions/generate-indices-alt.R")
+
 
 load("species_lists.RData") # loads objects created at the beginning of the script Fit_gamye_models_cws.R
 

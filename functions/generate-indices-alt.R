@@ -142,7 +142,6 @@ generate_indices <- function(jags_mod = NULL,
     mr_year <- min(data_list$r_year)
   }
 
-
   if(is.null(max_backcast)){
     max_backcast <- length(y_min:y_max)
   }
@@ -163,11 +162,19 @@ generate_indices <- function(jags_mod = NULL,
   non_zero_weight = bugs_data$nonzeroweight
 
   n_samples <- dim(n)[1]
-
+  
+  strata <- list(bcr = "bcr",
+                 latlong = "db",
+                 state = "stateprov",
+                 bbs_usgs = "strat",
+                 bbs_cws = "stratcan")
+  
   if(is.null(alt_region_names)){
-    region_names <- utils::read.csv(system.file("composite-regions", strata[[stratify_by]], package = "bbsBayes"),stringsAsFactors = FALSE)
+    region_names <- utils::read.csv(paste0(system.file("composite-regions", package = "bbsBayes"), "/",strata[[stratify_by]],".csv"),stringsAsFactors = FALSE)
   }else{
-    region_names_o <- utils::read.csv(system.file("composite-regions", strata[[stratify_by]], package = "bbsBayes"),stringsAsFactors = FALSE)
+    region_names_o <- utils::read.csv(paste0(system.file("composite-regions", package = "bbsBayes"), "/",strata[[stratify_by]],".csv"),stringsAsFactors = FALSE)
+    
+    # region_names_o <- utils::read.csv(system.file("composite-regions", strata[[stratify_by]], package = "bbsBayes"),stringsAsFactors = FALSE)
 
     region_names <- alt_region_names
     if(nrow(region_names) != nrow(region_names_o)){

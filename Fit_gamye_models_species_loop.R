@@ -178,7 +178,7 @@ stan_data[["node2"]] <- neighbours$node2
 tmp_stratify_by <- stan_data[["stratify_by"]]  
 tmp_model <- stan_data[["model"]]
 tmp_alt_data <- stan_data[["alt_data"]]
-tmp_strat_name <- stan_data[["strat_name"]]
+tmp_strat_name <- tmp_alt_data[["strat_name"]]
 
 stan_data[["stratify_by"]] <- NULL 
 stan_data[["model"]] <- NULL
