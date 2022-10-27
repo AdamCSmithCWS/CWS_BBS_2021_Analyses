@@ -3,6 +3,7 @@ library(tidyverse)
 library(cmdstanr)
 
 bbs_data <- stratify(by = "bbs_cws")
+bbs_data <- stratify(by = "latlong")
 
 
 #setwd("C:/GitHub/bbsStanBayes")
@@ -77,7 +78,8 @@ source("Functions/neighbours_define.R") # function to generate spatial neighbour
 sp_data <- prepare_data(bbs_data,
                         species_to_run = species,
                         model = model_sel,
-                        min_max_route_years = 2)
+                        min_max_route_years = 2,
+                        min_n_routes = 1)
 
 
 stan_data <- sp_data

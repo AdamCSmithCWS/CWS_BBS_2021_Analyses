@@ -2,7 +2,8 @@ library(bbsBayes)
 library(tidyverse)
 library(cmdstanr)
 
-bbs_data <- stratify(by = "bbs_usgs")
+#bbs_data <- stratify(by = "bbs_usgs")
+bbs_data <- stratify(by = "latlong")
 
 
 setwd("C:/GitHub/bbsStanBayes")
@@ -11,6 +12,7 @@ setwd("C:/GitHub/bbsStanBayes")
 
 
 species <- "Pacific Wren"
+species <- "Golden-winged Warbler"
 species_f <- gsub(species,pattern = " ",replacement = "_") # species name without spaces
 
 model_sel <- "gam"
@@ -52,6 +54,7 @@ if(fit_spatial){
 sp_data <- prepare_data(bbs_data,
                         species_to_run = species,
                         model = model_sel,
+                        min_n_routes = 1,
                         min_max_route_years = 2,
                         basis = "mgcv")
 
@@ -79,7 +82,7 @@ neighbours <- neighbours_define(real_strata_map = realized_strata_map, #sf map o
                                 buffer = TRUE,
                                 convex_hull = FALSE,
                                 plot_neighbours = TRUE,
-                                species = "Pacific Wren",
+                                species = species,
                                 plot_dir = "maps/",
                                 plot_file = "_strata_map",
                                 save_plot_data = TRUE,

@@ -142,7 +142,7 @@ for(i in names(trajs)){
 
 
 trends <- generate_trends(inds)
-trends_short <- generate_trends(inds,Min_year = 2011)
+trends_short <- generate_trends(inds,Min_year = 2009)
 map <- generate_map(trends,select = TRUE,stratify_by = strat_sel,species = species)
 mapshort <- generate_map(trends_short,select = TRUE,stratify_by = strat_sel,species = species)
 print(map + mapshort)
@@ -184,15 +184,15 @@ if(!is.na(alt_n)){
                            jags_data = stan_data,
                            backend = "Stan",
                            stratify_by = strat_sel,
-                           alternate_n = alt_n,
-                           regions = c("continental","national","prov_state"))
+ #                          regions = c("continental","national","prov_state"),
+                           alternate_n = alt_n)
   
 }else{
   inds2 <- generate_indices(jags_mod = stanfit,
                             jags_data = stan_data,
                             backend = "Stan",
-                            stratify_by = strat_sel,
-                            regions = c("continental","national","prov_state"))
+#                            regions = c("continental","national","prov_state"),
+                            stratify_by = strat_sel)
 }
 
 trends_roll <- NULL
@@ -208,7 +208,7 @@ trends_roll <- trends_roll %>%
 trends_roll_out <- bind_rows(trends_roll_out,trends_roll)
 
 t_roll <- trends_roll %>% 
-  filter(Region_type %in% c("continental","national"))
+  filter(Region_type %in% c("continental"))
 
 t_roll_plot <- ggplot(data = t_roll,
                       aes(x = End_year,
@@ -235,30 +235,74 @@ dev.off()
 # Animated annual trend maps
 
 # 
-# animated_trend_map(fit = stanfit,
-#                                rawdata = stan_data,
-#                                stratification = strat_sel,
-#                                alt_n = alt_n,
-#                                firstYear = NULL,
-#                                lastYear = NULL,
-#                    trend_length = 10,
-#                                res_mag = 3,
-#                                dir_out = "Figures/",
-#                    file_name_prefix = paste0(model_sel,"_"),
-#                                species = species)
-# 
+animated_trend_map(fit = stanfit,
+                               rawdata = stan_data,
+                               stratification = strat_sel,
+                               alt_n = alt_n,
+                               firstYear = NULL,
+                               lastYear = NULL,
+                   trend_length = 10,
+                               res_mag = 3,
+                               dir_out = "Figures/",
+                   file_name_prefix = paste0(model_sel,"_"),
+                               species = species)
+
 
 }
 
-  trends_roll_out 
-  
-  trends_ann_out 
-  
-  ind_all_out
-  inds_all_out
-  
-  
+  # trends_roll_out 
+  # 
+  # trends_ann_out 
+  # 
+  # ind_all_out
+  # inds_all_out
+  # 
+  # 
 
+  write.csv(trends_short_long,
+            paste0("trends/",species_f,"_long_short_trends.csv"))
+  # overplot the trends by BCR country and survey-wide --------------
+bcrs <- trends_short_long %>% 
+    select(Region_type,Region) %>% 
+    filter(Region_type == "bcr") %>% 
+    distinct()
+  
+  
+  region_order <- c("Continental","CA","US",bcrs$Region)
+  
+  allregs_t <- trends_short_long %>% 
+    filter(Region_type %in% c("bcr","continental","national")) %>% 
+    mutate(trend_time = paste(Start_year,End_year,sep = "-"),
+           Region_order = factor(Region,ordered = TRUE,levels = region_order)) %>% 
+    arrange(Region_order) 
+  
+  contsp <- ggplot(data = allregs_t,aes(x = Region_order,y = Trend,colour = model))+
+    geom_errorbar(aes(ymin = Trend_Q0.025,ymax = Trend_Q0.975),
+                  width = 0,alpha = 0.5,
+                  position = position_dodge(width = 0.5))+
+    geom_errorbar(aes(ymin = Trend_Q0.25,ymax = Trend_Q0.75),
+                  width = 0,alpha = 0.75,size = 0.8,
+                  position = position_dodge(width = 0.5))+
+    geom_point(position = position_dodge(width = 0.5),size = 0.85)+
+    xlab("")+
+    geom_hline(yintercept = 0)+
+    geom_hline(yintercept = 100*(0.7^(1/10)-1),colour = "darkorange")+
+    geom_hline(yintercept = 100*(0.5^(1/10)-1),colour = "darkred")+
+    theme_bw()+
+    coord_flip()+
+    scale_colour_viridis_d(begin = 0.3,end = 0.9)+
+    guides(colour = guide_legend(title = "Alternative Trend Models",reverse = TRUE))+
+    facet_wrap(facet = vars(trend_time),ncol = 2,
+               scales = "free_x")
+  
+  pdf(paste0("Figures/",species_f,"long_short_term_trends.pdf"),
+      width = 8,
+      height = 4.5) 
+  print(contsp)
+  dev.off()  
+  
+  
+  
 # overplot the trends by state country and survey-wide --------------
 
   provs <- c("AB","SK","BC","YT","NT","MB","NU",
@@ -316,7 +360,7 @@ dev.off()
 # overplot the trajectories by same groupings -----------------------------------
 
 allregs_i <- ind_all_out %>% 
-  filter(Region_type %in% c("prov_state","continental","national"),
+  filter(Region_type %in% c("bcr","prov_state","continental","national"),
          model != "firstdiff_NonHier") %>% 
   mutate(Region_order = factor(Region,ordered = TRUE,levels = region_order),
          obs_mean = ifelse(nrts == 0,NA,obs_mean)) %>% 
@@ -327,6 +371,12 @@ provs_regs_i <- allregs_i %>%
 
 national_regs_i <- allregs_i %>% 
   filter(Region_type != "prov_state")
+
+bcr_regs_i <- allregs_i %>% 
+  filter(Region_type == "bcr")
+
+national_regs_i <- allregs_i %>% 
+  filter(Region_type %in% c("continental","national"))
 
 conttraj <- ggplot(data = national_regs_i,aes(x = Year,y = Index,group = model))+
   # geom_ribbon(aes(ymin = Index_q_0.025,ymax = Index_q_0.975,
@@ -340,7 +390,7 @@ conttraj <- ggplot(data = national_regs_i,aes(x = Year,y = Index,group = model))
   theme_bw()+
   theme(legend.position = "bottom")+
   scale_y_continuous(limits = c(0,NA))+
-  scale_colour_viridis_d(begin = 0.3,end = 0.9,aesthetics = c("fill","colour"),
+  scale_colour_viridis_d(begin = 0.3,end = 0.8,aesthetics = c("fill","colour"),
                          guide = guide_legend(title = "Alternative Trend Models",reverse = TRUE))+
   facet_wrap(facet = vars(Region_order),ncol = 3,
              scales = "free_y")
@@ -354,8 +404,10 @@ dev.off()
 obs_means <- provs_regs_i %>% 
   filter(model == "gamye")
 
+obs_means <- bcr_regs_i %>% 
+  filter(model == "gamye_Spatial")
 
-provtraj <- ggplot(data = provs_regs_i,aes(x = Year,y = Index,group = model))+
+provtraj <- ggplot(data = bcr_regs_i,aes(x = Year,y = Index,group = model))+
   # geom_ribbon(aes(ymin = Index_q_0.025,ymax = Index_q_0.975,
   #                 fill = model),
   #               alpha = 0.2)+
