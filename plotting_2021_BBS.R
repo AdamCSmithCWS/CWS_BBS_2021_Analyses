@@ -5,6 +5,7 @@
 ## generate_indices() and extract_index_data() (the second is called within generate_indices())
 source("functions/posterior_summary_functions.R")
 source("functions/generate-indices-alt.R")
+source("functions/plot-indices-alt.R")
 
 
 setwd("C:/Users/SmithAC/Documents/GitHub/bbsStanBayes")
@@ -114,13 +115,17 @@ inds <- generate_indices(jags_mod = stanfit,
 trajs <- plot_indices(inds,
                       species = species,
                       add_observed_means = TRUE,
-                      add_number_routes = TRUE)
+                      add_number_routes = TRUE,
+                      add_adjusted_means = TRUE,
+                      add_extras = TRUE)
 
 trajshort <- plot_indices(inds,
                       species = species,
                       add_observed_means = TRUE,
                       add_number_routes = TRUE,
-                      min_year = 2004)
+                      min_year = 2004,
+                      add_adjusted_means = TRUE,
+                      add_extras = TRUE)
 
 pdf(file = paste0("Figures/",out_base,".pdf"),width = 11,height = 8.5)
 for(i in names(trajs)){
