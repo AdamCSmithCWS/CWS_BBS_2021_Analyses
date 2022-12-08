@@ -349,7 +349,7 @@ generate_indices <- function(jags_mod = NULL,
       }
 
       obs_df <- obs_df %>% 
-        mutate(obs_mean_scaled = obs_mean*re_scale) 
+        mutate(obs_mean_scaled = obs_mean/re_scale) 
       
 
       if(!is.null(st_rem)){
@@ -405,8 +405,8 @@ generate_indices <- function(jags_mod = NULL,
       data_summaryr$Year <- as.integer((data_summaryr$Year - 1) + mr_year)
       data_summaryr$obs_mean <- as.numeric(by(obs_df[,3],INDICES = obs_df[,1],FUN = sum,na.rm = TRUE))
       data_summaryr$obs_mean_scaled <- as.numeric(by(obs_df[,"obs_mean_scaled"],INDICES = obs_df[,1],FUN = sum,na.rm = TRUE))
-      data_summaryr$mean_obs <- as.numeric(by(obs_df[,"mean_obs"],INDICES = obs_df[,1],FUN = sum,na.rm = TRUE))
-      data_summaryr$mean_site <- as.numeric(by(obs_df[,"mean_site"],INDICES = obs_df[,1],FUN = sum,na.rm = TRUE))
+      data_summaryr$mean_obs <- as.numeric(by(obs_df[,"mean_obs"],INDICES = obs_df[,1],FUN = mean,na.rm = TRUE))
+      data_summaryr$mean_site <- as.numeric(by(obs_df[,"mean_site"],INDICES = obs_df[,1],FUN = mean,na.rm = TRUE))
       
       data_summaryr$nrts <- as.numeric(by(obs_df[,4],INDICES = obs_df[,1],FUN = sum,na.rm = TRUE))
       data_summaryr$nnzero <- as.numeric(by(obs_df[,5],INDICES = obs_df[,1],FUN = sum,na.rm = TRUE))
