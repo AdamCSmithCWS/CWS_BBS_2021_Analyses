@@ -3,6 +3,9 @@
 ### NOTE: this script depends on a development version of bbsBayes at the following repo: https://github.com/AdamCSmithCWS/bbsBayes/tree/testing_Stan 
 ## the specific changes in that branch are in the two functions
 ## generate_indices() and extract_index_data() (the second is called within generate_indices())
+source("functions/posterior_summary_functions.R")
+source("functions/generate-indices-alt.R")
+
 
 setwd("C:/Users/SmithAC/Documents/GitHub/bbsStanBayes")
 
@@ -31,9 +34,9 @@ if(fit_spatial){
 output_dir <- "F:/bbsStanBayes/output" # Stan writes output to files as it samples. This is great because it's really stable, but the user needs to think about where to store that output
 
 
-pdf(paste0("Figures/temp_trajectories2.pdf"),
-    width = 11,
-    height = 8.5)
+# pdf(paste0("Figures/temp_trajectories2.pdf"),
+#     width = 11,
+#     height = 8.5)
 
 jj = 131 #connecticut warbler
 regs_to_estimate <- c("stratum","continental","national","prov_state","bcr")
@@ -66,12 +69,22 @@ if(model_sel == "gamye"){alt_n <- "nsmooth"}
 if(model_sel == "slope"){alt_n <- "nslope"}
 
 if(model_sel %in% c("firstdiff","gam")){alt_n <- NA}
+if(is.null(stan_data$strat_name)){
+  stan_data$strat_name <- stan_data$alt_data$strat_name
+}
 ind <- generate_indices(jags_mod = stanfit,
                         jags_data = stan_data,
                         backend = "Stan",
                         stratify_by = strat_sel,
                         alternate_n = "n",
                         regions = regs_to_estimate)
+
+# extract_observer_route_effects <- function(jags_mod = stan_fit,
+#                                            jags_dat = stan_data){
+#   
+#   
+#   
+# }
 
 
 if(!is.na(alt_n)){
@@ -85,6 +98,17 @@ inds <- generate_indices(jags_mod = stanfit,
 }else{
   inds <- ind
 }
+
+## add option to choose which observed means get added and whether to add the mean effects
+## add option to choose which observed means get added and whether to add the mean effects
+## add option to choose which observed means get added and whether to add the mean effects
+## add option to choose which observed means get added and whether to add the mean effects
+## add option to choose which observed means get added and whether to add the mean effects
+## add option to choose which observed means get added and whether to add the mean effects
+## add option to choose which observed means get added and whether to add the mean effects
+## add option to choose which observed means get added and whether to add the mean effects
+
+
 
 
 trajs <- plot_indices(inds,
@@ -153,8 +177,6 @@ dev.off()
 
 
 }
-
-dev.off()
 
 
 

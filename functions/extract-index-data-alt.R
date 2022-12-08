@@ -20,6 +20,8 @@ extract_index_data <- function(jags_mod = NULL,
                                backend = NULL)
 {
 
+  source("functions/posterior_summary_functions.R")
+  
   if(is.null(backend))
   {
     if(any(grepl("jags",class(jags_mod)))){
@@ -33,6 +35,7 @@ extract_index_data <- function(jags_mod = NULL,
   {
     stratify_by <- jags_mod$stratify_by
   }
+  
   all_area_weights <- utils::read.csv(system.file("area-weight", strata[[stratify_by]], package = "bbsBayes"))
 
   # Extract posterior data and other data from jags_mod
@@ -57,26 +60,58 @@ extract_index_data <- function(jags_mod = NULL,
       n[,i,j] <- as.numeric((out_list[,paste0(alt_n,"[",i,",",j,"]")]))
     }
 
-     #nj <- jagsfit$sims.list[[alt_n]] ## simple array with n[1:niter,1:nstrata,1:nyears]
     bugs_data <- jags_data
 
-    # if (isTRUE(jags_mod$parallel))
-    # {
-    #   bugs_data <- jags_mod$model$cluster1$data()
-    # }else
-    # {
-    #   bugs_data <- jags_mod$model$data()
-    # }
     y_min <- 1
     y_max <- bugs_data$nyears
 
+# extract observer and route estimates ------------------------------------
+  sd_ste <- posterior_samples(jags_mod,
+                              parm = "sdste") %>% 
+    select(.draw,.value) %>% 
+    rename(sdste = .value)
+  
+  ste_list <- posterior_samples(jags_mod,
+                                parm = "ste_raw",
+                                dims = c("site")) %>% 
+    left_join(.,sd_ste,by = ".draw") %>% 
+    mutate(.value = .value*sdste) %>% 
+    posterior_sums(.,dims = c("site")) %>% 
+    select(site,mean) %>% 
+    rename(ste = mean)
+      
+  
+  sd_obs <- posterior_samples(jags_mod,
+                              parm = "sdobs") %>% 
+    select(.draw,.value) %>% 
+    rename(sdobs = .value)
+  
+  obs_list <- posterior_samples(jags_mod,
+                                parm = "obs_raw",
+                                dims = c("observer")) %>% 
+    left_join(.,sd_obs,by = ".draw") %>% 
+    mutate(.value = .value*sdobs) %>% 
+    posterior_sums(.,dims = c("observer")) %>% 
+    select(observer,mean) %>% 
+    rename(obs = mean)
+  
+  surveys <- data.frame(site = bugs_data$site,
+                        observer = bugs_data$observer,
+                        strat = bugs_data$strat,
+                        year = bugs_data$year) %>% 
+    left_join(.,obs_list,by = "observer") %>% 
+    left_join(.,ste_list,by = "site")
+  
+  annual_means <- surveys %>% 
+    group_by(year,strat) %>% 
+    summarise(mean_site = mean(ste),
+              mean_obs = mean(obs),
+              e_site = exp(mean_site),
+              e_obs = exp(mean_obs),
+              re_scale = e_site*e_obs,
+              .groups = "keep")
+  
   }
-
-
-
-
-
-
 
 
 
@@ -104,7 +139,7 @@ extract_index_data <- function(jags_mod = NULL,
                                                  "strat_name",
                                                  "strat",
                                                  "observer",
-                                                 "route",
+                                                 "site",
                                                  "firstyr")]
       names(original_data) <- c("Year","Year_Factored","Count","Stratum","Stratum_Factored","Observer_Factored","Route","First_Year")
 
@@ -114,6 +149,7 @@ extract_index_data <- function(jags_mod = NULL,
     original_data = NULL
   }
   return(list(n = n,
+              annual_means = annual_means,
               area_weights = area_weights,
               y_min = y_min,
               y_max = y_max,

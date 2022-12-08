@@ -41,7 +41,7 @@ save(list = c("jagsfit","jags_data","species"),
 # Stan models -------------------------------------------------------------
 
 
-fit_spatial <- FALSE # TRUE = spatial sharing of information and FALSE = non-spatial sharing
+fit_spatial <- TRUE # TRUE = spatial sharing of information and FALSE = non-spatial sharing
 
 source("Functions/prepare-data-Stan.R")
 if(fit_spatial){
@@ -54,6 +54,7 @@ sp_data <- prepare_data(bbs_data,
                         species_to_run = species,
                         model = sel_model,
                         min_max_route_years = 2,
+                        min_n_routes = 1,
                         basis = "mgcv")
 
 

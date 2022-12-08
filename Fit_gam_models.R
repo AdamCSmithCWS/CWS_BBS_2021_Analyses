@@ -2,7 +2,7 @@ library(bbsBayes)
 library(tidyverse)
 library(cmdstanr)
 
-bbs_data <- stratify(by = "bbs_usgs")
+bbs_data <- stratify(by = "latlong")
 
 
 setwd("C:/GitHub/bbsStanBayes")
@@ -10,7 +10,7 @@ setwd("C:/GitHub/bbsStanBayes")
 
 
 
-species <- "Pacific Wren"
+species <- "Horned Grebe"
 species_f <- gsub(species,pattern = " ",replacement = "_") # species name without spaces
 
 model_sel <- "gam"
@@ -53,7 +53,8 @@ sp_data <- prepare_data(bbs_data,
                         species_to_run = species,
                         model = model_sel,
                         min_max_route_years = 2,
-                        basis = "mgcv")
+                        basis = "mgcv",
+                        min_n_routes = 1)
 
 
 
@@ -79,7 +80,7 @@ neighbours <- neighbours_define(real_strata_map = realized_strata_map, #sf map o
                                 buffer = TRUE,
                                 convex_hull = FALSE,
                                 plot_neighbours = TRUE,
-                                species = "Pacific Wren",
+                                species = species,
                                 plot_dir = "maps/",
                                 plot_file = "_strata_map",
                                 save_plot_data = TRUE,
