@@ -142,7 +142,6 @@ generate_indices <- function(jags_mod = NULL,
     mr_year <- min(data_list$r_year)
   }
 
-
   if(is.null(max_backcast)){
     max_backcast <- length(y_min:y_max)
   }
@@ -175,13 +174,12 @@ generate_indices <- function(jags_mod = NULL,
 
   n_samples <- dim(n)[1]
   
-strata <- vector("list",length = 5)
-names(strata) <- c("state", "bcr", "latlong", "bbs_cws", "bbs_usgs")
-strata[[1]] <- "stateprov"
-strata[[2]] <- "bcr"
-strata[[3]] <- "db"
-strata[[4]] <- "stratcan"
-strata[[5]] <- "strat"
+  strata <- list(bcr = "bcr",
+                 latlong = "db",
+                 state = "stateprov",
+                 bbs_usgs = "strat",
+                 bbs_cws = "stratcan")
+  
 
   if(is.null(alt_region_names)){
     region_names <- utils::read.csv(paste0(path.package("bbsBayes"),"/composite-regions/", strata[[stratify_by]],".csv"),stringsAsFactors = FALSE)

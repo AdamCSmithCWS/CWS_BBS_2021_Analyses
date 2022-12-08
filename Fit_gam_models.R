@@ -2,6 +2,8 @@ library(bbsBayes)
 library(tidyverse)
 library(cmdstanr)
 
+
+#bbs_data <- stratify(by = "bbs_usgs")
 bbs_data <- stratify(by = "latlong")
 
 
@@ -11,6 +13,7 @@ setwd("C:/GitHub/bbsStanBayes")
 
 
 species <- "Horned Grebe"
+
 species_f <- gsub(species,pattern = " ",replacement = "_") # species name without spaces
 
 model_sel <- "gam"
@@ -52,6 +55,7 @@ if(fit_spatial){
 sp_data <- prepare_data(bbs_data,
                         species_to_run = species,
                         model = model_sel,
+                        min_n_routes = 1,
                         min_max_route_years = 2,
                         basis = "mgcv",
                         min_n_routes = 1)
