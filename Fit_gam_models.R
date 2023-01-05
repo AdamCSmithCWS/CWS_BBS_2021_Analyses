@@ -2,6 +2,7 @@ library(bbsBayes)
 library(tidyverse)
 library(cmdstanr)
 
+
 #bbs_data <- stratify(by = "bbs_usgs")
 bbs_data <- stratify(by = "latlong")
 
@@ -11,8 +12,8 @@ setwd("C:/GitHub/bbsStanBayes")
 
 
 
-species <- "Pacific Wren"
-species <- "Golden-winged Warbler"
+species <- "Horned Grebe"
+
 species_f <- gsub(species,pattern = " ",replacement = "_") # species name without spaces
 
 model_sel <- "gam"
@@ -56,7 +57,8 @@ sp_data <- prepare_data(bbs_data,
                         model = model_sel,
                         min_n_routes = 1,
                         min_max_route_years = 2,
-                        basis = "mgcv")
+                        basis = "mgcv",
+                        min_n_routes = 1)
 
 
 

@@ -50,13 +50,13 @@ save(list = c("nrecs_sp","splitters","stratified_data","split_miny"),
 
 # Run in separate R sessions ----------------------------------------------
 
-GG <- 1
+GG <- 4
 
 library(bbsBayes)
 library(tidyverse)
 library(cmdstanr)
 
-consider_spatial <- TRUE
+consider_spatial <- FALSE
 
 
 #setwd("C:/GitHub/bbsStanBayes")
@@ -77,7 +77,7 @@ if(consider_spatial){
 
 output_dir <- "output/" # Stan writes output to files as it samples. This is great because it's really stable, but the user needs to think about where to store that output
 
-for(jj in (1:nrow(species_to_run))){
+for(jj in c(31:21)){#rev(1:nrow(species_to_run))){
 
 species <- as.character(species_to_run[jj,"english"])
 species_f <- as.character(species_to_run[jj,"species_file"])
@@ -118,7 +118,8 @@ if(fit_spatial){
   
 } 
 
-if(!file.exists(paste0(output_dir,"/",out_base,"_Stan_fit.RData")) |
+if((!file.exists(paste0(output_dir,"/",out_base,"_Stan_fit.RData")) | 
+    !file.exists(paste0(output_dir,"/",out_base,"-1.csv"))) |
    species %in% splitters){
   
  if(species %in% splitters){start_year <- split_miny[species]}
@@ -251,7 +252,7 @@ stan_model <- cmdstan_model(mod.file, stanc_options = list("Oexperimental"))
 
 
 
-
+print(paste("starting",out_base,Sys.time()))
 
 stanfit <- stan_model$sample(
   data=stan_data,

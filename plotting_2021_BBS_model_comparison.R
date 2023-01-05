@@ -25,6 +25,7 @@ models_sel = c("gamye","gamye_Spatial",
                "firstdiff_Spatial","firstdiff_NonHier",
                "firstdiff")
 
+
 models_sel = c("gamye_Spatial",
                "firstdiff_Spatial")
 
@@ -35,7 +36,7 @@ output_dir <- "output" # Stan writes output to files as it samples. This is grea
 #output_dir <- "F:/bbsStanBayes/output" # Stan writes output to files as it samples. This is great because it's really stable, but the user needs to think about where to store that output
 
 
-regs_to_estimate <- c("stratum","continental","national","prov_state","bcr")
+regs_to_estimate <- c("stratum","continental")
 
 
   jj <- which(nrecs_sp[,"english"] == species)
@@ -58,6 +59,11 @@ if(!file.exists(paste0(output_dir,"/",out_base,"_Stan_fit.RData"))){next}
 
 load(paste0(output_dir,"/",out_base,"_Stan_fit.RData"))
 
+}
+
+  trends_roll_out 
+  
+  trends_ann_o
 alt_n <- ifelse(grepl(model_sel, pattern = "gamye"),"nsmooth",NA)
 
 
@@ -89,6 +95,9 @@ inds_all_out <- bind_rows(inds_all_out,inds_out_tmp)
   inds <- ind
 }
 
+g3 <- 13
+fyr_short <- 2021-g3
+
 ind_out_tmp <- ind$data_summary %>% 
   mutate(model = model_sel,
          species = species)
@@ -104,7 +113,7 @@ trajshort <- plot_indices(inds,
                       species = species,
                       add_observed_means = TRUE,
                       add_number_routes = TRUE,
-                      min_year = 2004)
+                      min_year = fyr_short-5)
 
 pdf(file = paste0("Figures/",out_base,".pdf"),width = 11,height = 8.5)
 for(i in names(trajs)){
@@ -128,7 +137,7 @@ for(i in names(trajs)){
   n2 <- ind$data_summary %>% 
     filter(Region_alt == gsub(i,pattern = "_",replacement = "-"),
            #Region_type == "stratum",
-           Year >= 2004)
+           Year >= fyr_short-5)
   t2 <- t2 +
     geom_ribbon(data = n2, aes(x = Year,y = Index,ymin = Index_q_0.025,ymax = Index_q_0.975),
                 fill = grey(0.5),alpha = 0.2)+
@@ -140,9 +149,10 @@ for(i in names(trajs)){
 }
 
 
-
 trends <- generate_trends(inds)
-trends_short <- generate_trends(inds,Min_year = 2009)
+
+trends_short <- generate_trends(inds,Min_year = fyr_short)
+
 map <- generate_map(trends,select = TRUE,stratify_by = strat_sel,species = species)
 mapshort <- generate_map(trends_short,select = TRUE,stratify_by = strat_sel,species = species)
 print(map + mapshort)
@@ -163,12 +173,12 @@ trends_short_long <- bind_rows(trends_short_long,trends_short)
 
 
 
-starts <- c(1970,seq(1976,2011,by = 5))
+starts <- c(seq(1970,fyr_short,by = 5),fyr_short)
 maps <- vector("list",length = length(starts))
 names(maps) <- paste(starts)
 
 for(dd in starts){
-  trends_10temp <- generate_trends(inds,Min_year = dd,Max_year = dd+10)
+  trends_10temp <- generate_trends(inds,Min_year = dd,Max_year = dd+g3)
   maps[[paste(dd)]] <- generate_map(trends_10temp,select = TRUE,stratify_by = strat_sel,species = species)
   print(maps[[paste(dd)]])
 }
@@ -177,27 +187,29 @@ for(dd in starts){
 
 # Rolling 10-year trends --------------------------------------------------
 
-starts <- c(1970:2011)
+starts <- c(1966:fyr_short)
 if(!is.na(alt_n)){
   
   inds2 <- generate_indices(jags_mod = stanfit,
                            jags_data = stan_data,
                            backend = "Stan",
                            stratify_by = strat_sel,
- #                          regions = c("continental","national","prov_state"),
+                           alternate_n = alt_n,
+                           regions = c("continental"),
                            alternate_n = alt_n)
-  
+
 }else{
   inds2 <- generate_indices(jags_mod = stanfit,
                             jags_data = stan_data,
                             backend = "Stan",
-#                            regions = c("continental","national","prov_state"),
-                            stratify_by = strat_sel)
+                            stratify_by = strat_sel,
+                            regions = c("continental"))
+
 }
 
 trends_roll <- NULL
 for(dd in starts){
-  trends_10temp <- generate_trends(inds2,Min_year = dd,Max_year = dd+10)
+  trends_10temp <- generate_trends(inds2,Min_year = dd,Max_year = dd+g3)
   trends_roll <- bind_rows(trends_roll,trends_10temp)
 
 }
@@ -220,7 +232,7 @@ t_roll_plot <- ggplot(data = t_roll,
                     ymax = Trend_Q0.75),
                 width = 0,alpha = 0.2,size = 1.5)+
   geom_point()+
-  labs(title = paste(species,model_sel,"Rolling ten-year trends through time"))+
+  labs(title = paste(species,model_sel,"Rolling",g3,"year trends through time"))+
   ylab("Trend %/year")+
   xlab("End of ten-year trend")+
   geom_hline(yintercept = 0)+
@@ -241,6 +253,7 @@ animated_trend_map(fit = stanfit,
                                alt_n = alt_n,
                                firstYear = NULL,
                                lastYear = NULL,
+                   trend_length = g3,
                    trend_length = 10,
                                res_mag = 3,
                                dir_out = "Figures/",
@@ -248,7 +261,6 @@ animated_trend_map(fit = stanfit,
                                species = species)
 
 
-}
 
   # trends_roll_out 
   # 

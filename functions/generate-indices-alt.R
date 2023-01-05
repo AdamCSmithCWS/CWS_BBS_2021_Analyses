@@ -148,9 +148,20 @@ generate_indices <- function(jags_mod = NULL,
 
   bugs_data = data_list$bugs_data
 
-  rawall = data.frame(year = bugs_data$year,
-                      count = bugs_data$count,
-                      strat = bugs_data$strat)
+  # if(!is.null(jags_data)){
+  #   
+  # rawall = data.frame(year = jags_data$year,
+  #                     count = jags_data$count,
+  #                     strat = jags_data$strat,
+  #                     observer = jags_data$observer,
+  #                     site = jags_data$site)
+  # 
+  #}else{
+    rawall = data.frame(year = bugs_data$year,
+                        count = bugs_data$count,
+                        strat = bugs_data$strat,
+                        observer = bugs_data$observer)
+  #}
   rawnonz = rawall[which(rawall$count > 0),]
 
   fyearbystrat = tapply(rawnonz$year,rawnonz[,c("strat")],min,na.rm = TRUE)
@@ -169,12 +180,11 @@ generate_indices <- function(jags_mod = NULL,
                  bbs_usgs = "strat",
                  bbs_cws = "stratcan")
   
+
   if(is.null(alt_region_names)){
-    region_names <- utils::read.csv(paste0(system.file("composite-regions", package = "bbsBayes"), "/",strata[[stratify_by]],".csv"),stringsAsFactors = FALSE)
+    region_names <- utils::read.csv(paste0(path.package("bbsBayes"),"/composite-regions/", strata[[stratify_by]],".csv"),stringsAsFactors = FALSE)
   }else{
-    region_names_o <- utils::read.csv(paste0(system.file("composite-regions", package = "bbsBayes"), "/",strata[[stratify_by]],".csv"),stringsAsFactors = FALSE)
-    
-    # region_names_o <- utils::read.csv(system.file("composite-regions", strata[[stratify_by]], package = "bbsBayes"),stringsAsFactors = FALSE)
+    region_names_o <-utils::read.csv(paste0(path.package("bbsBayes"),"/composite-regions/", strata[[stratify_by]],".csv"),stringsAsFactors = FALSE)
 
     region_names <- alt_region_names
     if(nrow(region_names) != nrow(region_names_o)){
@@ -210,6 +220,52 @@ generate_indices <- function(jags_mod = NULL,
 
   N_all <- list()
   n_index <- 0
+  
+  # extract observer and route estimates ------------------------------------
+ 
+  if(backend == "Stan"){
+    
+    sd_ste <- posterior_samples(jags_mod,
+                              parm = "sdste") %>% 
+    select(.draw,.value) %>% 
+    rename(sdste = .value)
+  
+  ste_list <- posterior_samples(jags_mod,
+                                parm = "ste_raw",
+                                dims = c("site")) %>% 
+    left_join(.,sd_ste,by = ".draw") %>% 
+    mutate(.value = .value*sdste) %>% 
+    posterior_sums(.,dims = c("site")) %>% 
+    select(site,mean) %>% 
+    rename(ste = mean)
+  
+  
+  sd_obs <- posterior_samples(jags_mod,
+                              parm = "sdobs") %>% 
+    select(.draw,.value) %>% 
+    rename(sdobs = .value)
+  
+  obs_list <- posterior_samples(jags_mod,
+                                parm = "obs_raw",
+                                dims = c("observer")) %>% 
+    left_join(.,sd_obs,by = ".draw") %>% 
+    mutate(.value = .value*sdobs) %>% 
+    posterior_sums(.,dims = c("observer")) %>% 
+    select(observer,mean) %>% 
+    rename(obs = mean)
+  
+  surveys <- data.frame(site = bugs_data$site,
+                        observer = bugs_data$observer,
+                        strat = bugs_data$strat,
+                        year = bugs_data$year) %>% 
+    left_join(.,obs_list,by = "observer") %>% 
+    left_join(.,ste_list,by = "site")
+  
+
+  }else{
+    
+  }
+  
   for(rr in regions){ #selecting the type of composite region
 
     rrall = unique(region_names[,rr]) #list of composite regions of type rr
@@ -236,7 +292,7 @@ generate_indices <- function(jags_mod = NULL,
       # it's designed to estimate the proportional contribution (excluding abundance) of that region to the composite trajectory
 
       if(length(strata_sel)<1){next}
-
+      
 
       obs_df = data.frame(year = integer(),
                           strat = integer(),
@@ -247,6 +303,18 @@ generate_indices <- function(jags_mod = NULL,
                           strata_rem_flag = double())
       for (j in strata_sel)
       {
+        #summaryise the observer adn route effects for these strata by year
+        annual_means <- surveys %>% 
+          filter(strat %in% j) %>% 
+          group_by(year) %>% 
+          summarise(mean_site = mean(ste),
+                    mean_obs = mean(obs),
+                    e_site = exp(mean_site),
+                    e_obs = exp(mean_obs),
+                    re_scale = e_site*e_obs,
+                    .groups = "keep")
+        
+        
         rawst <- raw[which(raw$strat == j),c("year","count")]
         yrs <- data.frame(year = c(y_min:y_max))
         rawst <- merge(rawst,yrs,by = "year",all = TRUE)
@@ -274,10 +342,15 @@ generate_indices <- function(jags_mod = NULL,
                                nnzero = nnzero,
                                nrts_total = as.integer(nrts_total_by_strat[j]),
                                strata_rem_flag = strem_flag)
-
+        obs_df_t <- obs_df_t %>% 
+          left_join(.,annual_means,by = "year") 
+          
         obs_df <- rbind(obs_df,obs_df_t)
       }
 
+      obs_df <- obs_df %>% 
+        mutate(obs_mean_scaled = obs_mean/re_scale) 
+      
 
       if(!is.null(st_rem)){
         if(drop_exclude){
@@ -331,6 +404,10 @@ generate_indices <- function(jags_mod = NULL,
 
       data_summaryr$Year <- as.integer((data_summaryr$Year - 1) + mr_year)
       data_summaryr$obs_mean <- as.numeric(by(obs_df[,3],INDICES = obs_df[,1],FUN = sum,na.rm = TRUE))
+      data_summaryr$obs_mean_scaled <- as.numeric(by(obs_df[,"obs_mean_scaled"],INDICES = obs_df[,1],FUN = sum,na.rm = TRUE))
+      data_summaryr$mean_obs <- as.numeric(by(obs_df[,"mean_obs"],INDICES = obs_df[,1],FUN = mean,na.rm = TRUE))
+      data_summaryr$mean_site <- as.numeric(by(obs_df[,"mean_site"],INDICES = obs_df[,1],FUN = mean,na.rm = TRUE))
+      
       data_summaryr$nrts <- as.numeric(by(obs_df[,4],INDICES = obs_df[,1],FUN = sum,na.rm = TRUE))
       data_summaryr$nnzero <- as.numeric(by(obs_df[,5],INDICES = obs_df[,1],FUN = sum,na.rm = TRUE))
       data_summaryr$nrts_total <- as.numeric(by(obs_df[,6],INDICES = obs_df[,1],FUN = sum,na.rm = TRUE))
@@ -342,6 +419,9 @@ generate_indices <- function(jags_mod = NULL,
     }
   }
 
+  data_summary <- data_summary %>% 
+    mutate(obs_mean = ifelse(nrts == 0,NA,obs_mean),
+           obs_mean_scaled = ifelse(nrts == 0,NA,obs_mean_scaled))
 
   return(list(data_summary = data_summary,
               samples = N_all,
