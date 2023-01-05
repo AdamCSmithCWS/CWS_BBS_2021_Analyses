@@ -15,7 +15,7 @@ model_sel <- "firstdiff"
 Non_hierarchical <- FALSE
 
 
-species <- "Golden-winged Warbler"
+species <- "Grasshopper Sparrow"
 species_f <- gsub(species,pattern = " ",replacement = "_") # species name without spaces
 
 
@@ -79,8 +79,7 @@ sp_data <- prepare_data(bbs_data,
                         species_to_run = species,
                         model = model_sel,
                         min_max_route_years = 2,
-                        min_n_routes = 1)
-
+                        min_n_routes = 3)
 
 stan_data <- sp_data
 

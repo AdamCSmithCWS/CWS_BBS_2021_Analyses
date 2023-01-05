@@ -23,25 +23,6 @@ species_f <- gsub(species,pattern = " ",replacement = "_") # species name withou
 
 model_sel <- "gamye"
 
-# # fit using JAGS ----------------------------------------------------------
-# jags_data <- prepare_data(strat_data = bbs_data,
-#                           species_to_run = species,
-#                           model = model_sel,
-#                           min_max_route_years = 2,
-#                           heavy_tailed = TRUE)
-# 
-# jagsfit <- bbsBayes::run_model(jags_data = jags_data,
-#                                parameters_to_save = c("n","nsmooth",
-#                                                       "B.X","beta.X","STRATA",
-#                                                       "sdobs","sdbeta","sdX","eta"),
-#                                parallel = TRUE,
-#                                modules = "glm")
-# 
-# save(list = c("jagsfit","jags_data","species"),
-#      file = paste("output/saved_bbsBayes_fit",model,species_f,".RData",sep = "_"))
-# ## the bbsBayes prepare_data function doesn't create all of the objects required for the Stan versions of the models
-# ## this source() call over-writes the bbsBayes function prepare_data()
-# 
 
 
 
@@ -121,11 +102,16 @@ tmp_model <- stan_data[["model"]]
 tmp_alt_data <- stan_data[["alt_data"]]
 
 
-source("Functions/CV_folds_define_default_BBS.R")
 
 stan_data[["stratify_by"]] <- NULL 
 stan_data[["model"]] <- NULL
 stan_data[["alt_data"]] <- NULL
+
+
+
+# Defining cross-validation folds -----------------------------------------
+source("Functions/CV_folds_define_default_BBS.R")
+
 
 orig_df <- tmp_alt_data[[1]]
 
