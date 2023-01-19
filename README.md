@@ -1,7 +1,9 @@
 # bbsStanBayes
 
-early attempt to translate bbsBayes models from JAGS to Stan (<https://github.com/BrandonEdwards/bbsBayes>)
+Canadian Wildlife Service, BBS status and trend analyses for 2021 data version.
 
-Initially working through the GAMYE and Slope models from bbsBayes package.
+This analysis was done using bbsBayes (<https://github.com/BrandonEdwards/bbsBayes>), and some additional functions and code to fit the models in Stan, instead of JAGS.
 
-Currently the plotting script "plotting_w\_alternate_bbsBayes.R" relies on a development version of bbsBayes at this repo <https://github.com/AdamCSmithCWS/bbsBayes/tree/testing_Stan>, which includes modifications to the `generate_indices()` function and a function on which it depends `extract_index_data()`
+This repo includes some git commits that tracked initial work to support the new version of bbsBayes - the package bbsBayes2 (<https://github.com/bbsBayes/bbsBayes2>).
+
+Scripts that are numbered 1, 1a, 2, 3, 4, and 5, include the full workflow from raw BBS data to the trend estimates, trend-maps, population trajectories, and rolling short-term trends necessary to recreate the 2021 CWS trend analyses.

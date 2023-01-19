@@ -39,6 +39,7 @@
 #'   \item{startyear}{first year used in the summary, scale 1966:2018}
 #'
 #' @importFrom stats quantile
+#' @importFrom HDInterval hdi
 #'
 #' @examples
 #'
@@ -78,13 +79,35 @@ generate_indices <- function(jags_mod = NULL,
                              stratify_by = NULL,
                              backend = NULL,
                              quantiles = c(0.025,0.05,0.25,0.75,0.95,0.975),
-                             regions = c("stratum","continental"),
+                             regions = c("continental","stratum"),
                              alternate_n = "n",
                              startyear = NULL,
                              drop_exclude = FALSE,
                              max_backcast = NULL,
-                             alt_region_names = NULL)
+                             alt_region_names = NULL,
+                             st_rem = NULL,
+                             hpdi = TRUE,
+                             n_obs_backcast = 3)
 {
+  if(hpdi){
+  interval_function <- function(x,probs = 0.025){
+    if(probs < 0.5){
+    q2 <- 1-(probs*2)
+    i <- 1
+    }else{
+      q2 <- 1-((1-probs)*2)
+      i <- 2
+    }
+    y <- HDInterval::hdi(x,q2)[i]
+    return(y)
+  }
+  }else{
+  interval_function <- function(x,probs = 0.025){
+    y <- stats::quantile(x,probs)
+    return(y)
+  }
+  }
+  
   if (is.null(jags_mod))
   {
     stop("No model output supplied to generate_indices()."); return(NULL)
@@ -284,7 +307,7 @@ generate_indices <- function(jags_mod = NULL,
 
       st_sela <- as.character(region_names[which(region_names[,rr] == rrs),"region"])
 
-      st_rem <- NULL
+      st_rem2 <- st_rem
       strata_sel <- area_weights[which(area_weights$region %in% st_sela),"num"]
       st_sel <- area_weights[which(area_weights$region %in% st_sela),"region"]
       pz_area <- area_weights[,"area_sq_km"]*non_zero_weight
@@ -309,8 +332,8 @@ generate_indices <- function(jags_mod = NULL,
           group_by(year) %>% 
           summarise(mean_site = mean(ste),
                     mean_obs = mean(obs),
-                    e_site = exp(mean_site),
-                    e_obs = exp(mean_obs),
+                    e_site = mean(exp(ste)),
+                    e_obs = mean(exp(obs)),
                     re_scale = e_site*e_obs,
                     .groups = "keep")
         
@@ -325,8 +348,8 @@ generate_indices <- function(jags_mod = NULL,
         nnzero <- as.numeric(by(rawst[,2],INDICES = rawst[,1],FUN = function(x){length(which(x>0))}))
         strata_p <- pz_area[j]/sum(pz_area[strata_sel])
 
-        if(sum(nnzero[1:max_backcast]) < 1 & as.integer(fyearbystrat[j]) > y_min){ #if no observations of the species in the first 5 years, then remove the strata from trend summaries
-          st_rem <- c(st_rem,as.character(area_weights[which(area_weights$num == j),"region"]))
+        if(sum(nnzero[1:max_backcast]) <= n_obs_backcast & as.integer(fyearbystrat[j]) > y_min ){ #if no observations of the species in the first 5 years, then remove the strata from trend summaries
+          st_rem2 <- c(st_rem2,as.character(area_weights[which(area_weights$num == j),"region"]))
           strem_flag <- c(rep(strata_p,fyearbystrat[j]-(y_min-1)),rep(0,y_max-fyearbystrat[j]))
           #if(length(strata_sel) == 1){break}
         }else{
@@ -334,6 +357,7 @@ generate_indices <- function(jags_mod = NULL,
 
         }
 
+        st_rem2 <- unique(st_rem2)
 
         obs_df_t <- data.frame(year = c(y_min:y_max),
                                strat = j,
@@ -352,11 +376,16 @@ generate_indices <- function(jags_mod = NULL,
         mutate(obs_mean_scaled = obs_mean/re_scale) 
       
 
-      if(!is.null(st_rem)){
-        if(drop_exclude){
-          strata_sel <- strata_sel[-which(strata_sel %in% area_weights[which(area_weights$region %in% st_rem),"num"])]
-          st_sel <- st_sel[-which(st_sel %in% st_rem)]
+      if(!is.null(st_rem2)){
+        if(drop_exclude & (rr != "stratum") & length(strata_sel) > 1){
+          strata_sel <- strata_sel[-which(strata_sel %in% area_weights[which(area_weights$region %in% st_rem2),"num"])]
+          st_sel <- st_sel[-which(st_sel %in% st_rem2)]
+          st_rem3 <- st_rem2
+        }else{
+          st_rem3 <- NULL
         }
+      }else{
+        st_rem3 <- NULL
       }
 
       if(length(strata_sel)<1){next}
@@ -395,11 +424,13 @@ generate_indices <- function(jags_mod = NULL,
                                   Region_alt = region_alt_name,
                                   Region_type = rr,
                                   Strata_included = paste(st_sel,collapse = " ; "),
-                                  Strata_excluded = paste(st_rem,collapse = " ; "),
+                                  Strata_excluded = paste(st_rem3,collapse = " ; "),
                                   Index = n_median,
                                   stringsAsFactors = FALSE)
       for(qq in quantiles){
-        data_summaryr[,paste0("Index_q_",qq)] <- apply(N,2,stats::quantile,probs = qq)
+        
+        data_summaryr[,paste0("Index_q_",qq)] <- apply(N,2,interval_function,probs = qq)
+        
       }
 
       data_summaryr$Year <- as.integer((data_summaryr$Year - 1) + mr_year)

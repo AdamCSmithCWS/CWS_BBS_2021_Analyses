@@ -28,7 +28,7 @@ name_simpl_function <- function(y){
 nrecs_sp <- stratified_data$bird_strat %>% 
   group_by(AOU) %>% 
   summarise(num_counts = n(),
-            num_routes = length(unique(Route))) %>% 
+            num_routes = length(unique(rt.uni))) %>% 
   left_join(.,stratified_data$species_strat,by = c("AOU" = "sp.bbs")) %>% 
   filter(num_counts > 200,
          !grepl("unid",english)) %>% 
@@ -48,7 +48,7 @@ save(list = c("nrecs_sp","splitters","stratified_data","split_miny"),
 
 
 
-# Run in separate R sessions ----------------------------------------------
+# Run in 1-9 separate R sessions for each value of nrecs_sp$grouping (ugly, I know) ----------------------------------------------
 
 GG <- 4
 
@@ -59,34 +59,38 @@ library(cmdstanr)
 consider_spatial <- FALSE
 
 
+# using setwd() because RStudio sessions are fragile
 #setwd("C:/GitHub/bbsStanBayes")
-#setwd("C:/Users/SmithAC/Documents/GitHub/bbsStanBayes")
+setwd("C:/Users/SmithAC/Documents/GitHub/bbsStanBayes")
 
 load("species_lists.RData")
 model = "gamye"
 
 
-species_to_run <- nrecs_sp %>% 
-  filter(grouping == GG)
+# species_to_run <- nrecs_sp %>% 
+#   filter(grouping == GG)
+
+# rerun <- readRDS("temp_species_to_rerun.rds")
+# GG <- 1
+
+species_to_run <- nrecs_sp 
+
 
 source("Functions/prepare-data-Stan.R")
 if(consider_spatial){
   source("Functions/neighbours_define.R") # function to generate spatial neighbourhoods to add to the spatial applications of the models
 }
-#output_dir <- "F:/bbsStanBayes/output/" # Stan writes output to files as it samples. This is great because it's really stable, but the user needs to think about where to store that output
+output_dir <- "F:/bbsStanBayes/output/" # Stan writes output to files as it samples. This is great because it's really stable, but the user needs to think about where to store that output
 
-output_dir <- "output/" # Stan writes output to files as it samples. This is great because it's really stable, but the user needs to think about where to store that output
+#output_dir <- "output/" # Stan writes output to files as it samples. This is great because it's really stable, but the user needs to think about where to store that output
 
-for(jj in c(31:21)){#rev(1:nrow(species_to_run))){
-
+for(jj in rev(1:nrow(species_to_run))){
 species <- as.character(species_to_run[jj,"english"])
+
+#species <- as.character(rerun[GG,"species"])
+
+jj <- which(species_to_run$english == species)
 species_f <- as.character(species_to_run[jj,"species_file"])
-
-jj <- which(nrecs_sp$english == "Golden-winged Warbler")
-species <- as.character(nrecs_sp[jj,"english"])
-species_f <- as.character(nrecs_sp[jj,"species_file"])
-
-## replaces the bbsBayes prepare_dta function because it includes additional infor required for Stan models
 
 
 ## Temporarily prepare the data for the species to see how many strata are likely
@@ -118,10 +122,10 @@ if(fit_spatial){
   
 } 
 
-if((!file.exists(paste0(output_dir,"/",out_base,"_Stan_fit.RData")) | 
-    !file.exists(paste0(output_dir,"/",out_base,"-1.csv"))) |
-   species %in% splitters){
-  
+ if((!file.exists(paste0(output_dir,"/",out_base,"_Stan_fit.RData")) | 
+     !file.exists(paste0(output_dir,"/",out_base,"-1.csv"))) |
+    species %in% splitters){
+#   
  if(species %in% splitters){start_year <- split_miny[species]}
   
   sp_data <- prepare_data(strat_data = stratified_data,
@@ -129,6 +133,7 @@ if((!file.exists(paste0(output_dir,"/",out_base,"_Stan_fit.RData")) |
                           model = model,
                           min_year = start_year,
                           min_max_route_years = 2,
+                          #n_knots = 8,
                           basis = "mgcv")
   
   
@@ -215,6 +220,7 @@ init_def <- function(){ list(noise_raw = rnorm(stan_data$ncounts*stan_data$use_p
 
 
 }else{
+  ##mod.file = paste0("models/",model,"_bbs_CV_alt_sdbeta.stan") ## alternative priors for some species with convergence issues in data sparse regions
   mod.file = paste0("models/",model,"_bbs_CV.stan")
   out_base <- paste(species_f,model,"BBS",sep = "_")
   
@@ -262,9 +268,9 @@ stanfit <- stan_model$sample(
   iter_sampling=1000,
   parallel_chains = 3,
   #pars = parms,
-  adapt_delta = 0.95,
+  #adapt_delta = 0.95,
   max_treedepth = 13,
-  seed = 123,
+  #seed = 123,
   init = init_def,
   output_dir = output_dir,
   output_basename = out_base)
@@ -291,7 +297,7 @@ save(list = c("stanfit","stan_data",
 print(paste("Completed",out_base))
 }else{
   print(paste("Skipped",out_base,"already run"))
-  
+
 }
 }
 

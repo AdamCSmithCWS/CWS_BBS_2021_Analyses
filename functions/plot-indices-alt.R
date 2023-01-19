@@ -56,6 +56,8 @@ plot_indices <- function(indices_list = NULL,
   {
     to_plot <- indices[which(indices$Region_alt == i), ]
     
+    upy <- max(to_plot$uci,na.rm = TRUE)/5
+    
     if(add_number_routes){
       
       if(max(to_plot$nrts) > 200){
@@ -75,10 +77,15 @@ plot_indices <- function(indices_list = NULL,
       dattc = data.frame(Year = rep(as.integer(names(ncby_y)),times = ncby_y))
     }
     
-    
+    if(upy*5 < 1){uplim <- (upy*5)*1.15}else{uplim <- NA}
     if(add_observed_means){
       
       annotobs = to_plot[4,c("obs_mean","Year")]
+      
+      if(upy*5 < 1){
+        mx_mean <- max(c(to_plot$obs_mean,to_plot$obs_mean_scaled),na.rm = TRUE)
+        uplim <- max(c((upy*5)*1.15,mx_mean*1.15),na.rm = TRUE)
+        }else{uplim <- NA}
       
       p <- ggplot2::ggplot() +
         ggplot2::theme(panel.grid.major = ggplot2::element_blank(),
@@ -92,12 +99,11 @@ plot_indices <- function(indices_list = NULL,
                       x = "Year",
                       y = "Annual index of abundance (mean count)") +
         ggplot2::geom_point(data = to_plot,ggplot2::aes(x = Year,y = obs_mean),colour = grDevices::grey(0.6),
-                            alpha = 0.4,
-                            shape = 21)+
+                            alpha = 0.4)+
         ggplot2::geom_line(data = to_plot, ggplot2::aes(x = Year, y = Index), colour = cl, size = line_width) +
         ggplot2::geom_ribbon(data = to_plot, ggplot2::aes(x = Year, ymin = lci, ymax = uci),fill = cl,alpha = 0.3)+
         ggplot2::scale_x_continuous(breaks = yys)+
-        ggplot2::scale_y_continuous(limits = c(0,NA))+
+        ggplot2::coord_cartesian(ylim = c(0,uplim))+
         ggplot2::annotate(geom = "text",x = annotobs$Year,y = annotobs$obs_mean,label = "",colour = grDevices::grey(0.6))
       
       if(add_number_routes){
@@ -112,7 +118,9 @@ plot_indices <- function(indices_list = NULL,
         p <- p + 
           ggplot2::geom_point(data = to_plot,
                             ggplot2::aes(x = Year,y = obs_mean_scaled),
-                            colour = grDevices::grey(0.6))
+                            colour = grDevices::grey(0.6),
+                            alpha = 0.5,
+                            shape = 21)
 
       }
       
@@ -150,8 +158,8 @@ plot_indices <- function(indices_list = NULL,
         ggplot2::geom_line(data = to_plot, ggplot2::aes(x = Year, y = Index), colour = cl, size = line_width) +
         ggplot2::geom_ribbon(data = to_plot, ggplot2::aes(x = Year, ymin = lci, ymax = uci),fill = cl, alpha = 0.3)+
         ggplot2::scale_x_continuous(breaks = yys)+
-        ggplot2::scale_y_continuous(limits = c(0,NA))
-      if(add_number_routes){
+        ggplot2::coord_cartesian(ylim = c(0,uplim))
+        if(add_number_routes){
         
         p <- p + ggplot2::geom_dotplot(data = dattc,mapping = ggplot2::aes(x = Year),drop = TRUE,binaxis = "x", stackdir = "up",method = "histodot",binwidth = 1,width = 0.2,inherit.aes = FALSE,fill = grDevices::grey(0.6),colour = grDevices::grey(0.6),alpha = 0.2,dotsize = 0.3)+
           ggplot2::annotate(geom = "text",x = min(dattc$Year)+5,y = 0,label = annot,alpha = 0.4,colour = grDevices::grey(0.6))
