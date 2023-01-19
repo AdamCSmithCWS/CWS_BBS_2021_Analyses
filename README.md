@@ -1,4 +1,4 @@
-# bbsStanBayes
+# CWS 2021 data-version Trend Analysis
 
 Canadian Wildlife Service, BBS status and trend analyses for 2021 data version.
 
