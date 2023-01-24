@@ -84,6 +84,16 @@ load("species_lists.RData") # loads objects created at the beginning of the scri
 
 species_to_run <- nrecs_sp 
 
+sp_tmp <- c("(Northwestern Crow) American Crow",
+              "Wood Stork",
+              "Cedar Waxwing",
+              "Northern Shoveler",
+              "Lesser Scaup",
+              "White Ibis",
+              "American Woodcock",
+              "Common Eider",
+              "White-winged Scoter")
+
 # sp_tmp <- c("American Robin",
 #             "Barn Swallow",
 #             "House Sparrow",
@@ -91,11 +101,11 @@ species_to_run <- nrecs_sp
 #             "Carolina Wren",
 #             "Greater Roadrunner")
 # 
-# species_to_run <- filter(species_to_run,
-#                          english %in% sp_tmp)
+species_to_run <- filter(species_to_run,
+                         english %in% sp_tmp)
 # 
 # Species loop to generate the indices in parallel ------------------------------------------------------------
-n_cores <- 6#length(provs)
+n_cores <- 9#
 cluster <- makeCluster(n_cores, type = "PSOCK")
 registerDoParallel(cluster)
 

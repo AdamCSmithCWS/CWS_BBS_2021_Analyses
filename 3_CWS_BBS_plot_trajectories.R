@@ -90,15 +90,23 @@ CV_threshold <- function(m,ci,thresh = 100){
 }
 
 
-
-
-sp_tmp <- c("American Robin",
-            "Barn Swallow",
-            "House Sparrow",
-            "American Crow",
-            "Carolina Wren",
-            "Greater Roadrunner")
-
+sp_tmp <- c("(Northwestern Crow) American Crow",
+            "Wood Stork",
+            "Cedar Waxwing",
+            "Northern Shoveler",
+            "Lesser Scaup",
+            "White Ibis",
+            "American Woodcock",
+            "Common Eider",
+            "White-winged Scoter")
+# 
+# sp_tmp <- c("American Robin",
+#             "Barn Swallow",
+#             "House Sparrow",
+#             "American Crow",
+#             "Carolina Wren",
+#             "Greater Roadrunner")
+# 
 species_to_run <- filter(species_to_run,
                          english %in% sp_tmp)
 
@@ -114,7 +122,7 @@ species_to_run <- filter(species_to_run,
 
 
 # Species loop to plot diagnostic trajectories ------------------------------------------------------------
-n_cores <- 6#length(provs)
+n_cores <- 9#
 cluster <- makeCluster(n_cores, type = "PSOCK")
 registerDoParallel(cluster)
 
@@ -243,8 +251,7 @@ for(i in names(trajs)){
   }
   print(t1 + t2)
   
-  
-  
+
 }
 
 dev.off()  # close diagnostic trajectory plotting
@@ -380,6 +387,8 @@ fullrun <- foreach(jj = rev(1:nrow(species_to_run)),
                               axis_text_size = 10)
     
     
+    traj_out <- vector("list",3)
+    names(traj_out) <- c("Continental","Canada","United_States_of_America")
     
     pdf(file = paste0("Figures/trajectories/",species_f_bil,"_trajectories.pdf"),width = 11,height = 8.5)
     for(i in names(trajs)){
@@ -415,10 +424,15 @@ fullrun <- foreach(jj = rev(1:nrow(species_to_run)),
       print(t1 + t2)
       
       
-      
+      if(i %in% c("Continental","Canada","United_States_of_America")){
+        traj_out[[i]] <- t1
+      }
     }
     
     dev.off()  # 
+    
+    
+    saveRDS(traj_out,file = paste0(output_dir,"/temp_rds_storage/",species_f,"_highlevel_trajs.RDS"))
     
     
     # 

@@ -6,4 +6,9 @@ This analysis was done using bbsBayes (<https://github.com/BrandonEdwards/bbsBay
 
 This repo includes some git commits that tracked initial work to support the new version of bbsBayes - the package bbsBayes2 (<https://github.com/bbsBayes/bbsBayes2>).
 
+These analyses were conducted using Stan, and versions of the models that are included in the new bbsBayes2 package.
+
 Scripts that are numbered 1, 1a, 2, 3, 4, and 5, include the full workflow from raw BBS data to the trend estimates, trend-maps, population trajectories, and rolling short-term trends necessary to recreate the 2021 CWS trend analyses.
+
+
+

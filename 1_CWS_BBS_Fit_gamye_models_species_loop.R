@@ -52,6 +52,9 @@ save(list = c("nrecs_sp","splitters","stratified_data","split_miny"),
 
 GG <- 4
 
+alt_priors <- TRUE
+
+
 library(bbsBayes)
 library(tidyverse)
 library(cmdstanr)
@@ -67,13 +70,25 @@ load("species_lists.RData")
 model = "gamye"
 
 
+rerun_sp <- c("(Northwestern Crow) American Crow",
+              "Wood Stork",
+              "Cedar Waxwing",
+              "Northern Shoveler",
+              "Lesser Scaup",
+              "White Ibis",
+              "American Woodcock",
+              "Common Eider",
+              "White-winged Scoter")
+
 # species_to_run <- nrecs_sp %>% 
 #   filter(grouping == GG)
 
 # rerun <- readRDS("temp_species_to_rerun.rds")
 # GG <- 1
 
-species_to_run <- nrecs_sp 
+species_to_run <- nrecs_sp %>% 
+  filter(english %in% rerun_sp)
+
 
 
 source("Functions/prepare-data-Stan.R")
@@ -89,7 +104,7 @@ species <- as.character(species_to_run[jj,"english"])
 
 #species <- as.character(rerun[GG,"species"])
 
-jj <- which(species_to_run$english == species)
+#jj <- which(species_to_run$english == species)
 species_f <- as.character(species_to_run[jj,"species_file"])
 
 
@@ -122,9 +137,9 @@ if(fit_spatial){
   
 } 
 
- if((!file.exists(paste0(output_dir,"/",out_base,"_Stan_fit.RData")) | 
-     !file.exists(paste0(output_dir,"/",out_base,"-1.csv"))) |
-    species %in% splitters){
+ # if((!file.exists(paste0(output_dir,"/",out_base,"_Stan_fit.RData")) | 
+ #     !file.exists(paste0(output_dir,"/",out_base,"-1.csv"))) |
+ #    species %in% splitters){
 #   
  if(species %in% splitters){start_year <- split_miny[species]}
   
@@ -220,8 +235,12 @@ init_def <- function(){ list(noise_raw = rnorm(stan_data$ncounts*stan_data$use_p
 
 
 }else{
-  ##mod.file = paste0("models/",model,"_bbs_CV_alt_sdbeta.stan") ## alternative priors for some species with convergence issues in data sparse regions
-  mod.file = paste0("models/",model,"_bbs_CV.stan")
+  
+  if(alt_priors){
+    mod.file = paste0("models/",model,"_bbs_CV_alt_sdbeta.stan") ## alternative priors for some species with convergence issues in data sparse regions
+  }else{
+    mod.file = paste0("models/",model,"_bbs_CV.stan")
+  }
   out_base <- paste(species_f,model,"BBS",sep = "_")
   
   init_def <- function(){ list(noise_raw = rnorm(stan_data$ncounts*stan_data$use_pois,0,0.1),
@@ -258,7 +277,7 @@ stan_model <- cmdstan_model(mod.file, stanc_options = list("Oexperimental"))
 
 
 
-print(paste("starting",out_base,Sys.time()))
+print(paste("starting",out_base,Sys.time(),mod.file))
 
 stanfit <- stan_model$sample(
   data=stan_data,
@@ -295,10 +314,10 @@ save(list = c("stanfit","stan_data",
 
 
 print(paste("Completed",out_base))
-}else{
-  print(paste("Skipped",out_base,"already run"))
-
-}
+# }else{
+#   print(paste("Skipped",out_base,"already run"))
+# 
+# }
 }
 
 

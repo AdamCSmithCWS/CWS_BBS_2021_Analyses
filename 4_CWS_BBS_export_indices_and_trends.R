@@ -126,13 +126,8 @@ names(backcast_cuts) <- c("High","Medium")
 
 
 
-
-
-
-
-
 # Species loop to save indices and generate trends ------------------------------------------------------------
-n_cores <- 6#length(provs)
+n_cores <- 10#length(provs)
 cluster <- makeCluster(n_cores, type = "PSOCK")
 registerDoParallel(cluster)
 
@@ -267,7 +262,7 @@ fullrun <- foreach(jj = (1:nrow(species_to_run)),
         
         
   
-        write.csv(tall,file = paste0("trends/",species_f_bil,"_trends.csv"),
+        write.csv(tall,file = paste0("trends/estimates/",species_f_bil,"_trends.csv"),
                   row.names = FALSE)
         
         
@@ -318,6 +313,13 @@ fullrun <- foreach(jj = (1:nrow(species_to_run)),
         print(mapshort_10 / mapshort_90)
         dev.off()
     
+        traj_out <- vector("list",2)
+        names(traj_out) <- c("Long-term","Short-term")
+          traj_out[[1]] <- map
+          traj_out[[2]] <- mapshort
+          
+  
+        saveRDS(traj_out,file = paste0(output_dir,"/temp_rds_storage/",species_f,"_trend_maps.RDS"))
         
         
 
@@ -343,7 +345,7 @@ fullrun <- foreach(jj = (1:nrow(species_to_run)),
                  bbs_num = as.integer(aou),
                  index_type = "Smooth")
         
-        write.csv(inds_out,file = paste0("indices/",species_f_bil,"_smoothed_annual_indices.csv"),
+        write.csv(inds_out,file = paste0("indices/smooth/",species_f_bil,"_smoothed_annual_indices.csv"),
                   row.names = FALSE)
         
   } #temp end loop
@@ -352,4 +354,54 @@ fullrun <- foreach(jj = (1:nrow(species_to_run)),
 stopCluster(cl = cluster)
 
 
+
+
+
+
+
+
+
+
+
+
+
+# All species high-level plots --------------------------------------------
+
+
+pdf(file = paste0("Figures/BBS_High_level_summary_",YYYY,".pdf"),
+    height = 9,
+    width = 17)
+
+for(jj in (1:nrow(species_to_run))){
+  
+  
+  species <- as.character(species_to_run[jj,"english"])
+  species_f <- as.character(species_to_run[jj,"species_file"])
+  espece <- as.character(species_to_run[jj,"french"])
+  species_f_bil <- gsub(paste(species,espece),pattern = "[[:space:]]|[[:punct:]]",
+                        replacement = "_")
+  aou <- as.character(species_to_run[jj,"AOU"])
+  
+
+tmaps <- readRDS(paste0(output_dir,"/temp_rds_storage/",species_f,"_trend_maps.RDS"))
+
+trajs <- readRDS(paste0(output_dir,"/temp_rds_storage/",species_f,"_highlevel_trajs.RDS"))
+
+design <- "
+124
+135
+"
+
+layt <- trajs[[1]] + trajs[[2]] + trajs[[3]] +
+  tmaps[[1]] + tmaps[[2]] +
+  plot_layout(design = design,
+              guides = "collect") 
+
+print(layt)
+
+print(species)
+
+}
+
+dev.off()
 

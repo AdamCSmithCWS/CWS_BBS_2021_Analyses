@@ -83,7 +83,8 @@ registerDoParallel(cluster)
 
 
 fullrun <- foreach(jj = rev(1:nrow(species_to_run)),
-                   .packages = c("posterior","tidyverse","bbsBayes"),
+                   .packages = c("posterior","tidyverse","bbsBayes",
+                                 "patchwork"),
                    .inorder = FALSE,
                    .errorhandling = "pass") %dopar%
   {
