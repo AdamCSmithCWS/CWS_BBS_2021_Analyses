@@ -99,7 +99,7 @@ output_dir <- "F:/bbsStanBayes/output/" # Stan writes output to files as it samp
 
 #output_dir <- "output/" # Stan writes output to files as it samples. This is great because it's really stable, but the user needs to think about where to store that output
 
-for(jj in rev(1:nrow(species_to_run))){
+for(jj in 1:(nrow(species_to_run)-1)){
 species <- as.character(species_to_run[jj,"english"])
 
 #species <- as.character(rerun[GG,"species"])
