@@ -28,7 +28,7 @@ name_simpl_function <- function(y){
 nrecs_sp <- stratified_data$bird_strat %>% 
   group_by(AOU) %>% 
   summarise(num_counts = n(),
-            num_routes = length(unique(Route))) %>% 
+            num_routes = length(unique(rt.uni))) %>% 
   left_join(.,stratified_data$species_strat,by = c("AOU" = "sp.bbs")) %>% 
   filter(num_counts > 200,
          !grepl("unid",english)) %>% 
@@ -43,14 +43,14 @@ split_miny = c(1990,1990,1978,1978)
 names(split_miny) <- splitters
 
 
-save(list = c("nrecs_sp","splitters","stratified_data"),
+save(list = c("nrecs_sp","splitters","stratified_data","split_miny"),
      file = "species_lists.RData")
 
 
 
-# Run in separate R sessions ----------------------------------------------
+# Run in 1-9 separate R sessions for each value of nrecs_sp$grouping (ugly, I know) ----------------------------------------------
 
-GG <- 1
+GG <- 4
 
 library(bbsBayes)
 library(tidyverse)
@@ -59,6 +59,7 @@ library(cmdstanr)
 consider_spatial <- FALSE
 
 
+# using setwd() because RStudio sessions are fragile
 #setwd("C:/GitHub/bbsStanBayes")
 setwd("C:/Users/SmithAC/Documents/GitHub/bbsStanBayes")
 
@@ -66,8 +67,14 @@ load("species_lists.RData")
 model = "gamye"
 
 
-species_to_run <- nrecs_sp %>% 
-  filter(grouping == GG)
+# species_to_run <- nrecs_sp %>% 
+#   filter(grouping == GG)
+
+# rerun <- readRDS("temp_species_to_rerun.rds")
+# GG <- 1
+
+species_to_run <- nrecs_sp 
+
 
 source("Functions/prepare-data-Stan.R")
 if(consider_spatial){
@@ -75,17 +82,28 @@ if(consider_spatial){
 }
 output_dir <- "F:/bbsStanBayes/output/" # Stan writes output to files as it samples. This is great because it's really stable, but the user needs to think about where to store that output
 
+#output_dir <- "output/" # Stan writes output to files as it samples. This is great because it's really stable, but the user needs to think about where to store that output
 
-for(jj in nrow(species_to_run):1){
-
+for(jj in rev(1:nrow(species_to_run))){
 species <- as.character(species_to_run[jj,"english"])
+
+#species <- as.character(rerun[GG,"species"])
+
+jj <- which(species_to_run$english == species)
 species_f <- as.character(species_to_run[jj,"species_file"])
 
-## replaces the bbsBayes prepare_dta function because it includes additional infor required for Stan models
 
+## Temporarily prepare the data for the species to see how many strata are likely
+start_year <- NULL
 
 
 if(consider_spatial){
+  sp_data <- prepare_data(strat_data = stratified_data,
+                          species_to_run = species,
+                          model = model,
+                          min_year = start_year,
+                          min_max_route_years = 2,
+                          basis = "mgcv")
 if(sp_data$nstrata > 5){
   fit_spatial <- TRUE # TRUE = spatial sharing of information and FALSE = non-spatial sharing
   
@@ -104,12 +122,18 @@ if(fit_spatial){
   
 } 
 
-if(!file.exists(paste0(output_dir,"/",out_base,"_Stan_fit.RData"))){
+ if((!file.exists(paste0(output_dir,"/",out_base,"_Stan_fit.RData")) | 
+     !file.exists(paste0(output_dir,"/",out_base,"-1.csv"))) |
+    species %in% splitters){
+#   
+ if(species %in% splitters){start_year <- split_miny[species]}
   
   sp_data <- prepare_data(strat_data = stratified_data,
                           species_to_run = species,
                           model = model,
+                          min_year = start_year,
                           min_max_route_years = 2,
+                          #n_knots = 8,
                           basis = "mgcv")
   
   
@@ -160,11 +184,12 @@ stan_data[["node2"]] <- neighbours$node2
 tmp_stratify_by <- stan_data[["stratify_by"]]  
 tmp_model <- stan_data[["model"]]
 tmp_alt_data <- stan_data[["alt_data"]]
-
+tmp_strat_name <- tmp_alt_data[["strat_name"]]
 
 stan_data[["stratify_by"]] <- NULL 
 stan_data[["model"]] <- NULL
 stan_data[["alt_data"]] <- NULL
+stan_data[["strat_name"]] <- NULL
 
 
 
@@ -195,6 +220,7 @@ init_def <- function(){ list(noise_raw = rnorm(stan_data$ncounts*stan_data$use_p
 
 
 }else{
+  ##mod.file = paste0("models/",model,"_bbs_CV_alt_sdbeta.stan") ## alternative priors for some species with convergence issues in data sparse regions
   mod.file = paste0("models/",model,"_bbs_CV.stan")
   out_base <- paste(species_f,model,"BBS",sep = "_")
   
@@ -232,18 +258,19 @@ stan_model <- cmdstan_model(mod.file, stanc_options = list("Oexperimental"))
 
 
 
-
+print(paste("starting",out_base,Sys.time()))
 
 stanfit <- stan_model$sample(
   data=stan_data,
   refresh=100,
-  chains=3, iter_sampling=1000,
+  chains=3, 
   iter_warmup=1200,
+  iter_sampling=1000,
   parallel_chains = 3,
   #pars = parms,
-  adapt_delta = 0.95,
-  max_treedepth = 12,
-  seed = 123,
+  #adapt_delta = 0.95,
+  max_treedepth = 13,
+  #seed = 123,
   init = init_def,
   output_dir = output_dir,
   output_basename = out_base)
@@ -259,7 +286,7 @@ fit_summary <- stanfit$summary()
 stan_data[["stratify_by"]] <- tmp_stratify_by 
 stan_data[["model"]] <- tmp_model
 stan_data[["alt_data"]] <- tmp_alt_data
-stan_data[["strat_name"]] <- tmp_alt_data$strat_name
+stan_data[["strat_name"]] <- tmp_strat_name
 
 save(list = c("stanfit","stan_data",
               "out_base",
@@ -270,7 +297,7 @@ save(list = c("stanfit","stan_data",
 print(paste("Completed",out_base))
 }else{
   print(paste("Skipped",out_base,"already run"))
-  
+
 }
 }
 
