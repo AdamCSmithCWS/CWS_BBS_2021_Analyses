@@ -9,6 +9,7 @@ library(tidyverse)
 
 
 source("functions/mapping.R")
+source("functions/loess_func.R")
 
 
 # Compile all trends and indices ------------------------------------------------------
@@ -200,6 +201,9 @@ write.csv(webi, paste0("website/",YYYY," BBS indices for website.csv"),row.names
 ## see note from M-A, Teams chat Jan 26, 2023
 # ok, here we go: we want the ability to see trends for Canada (of course), but also continental, US, BCR, prov/terr, and the intersections of BCR and prov/terr, because that will feed into the goals (ugh)
 
+trends <- readRDS("output/alltrends.rds")
+indices <- readRDS("output/allindices.rds")
+#smooth_indices <- readRDS("output/allsmooth_indices.rds")
 
 trends_out <- trends %>% 
    filter((For_web == TRUE | Region %in% c("Continental","US"))) #%>% 
@@ -322,9 +326,13 @@ write.csv(socb_headings_extract,
 
 indices_socb <- indices %>% 
   filter((For_web == TRUE | Region %in% c("Continental","US"))) %>% 
-  select(Year,Region,Index,
+  group_by(species,Region,Trend_Time) %>% 
+  mutate(LOESS_index = loess_func(Index,Year)) %>% 
+  select(Year,Region,Index,Trend_Time,
          Index_q_0.05,Index_q_0.95,
-         species,espece,bbs_num)
+         species,espece,bbs_num) %>% 
+  rename(upper_ci = Index_q_0.95,
+         lower_ci = Index_q_0.05) 
 
 write.csv(indices_socb,
           file = paste0("website/BBS_",YYYY,"_annual_indices_for_socb.csv"))
