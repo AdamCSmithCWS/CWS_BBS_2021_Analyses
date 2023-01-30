@@ -367,7 +367,8 @@ stopCluster(cl = cluster)
 
 # All species high-level plots --------------------------------------------
 
-
+species_to_run <- species_to_run %>% 
+  arrange(-AOU)
 pdf(file = paste0("Figures/BBS_High_level_summary_",YYYY,".pdf"),
     height = 9,
     width = 17)
