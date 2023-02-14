@@ -31,6 +31,7 @@ library(foreach)
 
 # Generate trend uncertainty maps that show the variation in trend estimates across ~50 samples from the posterior
 # or at least a map that plots the CIs of the trends
+setwd("C:/Users/SmithAC/Documents/GitHub/bbsStanBayes")
 
 source("functions/posterior_summary_functions.R")
 source("functions/generate-indices-alt.R")
@@ -41,7 +42,6 @@ source("functions/web_trends.R")
 source("functions/reliability.R")
 
 
-setwd("C:/Users/SmithAC/Documents/GitHub/bbsStanBayes")
 
 strat_sel <- "bbs_cws"
 
@@ -187,7 +187,7 @@ fullrun <- foreach(jj = rev(1:nrow(species_to_run)),
                  espece = espece,
                  bbs_num = aou,
                  Trend_Time = "rolling-short")
-        write.csv(roll_trends_out,file = paste0("trends/",species_f_bil,"_rolling_trends.csv"),
+        write.csv(roll_trends_out,file = paste0("trends/rolling_trend_estimates/",species_f_bil,"_rolling_trends.csv"),
                   row.names = FALSE)
         
         roll_trends_out <- roll_trends_out %>% 
@@ -197,7 +197,7 @@ fullrun <- foreach(jj = rev(1:nrow(species_to_run)),
         thresh50 = (0.5^(1/short_time)-1)*100
         
         
-        pdf(paste0("trends/rolling_trends/",species_f,"_rolling_trends.pdf"),
+        pdf(paste0("trends/rolling_trend_graphs/",species_f,"_rolling_trends.pdf"),
             width = 11,
             height = 8.5)
         

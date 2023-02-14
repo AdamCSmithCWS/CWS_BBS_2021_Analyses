@@ -99,3 +99,54 @@ re_run_species <- max_fail %>%
 saveRDS(re_run_species,"temp_species_to_rerun.rds")
 
 
+
+
+
+# extracting SD parameter estimates ---------------------------------------
+
+
+
+sd_year<- NULL
+sd_other <- NULL
+
+
+for(jj in rev(1:nrow(species_to_run))){
+  
+  species <- as.character(species_to_run[jj,"english"])
+  species_f <- as.character(species_to_run[jj,"species_file"])
+
+  if(fit_spatial){
+    
+    out_base <- paste(species_f,model_sel,"Spatial","BBS",sep = "_") # text string to identify the saved output from the Stan process unique to species and model, but probably something the user wants to control
+    
+  }else{
+    out_base <- paste(species_f,model_sel,"BBS",sep = "_")
+    if(Non_hierarchical){
+      out_base <- paste(species_f,model_sel,"NonHier_BBS",sep = "_")
+    }
+  }
+  
+  if(!file.exists(paste0(output_dir,"/",out_base,"_Stan_fit.RData"))){next}
+  
+  load(paste0(output_dir,"/",out_base,"_Stan_fit.RData"))
+  
+  sd_tmp <- fit_summary %>% 
+    filter(grepl("sd",variable)) %>% 
+    mutate(species = species)
+  
+  sd_year_tmp <- sd_tmp %>% 
+    filter(grepl("year",variable))
+  
+  sd_other_tmp <- sd_tmp %>% 
+    filter(!grepl("year",variable))
+  
+  sd_year <- bind_rows(sd_year,sd_year_tmp)
+  sd_other <- bind_rows(sd_other,sd_other_tmp)
+  
+
+  write.csv(sd_year,"output/temp_sd_year.csv",
+            row.names = FALSE)
+  write.csv(sd_other,"output/temp_sd_other.csv",
+            row.names = FALSE)
+  
+}

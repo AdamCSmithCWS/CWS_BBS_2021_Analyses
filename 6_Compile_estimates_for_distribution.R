@@ -33,8 +33,8 @@ for(jj in 1:nrow(species_to_run)){
   
   
 smooth_indices_1 <- read.csv(paste0("indices/smooth/",species_f_bil,"_smoothed_annual_indices.csv"))
-indices_1 <- read.csv(paste0("indices/",species_f_bil,"_annual_indices.csv"))
-trends_1 <- read.csv(paste0("trends/estimates/",species_f_bil,"_trends.csv"))
+indices_1 <- read.csv(paste0("indices/full/",species_f_bil,"_annual_indices.csv"))
+trends_1 <- read.csv(paste0("trends/Trends_by_species/",species_f_bil,"_trends.csv"))
 
 trends <- bind_rows(trends,trends_1)  
 indices <- bind_rows(indices,indices_1)  
@@ -46,23 +46,38 @@ print(round(jj/nrow(species_to_run),2))
   
 }# end species loop
 
+numeric_cols_trends <- names(trends)[which(as.character(lapply(trends,class)) == "numeric")]
+
+trends_round <- trends %>% 
+  mutate(across(all_of(numeric_cols_trends),~signif(.,3)))
+
 saveRDS(trends,"output/alltrends.rds")
+write.csv(trends_round, paste0("website/All_",YYYY,"_BBS_trends.csv"),row.names = F)
+
+
+
+numeric_cols_indices <- names(indices)[which(as.character(lapply(indices,class)) == "numeric")]
+
+indices_round <- indices %>% 
+  mutate(across(all_of(numeric_cols_indices),~signif(.,3)))
+
 saveRDS(indices,"output/allindices.rds")
+write.csv(indices_round, paste0("website/All_",YYYY,"_BBS_indices.csv"),row.names = F)
+
+
+numeric_cols_smooth_indices <- names(smooth_indices)[which(as.character(lapply(smooth_indices,class)) == "numeric")]
+
+smooth_indices_round <- smooth_indices %>% 
+  mutate(across(all_of(numeric_cols_indices),~signif(.,3)))
 saveRDS(smooth_indices,"output/allsmooth_indices.rds")
-
-
-write.csv(indices, paste0("website/All_",YYYY,"_BBS_indices.csv"),row.names = F)
-
-write.csv(trends, paste0("website/All_",YYYY,"_BBS_trends.csv"),row.names = F)
-
-write.csv(smooth_indices, paste0("website/All_",YYYY,"_BBS_smooth_indices.csv"),row.names = F)
+write.csv(smooth_indices_round, paste0("website/All_",YYYY,"_BBS_smooth_indices.csv"),row.names = F)
 
 
 
 # Website trends ----------------------------------------------------------
 
 
-web <- trends %>% 
+web <- trends_round %>% 
   filter(For_web == TRUE,
          Region != "Continental",
          Region_type != "bcr") %>% 
@@ -168,7 +183,7 @@ write.csv(web, paste0("website/",YYYY," BBS trends for website.csv"),row.names =
 
 
 
-webi <- indices %>% 
+webi <- indices_round %>% 
   filter(For_web == TRUE,
                Region != "Continental",
                Region_type != "bcr")
@@ -201,11 +216,11 @@ write.csv(webi, paste0("website/",YYYY," BBS indices for website.csv"),row.names
 ## see note from M-A, Teams chat Jan 26, 2023
 # ok, here we go: we want the ability to see trends for Canada (of course), but also continental, US, BCR, prov/terr, and the intersections of BCR and prov/terr, because that will feed into the goals (ugh)
 
-trends <- readRDS("output/alltrends.rds")
-indices <- readRDS("output/allindices.rds")
+# trends <- readRDS("output/alltrends.rds")
+# indices <- readRDS("output/allindices.rds")
 #smooth_indices <- readRDS("output/allsmooth_indices.rds")
 
-trends_out <- trends %>% 
+trends_out <- trends_round %>% 
    filter((For_web == TRUE | Region %in% c("Continental","US"))) #%>% 
   # mutate(prob_decrease_0_25_percent = prob_decrease_0_percent-prob_decrease_25_percent,
   #        prob_decrease_25_50_percent = prob_decrease_0_percent - (prob_decrease_0_25_percent + prob_decrease_50_percent),
@@ -258,8 +273,8 @@ trend_headings_match <- c("",
                           "",
                           "Region_alt",
                           "",
-                          "",
-                          "",
+                          "espece",
+                          "species",
                           "Trend_Time",
                           "",
                           "Start_year",
@@ -324,7 +339,7 @@ write.csv(socb_headings_extract,
 
 # SOCB indices ------------------------------------------------------------
 
-indices_socb <- indices %>% 
+indices_socb <- indices_round %>% 
   filter((For_web == TRUE | Region %in% c("Continental","US"))) %>% 
   group_by(species,Region,Trend_Time) %>% 
   mutate(LOESS_index = loess_func(Index,Year)) %>% 

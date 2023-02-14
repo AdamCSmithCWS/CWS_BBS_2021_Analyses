@@ -32,6 +32,8 @@ library(foreach)
 # Generate trend uncertainty maps that show the variation in trend estimates across ~50 samples from the posterior
 # or at least a map that plots the CIs of the trends
 
+setwd("C:/Users/SmithAC/Documents/GitHub/bbsStanBayes")
+
 source("functions/posterior_summary_functions.R")
 source("functions/generate-indices-alt.R")
 source("functions/plot-indices-alt.R")
@@ -40,8 +42,6 @@ source("functions/generate-trends-alt.R")
 source("functions/web_trends.R")
 source("functions/reliability.R")
 
-
-setwd("C:/Users/SmithAC/Documents/GitHub/bbsStanBayes")
 
 strat_sel <- "bbs_cws"
 
@@ -127,7 +127,7 @@ names(backcast_cuts) <- c("High","Medium")
 
 
 # Species loop to save indices and generate trends ------------------------------------------------------------
-n_cores <- 10#length(provs)
+n_cores <- 20#length(provs)
 cluster <- makeCluster(n_cores, type = "PSOCK")
 registerDoParallel(cluster)
 
@@ -262,55 +262,54 @@ fullrun <- foreach(jj = (1:nrow(species_to_run)),
         
         
   
-        write.csv(tall,file = paste0("trends/estimates/",species_f_bil,"_trends.csv"),
+        write.csv(tall,file = paste0("trends/Trends_by_species/",species_f_bil,"_trends.csv"),
                   row.names = FALSE)
         
         
         
         map <- generate_map(trends_70,select = TRUE,stratify_by = strat_sel,
                             species = paste(species,espece))
+
+        
+        
+        map_25 <- generate_map(trends_70,select = TRUE,stratify_by = strat_sel,
+                            species = paste("25 Percentile trends",species,espece),
+                            heat_column = "Trend_Q0.25")
+        map_75 <- generate_map(trends_70,select = TRUE,stratify_by = strat_sel,
+                               species = paste("75 Percentile trends",species,espece),
+                               heat_column = "Trend_Q0.75")
+        
+        # map_10 <- generate_map(trends_70,select = TRUE,stratify_by = strat_sel,
+        #                        species = paste("10 Percentile trends",species,espece),
+        #                        heat_column = "Trend_Q0.1")
+        # map_90 <- generate_map(trends_70,select = TRUE,stratify_by = strat_sel,
+        #                        species = paste("90 Percentile trends",species,espece),
+        #                        heat_column = "Trend_Q0.9")
+        
         mapshort <- generate_map(trends_short,select = TRUE,stratify_by = strat_sel,
                                  species = paste(species,espece))
+
+        mapshort_25 <- generate_map(trends_short,select = TRUE,stratify_by = strat_sel,
+                               species = paste("25 Percentile trends",species,espece),
+                               heat_column = "Trend_Q0.25")
+        mapshort_75 <- generate_map(trends_short,select = TRUE,stratify_by = strat_sel,
+                               species = paste("75 Percentile trends",species,espece),
+                               heat_column = "Trend_Q0.75")
         
+        # mapshort_10 <- generate_map(trends_short,select = TRUE,stratify_by = strat_sel,
+        #                             species = paste("10 Percentile trends",species,espece),
+        #                             heat_column = "Trend_Q0.1")
+        # mapshort_90 <- generate_map(trends_short,select = TRUE,stratify_by = strat_sel,
+        #                             species = paste("90 Percentile trends",species,espece),
+        #                             heat_column = "Trend_Q0.9")
         
-        # map_25 <- generate_map(trends_70,select = TRUE,stratify_by = strat_sel,
-        #                     species = paste("25 Percentile trends",species,espece),
-        #                     heat_column = "Trend_Q0.25")
-        # map_75 <- generate_map(trends_70,select = TRUE,stratify_by = strat_sel,
-        #                        species = paste("75 Percentile trends",species,espece),
-        #                        heat_column = "Trend_Q0.75")
-        
-        map_10 <- generate_map(trends_70,select = TRUE,stratify_by = strat_sel,
-                               species = paste("10 Percentile trends",species,espece),
-                               heat_column = "Trend_Q0.1")
-        map_90 <- generate_map(trends_70,select = TRUE,stratify_by = strat_sel,
-                               species = paste("90 Percentile trends",species,espece),
-                               heat_column = "Trend_Q0.9")
-        
-        mapshort <- generate_map(trends_short,select = TRUE,stratify_by = strat_sel,
-                                 species = paste(species,espece))
-        # 
-        # mapshort_25 <- generate_map(trends_short,select = TRUE,stratify_by = strat_sel,
-        #                        species = paste("25 Percentile trends",species,espece),
-        #                        heat_column = "Trend_Q0.25")
-        # mapshort_75 <- generate_map(trends_short,select = TRUE,stratify_by = strat_sel,
-        #                        species = paste("75 Percentile trends",species,espece),
-        #                        heat_column = "Trend_Q0.75")
-        
-        mapshort_10 <- generate_map(trends_short,select = TRUE,stratify_by = strat_sel,
-                                    species = paste("10 Percentile trends",species,espece),
-                                    heat_column = "Trend_Q0.1")
-        mapshort_90 <- generate_map(trends_short,select = TRUE,stratify_by = strat_sel,
-                                    species = paste("90 Percentile trends",species,espece),
-                                    heat_column = "Trend_Q0.9")
-        
-        pdf(file = paste0("trends/maps/",species_f_bil,"_trend_maps.pdf"),
+        pdf(file = paste0("trends/Trend_maps/",species_f_bil,"_trend_maps.pdf"),
             width = 11,
             height = 8.5)
         print(map)
-        print(map_10 / map_90)
+        print(map_25 / map_75)
         print(mapshort)
-        print(mapshort_10 / mapshort_90)
+        print(mapshort_25 / mapshort_75)
         dev.off()
     
         traj_out <- vector("list",2)
@@ -333,7 +332,7 @@ fullrun <- foreach(jj = (1:nrow(species_to_run)),
                  espece = espece,
                  bbs_num = as.integer(aou))
         
-        write.csv(ind_out,file = paste0("indices/",species_f_bil,"_annual_indices.csv"),
+        write.csv(ind_out,file = paste0("indices/full/",species_f_bil,"_annual_indices.csv"),
                   row.names = FALSE)
         
         inds_out <- inds$data_summary %>% 
