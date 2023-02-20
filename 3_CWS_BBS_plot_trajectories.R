@@ -374,17 +374,17 @@ fullrun <- foreach(jj = rev(1:nrow(species_to_run)),
                           species = paste(species,espece, sep = " / "),
                           ci_width = 0.9,
                           min_year = fy, 
-                          title_size = 12,
-                          axis_title_size = 10,
-                          axis_text_size = 10)
+                          title_size = 10,
+                          axis_title_size = 8,
+                          axis_text_size = 8)
     
     trajshort <- plot_indices(ind,
                               species = "",
                               min_year = ((YYYY-short_time)-5), # add five years to the short-term trajectories
                               ci_width = 0.9,
-                              title_size = 12,
-                              axis_title_size = 10,
-                              axis_text_size = 10)
+                              title_size = 10,
+                              axis_title_size = 8,
+                              axis_text_size = 8)
     
     
     traj_out <- vector("list",3)
@@ -408,7 +408,7 @@ fullrun <- foreach(jj = rev(1:nrow(species_to_run)),
           geom_ribbon(data = n1, aes(x = Year,y = Index,ymin = Index_q_0.05,ymax = Index_q_0.95),
                       fill = grey(0.5),alpha = 0.2)+
           geom_line(data = n1, aes(x = Year,y = Index),
-                    colour = grey(0.5),)
+                    colour = grey(0.5))
         
         n2 <- inds$data_summary %>% 
           mutate(Reg_traj = gsub(Region_alt,pattern = "[[:punct:]]|[[:space:]]",replacement = "")) %>% 

@@ -345,7 +345,8 @@ indices_socb <- indices_round %>%
   mutate(LOESS_index = loess_func(Index,Year)) %>% 
   select(Year,Region,Index,Trend_Time,
          Index_q_0.05,Index_q_0.95,
-         species,espece,bbs_num) %>% 
+         species,espece,bbs_num,
+         LOESS_index) %>% 
   rename(upper_ci = Index_q_0.95,
          lower_ci = Index_q_0.05) 
 

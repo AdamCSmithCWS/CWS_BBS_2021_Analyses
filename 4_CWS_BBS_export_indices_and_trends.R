@@ -258,7 +258,8 @@ fullrun <- foreach(jj = (1:nrow(species_to_run)),
           mutate(precision = reliab_func_prec(Width_of_95_percent_Credible_Interval),
                  coverage = reliab_func_cov(reliab.cov),
                  backcast_reliab = reliab_func_backcast(backcast_flag),
-                 reliability = reliability_func(precision,coverage,backcast_reliab))
+                 reliability = reliability_func(precision,coverage,backcast_reliab)) %>% 
+          mutate(across(where(is.numeric),~signif(.,3)))
         
         
   
@@ -330,7 +331,8 @@ fullrun <- foreach(jj = (1:nrow(species_to_run)),
                  For_web = for_web_func(Strata_included),
                  species = species,
                  espece = espece,
-                 bbs_num = as.integer(aou))
+                 bbs_num = as.integer(aou)) %>% 
+          mutate(across(where(is.numeric),~signif(.,3)))
         
         write.csv(ind_out,file = paste0("indices/full/",species_f_bil,"_annual_indices.csv"),
                   row.names = FALSE)
@@ -342,7 +344,8 @@ fullrun <- foreach(jj = (1:nrow(species_to_run)),
                  species = species,
                  espece = espece,
                  bbs_num = as.integer(aou),
-                 index_type = "Smooth")
+                 index_type = "Smooth") %>% 
+          mutate(across(where(is.numeric),~signif(.,3)))
         
         write.csv(inds_out,file = paste0("indices/smooth/",species_f_bil,"_smoothed_annual_indices.csv"),
                   row.names = FALSE)
@@ -368,6 +371,7 @@ stopCluster(cl = cluster)
 
 species_to_run <- species_to_run %>% 
   arrange(-AOU)
+
 pdf(file = paste0("Figures/BBS_High_level_summary_",YYYY,".pdf"),
     height = 9,
     width = 17)

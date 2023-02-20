@@ -162,7 +162,7 @@ fullrun <- foreach(jj = rev(1:nrow(species_to_run)),
         starts <- c(seq(fy,(YYYY-short_time),by = 1))
         
         roll_trends_out <- NULL
-        pdf(paste0("trends/rolling_trend_maps/",species_f,"_rolling_trend_map.pdf"))
+        pdf(paste0("trends/rolling_trend_maps/",species_f_bil,"_rolling_trend_map.pdf"))
         for(dd in starts){
           trends_10temp <- generate_trends(inds,
                                            Min_year = dd,
@@ -197,7 +197,7 @@ fullrun <- foreach(jj = rev(1:nrow(species_to_run)),
         thresh50 = (0.5^(1/short_time)-1)*100
         
         
-        pdf(paste0("trends/rolling_trend_graphs/",species_f,"_rolling_trends.pdf"),
+        pdf(paste0("trends/rolling_trend_graphs/",species_f_bil,"_rolling_trends.pdf"),
             width = 11,
             height = 8.5)
         
