@@ -84,15 +84,29 @@ load("species_lists.RData") # loads objects created at the beginning of the scri
 
 species_to_run <- nrecs_sp 
 
-sp_tmp <- c("(Northwestern Crow) American Crow",
-              "Wood Stork",
-              "Cedar Waxwing",
-              "Northern Shoveler",
-              "Lesser Scaup",
-              "White Ibis",
-              "American Woodcock",
-              "Common Eider",
-              "White-winged Scoter")
+sp_tmp <- c(
+  # "(Northwestern Crow) American Crow",
+  #             "Wood Stork",
+  #             "Cedar Waxwing",
+  #             "Northern Shoveler",
+  #             "Lesser Scaup",
+  #             "White Ibis",
+  #             "American Woodcock",
+  #             "Common Eider",
+  #             "White-winged Scoter",
+            "Brown-headed Cowbird",
+            "Clark's Nutcracker",
+            "Western Wood-Pewee",
+            "Eastern Towhee",
+            "Common Grackle",
+            "Song Sparrow",
+            "Townsend's Solitaire",
+            "Black-throated Green Warbler",
+            "Common Yellowthroat",
+            "American Robin",
+            "Hermit Thrush",
+            "American Wigeon",
+            "Bufflehead")
 
 # sp_tmp <- c("American Robin",
 #             "Barn Swallow",
@@ -105,7 +119,7 @@ species_to_run <- filter(species_to_run,
                          english %in% sp_tmp)
 # 
 # Species loop to generate the indices in parallel ------------------------------------------------------------
-n_cores <- 9#
+n_cores <- 13#
 cluster <- makeCluster(n_cores, type = "PSOCK")
 registerDoParallel(cluster)
 
@@ -168,6 +182,58 @@ if(is.null(stan_data$strat_name)){
 }
 
 
+# test for extreme indices and asymetrical trends ---------------------
+
+if(!is.na(alt_n)){
+  
+  inds_test <- generate_indices(jags_mod = stanfit,
+                           jags_data = stan_data,
+                           backend = "Stan",
+                           stratify_by = strat_sel,
+                           alternate_n = alt_n,
+                           max_backcast = 15,
+                           n_obs_backcast = 2,
+                           #drop_exclude = TRUE,
+                           regions = "stratum")
+  
+
+# drop strata where indices are extreme and sparse data -------------------
+  inds_drop <- inds_test$data_summary %>%
+    filter(Year < min(Year)+25) %>%
+    group_by(Region) %>%
+    summarise(max_975 = max(Index_q_0.975),
+              mean_obs_count = mean(obs_mean,na.rm = TRUE),
+              mean_nnzero = mean(nnzero),
+              mean_obs_count = ifelse(is.na(mean_obs_count),0,mean_obs_count)) %>%
+    filter(max_975 > 1, #drop strata with upper limits > 1
+           max_975 > mean_obs_count*10, #drop strata with upper limits > 10*mean_obs_count
+           mean_nnzero < 1) #%>%  #drop strata with < 1 observation (on average) per year in the first 25 years
+    select(Region) %>% 
+    unlist() %>% 
+    as.character()
+
+  # drop strata where trends CI is strongly asymetrical -------------------
+  trend_drop <- generate_trends(inds_test,
+                              hpdi = TRUE) %>% 
+    mutate(cl_low = Trend - Trend_Q0.025,
+           cl_high = Trend_Q0.975 - Trend,
+           asym = abs(cl_high - cl_low)) %>% 
+    filter(asym > 2)%>% 
+    select(Region) %>% 
+    unlist()
+  
+  to_drop <- as.character(trend_drop[which(trend_drop %in% inds_drop)])
+  
+  if(length(to_drop) > 0){
+    strat_drop <- to_drop
+  }else{
+    strat_drop <- NULL
+  }
+}
+
+paste(species,to_drop)
+
+}
 # estimate indices --------------------------------------------------------
 
 
@@ -179,6 +245,7 @@ ind <- generate_indices(jags_mod = stanfit,
                         max_backcast = 15,
                         n_obs_backcast = 2,
                         #drop_exclude = TRUE,
+                        st_rem = strat_drop,
                         regions = regs_to_estimate)
 
 
@@ -193,7 +260,12 @@ inds <- generate_indices(jags_mod = stanfit,
                          max_backcast = 15,
                          n_obs_backcast = 2,
                          #drop_exclude = TRUE,
+                         st_rem = strat_drop,
                          regions = regs_to_estimate)
+
+
+
+
 }else{
   inds <- ind
 }

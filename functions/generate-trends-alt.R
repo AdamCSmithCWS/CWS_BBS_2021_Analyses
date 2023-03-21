@@ -77,6 +77,7 @@ generate_trends <- function(indices = NULL,
                             Max_year = NULL,
                             quantiles = c(0.025,0.05,0.25,0.75,0.95,0.975),
                             slope = FALSE,
+                            hpdi = TRUE,
                             prob_decrease = NULL,
                             prob_increase = NULL)
 {
@@ -86,6 +87,26 @@ generate_trends <- function(indices = NULL,
   }
   n_all = indices$samples
 
+  
+  if(hpdi){
+    interval_function <- function(x,probs = 0.025){
+      if(probs < 0.5){
+        q2 <- 1-(probs*2)
+        i <- 1
+      }else{
+        q2 <- 1-((1-probs)*2)
+        i <- 2
+      }
+      y <- HDInterval::hdi(x,q2)[i]
+      return(y)
+    }
+  }else{
+    interval_function <- function(x,probs = 0.025){
+      y <- stats::quantile(x,probs)
+      return(y)
+    }
+  }
+  
   if (is.null(Min_year))
   {
     min_year = indices$y_min
@@ -189,20 +210,20 @@ st_exc = unique(dsum[w_summary_rows,"Strata_excluded"])
                       Trend = median(tr),
                       stringsAsFactors = FALSE)
   for(qq in quantiles){
-    trendt[,paste0("Trend_Q",qq)] <- stats::quantile(tr,qq,names = FALSE)
+    trendt[,paste0("Trend_Q",qq)] <- interval_function(tr,qq)
   }
 
   ### estimated %change
   trendt[,"Percent_Change"] <- 100*(median(ch)-1)
   for(qq in quantiles){
-    trendt[,paste0("Percent_Change_Q",qq)] <- 100*(stats::quantile(ch,qq,names = FALSE)-1)
+    trendt[,paste0("Percent_Change_Q",qq)] <- 100*(interval_function(ch,qq)-1)
   }
 
   ### optional slope based trends
   if(slope){
     trendt[,"Slope_Trend"] <- median(sl.t)
     for(qq in quantiles){
-      trendt[,paste0("Slope_Trend_Q",qq)] <- stats::quantile(sl.t,qq,names = FALSE)
+      trendt[,paste0("Slope_Trend_Q",qq)] <- interval_function(sl.t,qq)
     }
   }
 

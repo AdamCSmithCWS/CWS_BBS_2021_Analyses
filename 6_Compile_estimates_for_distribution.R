@@ -64,7 +64,6 @@ indices_round <- indices %>%
 saveRDS(indices,"output/allindices.rds")
 write.csv(indices_round, paste0("website/All_",YYYY,"_BBS_indices.csv"),row.names = F)
 
-
 numeric_cols_smooth_indices <- names(smooth_indices)[which(as.character(lapply(smooth_indices,class)) == "numeric")]
 
 smooth_indices_round <- smooth_indices %>% 
@@ -173,6 +172,29 @@ clnms = c("sp","species","espece","geo.area","trendtype",
 web = web[,clout]
 names(web) = clnms
 
+web_species <- read.csv("alt_data/BBS_AvianCore.csv")
+names_match <- web %>% 
+  select(species,espece,bbs_num) %>% 
+  distinct()
+
+miss_bbs_num <- names_match %>% 
+  select(bbs_num,species) %>% 
+  left_join(.,
+            web_species,
+            by = c("bbs_num" = "bbsNumber"),
+            multiple = "all") %>% 
+  arrange(bbs_num) %>% 
+  filter(is.na(commonNameE))
+
+
+miss_english_names <- names_match %>% 
+  select(bbs_num,species,espece) %>% 
+  left_join(.,
+            web_species,
+            by = c("species" = "commonNameE"),
+            multiple = "all") %>% 
+  arrange(bbs_num) %>% 
+  filter(is.na(bbsNumber))
 
 
 
@@ -182,11 +204,19 @@ write.csv(web, paste0("website/",YYYY," BBS trends for website.csv"),row.names =
 
 
 
+webi_short <- indices_round %>% 
+  filter(For_web == TRUE,
+         Region != "Continental",
+         Region_type != "bcr",
+         Year > (YYYY-11)) %>% 
+  mutate(Trend_Time = "Short-term")
 
 webi <- indices_round %>% 
   filter(For_web == TRUE,
                Region != "Continental",
-               Region_type != "bcr")
+               Region_type != "bcr") %>% 
+  bind_rows(.,webi_short)
+
 
 clouti =  c("bbs_num",
             "species",
@@ -207,7 +237,10 @@ names(webi) <- clnmsi
 
 write.csv(webi, paste0("website/",YYYY," BBS indices for website.csv"),row.names = F)
 
+webi_short = webi_short[,clouti]
+names(webi_short) <- clnmsi
 
+write.csv(webi_short, paste0("website/",YYYY," Short-term only BBS indices for website.csv"),row.names = F)
 
 
 # SOCB Trends -------------------------------------------------------------
