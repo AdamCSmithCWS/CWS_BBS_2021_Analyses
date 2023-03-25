@@ -169,7 +169,7 @@ names(backcast_cuts) <- c("High","Medium")
 
 
 # Species loop to save indices and generate trends ------------------------------------------------------------
-n_cores <- 20#length(provs)
+n_cores <- 15#length(provs)
 cluster <- makeCluster(n_cores, type = "PSOCK")
 registerDoParallel(cluster)
 

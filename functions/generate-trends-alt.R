@@ -200,8 +200,8 @@ st_exc = unique(dsum[w_summary_rows,"Strata_excluded"])
   ch = n[,maxyn]/n[,minyn]
   tr = 100*((ch^(1/(maxyn-minyn)))-1)
 
-  trendt <- data.frame(Start_year = (indices$startyear+minyn)-1,
-                      End_year = (indices$startyear+maxyn)-1,
+  trendt <- data.frame(Start_year = as.integer((indices$startyear+minyn)-1),
+                      End_year = as.integer((indices$startyear+maxyn)-1),
                       Region = reg,
                       Region_alt = reg_alt,
                       Region_type = rr,
@@ -245,14 +245,14 @@ for(pp in prob_decrease){
   ###### reliability criteria
   trendt[,"Relative_Abundance"] <- mean(dsum[w_summary_rows,"Index"])
   trendt[,"Observed_Relative_Abundance"] <- mean(dsum[w_summary_rows,"obs_mean"],na.rm = TRUE)
-  trendt[,"Number_of_strata"] <- nstr
+  trendt[,"Number_of_strata"] <- as.integer(nstr)
   q1 = quantiles[1]
   q2 = quantiles[length(quantiles)]
   trendt[,paste0("Width_of_",(q2-q1)*100,"_percent_Credible_Interval")] <- trendt[,paste0("Trend_Q",q2)]-trendt[,paste0("Trend_Q",q1)]
 if(slope){
   trendt[,paste0("Width_of_",(q2-q1)*100,"_percent_Credible_Interval_Slope")] <- trendt[,paste0("Slope_Trend_Q",q2)]-trendt[,paste0("Slope_Trend_Q",q1)]
 }
-  trendt[,"Number_of_Routes"] <- mean(dsum[w_summary_rows,"nrts_total"])
+  trendt[,"Number_of_Routes"] <- as.integer(mean(dsum[w_summary_rows,"nrts_total"]))
   trendt[,"Mean_Number_of_Routes"] <- mean(dsum[w_summary_rows,"nrts"])
   trendt[,"backcast_flag"] <- mean(dsum[w_summary_rows,"backcast_flag"])
 
