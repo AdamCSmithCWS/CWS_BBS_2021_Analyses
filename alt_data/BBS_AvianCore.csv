@@ -1,0 +1,446 @@
+speciesID,familyID,bbsNumber,commonNameE,commonNameF,scientificNameE,scientificNameF,aou,descriptionE,descriptionF,XStatus,XModUTC
+ABDU,14,1330,American Black Duck,Canard noir,Anas rubripes,Anas rubripes,48,NULL,NULL,A,24:55.1
+ACFL,56,4650,Acadian Flycatcher,Moucherolle vert,Empidonax virescens,Empidonax virescens,1221,NULL,NULL,A,24:55.3
+ALFL,56,4661,Alder Flycatcher,Moucherolle des aulnes,Empidonax alnorum,Empidonax alnorum,1222,NULL,NULL,A,24:55.4
+AMAV,51,2250,American Avocet,Avocette d'Amérique,Recurvirostra americana,Recurvirostra americana,443,NULL,NULL,A,24:55.6
+AMBI,23,1900,American Bittern,Butor d'Amérique,Botaurus lentiginosus,Botaurus lentiginosus,726,NULL,NULL,A,24:55.7
+AMCO,46,2210,American Coot,Foulque d'Amérique,Fulica americana,Fulica americana,434,NULL,NULL,A,24:55.8
+AMCR,27,4880,American Crow,Corneille d'Amérique,Corvus brachyrhynchos,Corvus brachyrhynchos,1393,NULL,NULL,A,24:56.0
+AMDI,12,7010,American Dipper,Cincle d'Amérique,Cinclus mexicanus,Cinclus mexicanus,1512,NULL,NULL,A,24:56.1
+AMGO,16,5290,American Goldfinch,Chardonneret jaune,Spinus tristis,Spinus tristis,1770,NULL,NULL,A,24:56.3
+AMGP,44,2720,American Golden-Plover,Pluvier bronzé,Pluvialis dominica,Pluvialis dominica,451,NULL,NULL,A,24:56.4
+AMKE,15,3600,American Kestrel,Crécerelle d'Amérique,Falco sparverius,Falco sparverius,997,NULL,NULL,A,24:56.5
+AMOY,41,2860,American Oystercatcher,Huîtrier d'Amérique,Haematopus palliatus,Haematopus palliatus,445,NULL,NULL,A,24:56.7
+AMPI,43,6970,American Pipit,Pipit d'Amérique,Anthus rubescens,Anthus rubescens,1677,NULL,NULL,A,24:56.8
+AMRE,58,6870,American Redstart,Paruline flamboyante,Setophaga ruticilla,Setophaga ruticilla,1983,NULL,NULL,A,24:56.9
+AMRO,55,7610,American Robin,Merle d'Amérique,Turdus migratorius,Turdus migratorius,1601,NULL,NULL,A,24:57.1
+AMWI,14,1370,American Wigeon,Canard d'Amérique,Anas americana,Anas americana,43,NULL,NULL,A,24:57.2
+AMWO,47,2280,American Woodcock,Bécasse d'Amérique,Scolopax minor,Scolopax minor,511,NULL,NULL,A,24:57.4
+ANHU,24,4310,Anna's Hummingbird,Colibri d'Anna,Calypte anna,Calypte anna,335,NULL,NULL,A,24:57.5
+ANMU,33,210,Ancient Murrelet,Guillemot à cou blanc,Synthliboramphus antiquus,Synthliboramphus antiquus,554,NULL,NULL,A,24:57.6
+ARTE,21,710,Arctic Tern,Sterne arctique,Sterna paradisaea,Sterna paradisaea,614,NULL,NULL,A,24:57.7
+ATPU,33,130,Atlantic Puffin,Macareux moine,Fratercula arctica,Fratercula arctica,561,NULL,NULL,A,24:57.9
+ATSP,49,5590,American Tree Sparrow,Bruant hudsonien,Spizella arborea,Spizella arborea,1827,NULL,NULL,A,24:58.0
+ATTW,60,4010,American Three-toed Woodpecker,Pic à dos rayé,Picoides dorsalis,Picoides dorsalis,967,NULL,NULL,A,24:58.2
+AWPE,42,1250,American White Pelican,Pélican d'Amérique,Pelecanus erythrorhynchos,Pelecanus erythrorhynchos,723,NULL,NULL,A,24:58.3
+BABU_UNI,2,5077,Northern Oriole (Bullock's/Baltimore),Oriole du Nord (de Bullock/de Baltimore),Icterus sp.,Icterus sp.,1916.999,NULL,NULL,A,24:58.4
+BADO,40,3680,Barred Owl,Chouette rayée,Strix varia,Strix varia,859,NULL,NULL,A,24:58.6
+BAEA,22,3520,Bald Eagle,Pygargue à tête blanche,Haliaeetus leucocephalus,Haliaeetus leucocephalus,781,NULL,NULL,A,24:58.7
+BAGO,14,1520,Barrow's Goldeneye,Garrot d'Islande,Bucephala islandica,Bucephala islandica,73,NULL,NULL,A,24:58.8
+BAIS,49,5450,Baird's Sparrow,Bruant de Baird,Ammodramus bairdii,Ammodramus bairdii,1843,NULL,NULL,A,24:59.0
+BANO,1,3650,Barn Owl,Effraie des clochers,Tyto alba,Tyto alba,827,NULL,NULL,A,24:59.1
+BANS,53,6160,Bank Swallow,Hirondelle de rivage,Riparia riparia,Riparia riparia,1428,NULL,NULL,A,24:59.2
+BAOR,2,5070,Baltimore Oriole,Oriole de Baltimore,Icterus galbula,Icterus galbula,1921,NULL,NULL,A,24:59.4
+BARS,53,6130,Barn Swallow,Hirondelle rustique,Hirundo rustica,Hirundo rustica,1431,NULL,NULL,A,24:59.5
+BASA,47,2410,Baird's Sandpiper,Bécasseau de Baird,Calidris bairdii,Calidris bairdii,499,NULL,NULL,A,24:59.6
+BAWW,58,6360,Black-and-white Warbler,Paruline noir et blanc,Mniotilta varia,Mniotilta varia,1953,NULL,NULL,A,24:59.7
+BBCU,11,3880,Black-billed Cuckoo,Coulicou à bec noir,Coccyzus erythropthalmus,Coccyzus erythropthalmus,208,NULL,NULL,A,24:59.9
+BBMA,27,4750,Black-billed Magpie,Pie d'Amérique,Pica hudsonia,Pica hudsonia,1389,NULL,NULL,A,25:00.0
+BBOH,2,5078,Bullock's/Baltimore Oriole hybrid,Hybride d'Oriole de Bullock et d'Oriole de Baltimore,Icterus bullockii x galbula,Icterus bullockii x galbula,1915.555,NULL,NULL,A,25:00.1
+BBPL,44,2700,Black-bellied Plover,Pluvier argenté,Pluvialis squatarola,Pluvialis squatarola,449,NULL,NULL,A,25:00.3
+BBSA,47,2620,Buff-breasted Sandpiper,Bécasseau roussâtre,Tryngites subruficollis,Tryngites subruficollis,503,NULL,NULL,A,25:00.4
+BBWA,58,6600,Bay-breasted Warbler,Paruline à poitrine baie,Setophaga castanea,Setophaga castanea,1990,NULL,NULL,A,25:00.6
+BBWO,60,4000,Black-backed Woodpecker,Pic à dos noir,Picoides arcticus,Picoides arcticus,968,NULL,NULL,A,25:00.7
+BCCH,7,7350,Black-capped Chickadee,Mésange à tête noire,Poecile atricapillus,Poecile atricapillus,1434,NULL,NULL,A,25:00.8
+BCHU,24,4290,Black-chinned Hummingbird,Colibri à gorge noire,Archilochus alexandri,Archilochus alexandri,332,NULL,NULL,A,25:00.9
+BCNH,23,2020,Black-crowned Night-Heron,Bihoreau gris,Nycticorax nycticorax,Nycticorax nycticorax,753,NULL,NULL,A,25:01.1
+BEKI,28,3900,Belted Kingfisher,Martin-pêcheur d'Amérique,Megaceryle alcyon,Megaceryle alcyon,906,NULL,NULL,A,25:01.2
+BEWR,61,7190,Bewick's Wren,Troglodyte de Bewick,Thryomanes bewickii,Thryomanes bewickii,1470,NULL,NULL,A,25:01.4
+BGGN,18,7510,Blue-gray Gnatcatcher,Gobemoucheron gris-bleu,Polioptila caerulea,Polioptila caerulea,1504,NULL,NULL,A,25:01.5
+BHCO,2,4950,Brown-headed Cowbird,Vacher à tête brune,Molothrus ater,Molothrus ater,1932,NULL,NULL,A,25:01.6
+BHGR,5,5960,Black-headed Grosbeak,Cardinal à tête noire,Pheucticus melanocephalus,Pheucticus melanocephalus,2052,NULL,NULL,A,25:01.8
+BHGU,21,551,Black-headed Gull,Mouette rieuse,Chroicocephalus ridibundus,Chroicocephalus ridibundus,571,NULL,NULL,A,25:01.9
+BHVI,57,6290,Blue-headed Vireo,Viréo à tête bleue,Vireo solitarius,Vireo solitarius,1353,NULL,NULL,A,25:02.0
+BITH,55,7571,Bicknell's Thrush,Grive de Bicknell,Catharus bicknelli,Catharus bicknelli,1580,NULL,NULL,A,25:02.1
+BLBR,14,1740,Black Brant,Bernache noire,Branta bernicla nigricans,Branta bernicla nigricans,20.1,NULL,NULL,A,25:02.3
+BLBW,58,6620,Blackburnian Warbler,Paruline à gorge orangée,Setophaga fusca,Setophaga fusca,1991,NULL,NULL,A,25:02.4
+BLGS,20,2973,Blue Grouse (Dusky/Sooty),Tétras sombre (sombre/fuligineux) ,Dendragapus sp,Dendragapus sp,132.999,NULL,NULL,A,25:02.5
+BLGU,33,270,Black Guillemot,Guillemot à miroir,Cepphus grylle,Cepphus grylle,546,NULL,NULL,A,25:02.7
+BLJA,27,4770,Blue Jay,Geai bleu,Cyanocitta cristata,Cyanocitta cristata,1380,NULL,NULL,A,25:02.8
+BLKI,21,400,Black-legged Kittiwake,Mouette tridactyle,Rissa tridactyla,Rissa tridactyla,565,NULL,NULL,A,25:02.9
+BLOY,41,2870,Black Oystercatcher,Huîtrier de Bachman,Haematopus bachmani,Haematopus bachmani,446,NULL,NULL,A,25:03.1
+BLPW,58,6610,Blackpoll Warbler,Paruline rayée,Setophaga striata,Setophaga striata,1994,NULL,NULL,A,25:03.2
+BLSC,14,1630,Black Scoter,Macreuse à bec jaune,Melanitta americana,Melanitta americana,69,NULL,NULL,A,25:03.3
+BLSW,54,4220,Black Swift,Martinet sombre,Cypseloides niger,Cypseloides niger,252,NULL,NULL,A,25:03.4
+BLTE,21,770,Black Tern,Guifette noire,Chlidonias niger,Chlidonias niger,609,NULL,NULL,A,25:03.6
+BLUE,37,7640,Bluethroat,Gorgebleue à miroir,Luscinia svecica,Luscinia svecica,1546,NULL,NULL,A,25:03.7
+BNST,51,2260,Black-necked Stilt,Échasse d'Amérique,Himantopus mexicanus,Himantopus mexicanus,442,NULL,NULL,A,25:03.9
+BOBO,2,4940,Bobolink,Goglu des prés,Dolichonyx oryzivorus,Dolichonyx oryzivorus,1886,NULL,NULL,A,25:04.0
+BOCH,7,7400,Boreal Chickadee,Mésange à tête brune,Poecile hudsonicus,Poecile hudsonicus,1438,NULL,NULL,A,25:04.1
+BOGU,21,600,Bonaparte's Gull,Mouette de Bonaparte,Chroicocephalus philadelphia,Chroicocephalus philadelphia,569,NULL,NULL,A,25:04.3
+BOOW,40,3710,Boreal Owl,Nyctale de Tengmalm,Aegolius funereus,Aegolius funereus,867,NULL,NULL,A,25:04.4
+BOWA,59,6180,Bohemian Waxwing,Jaseur boréal,Bombycilla garrulus,Bombycilla garrulus,1636,NULL,NULL,A,25:04.5
+BRAN,14,1730,Brant,Bernache cravant,Branta bernicla,Branta bernicla,20,NULL,NULL,A,25:04.6
+BRBL,2,5100,Brewer's Blackbird,Quiscale de Brewer,Euphagus cyanocephalus,Euphagus cyanocephalus,1937,NULL,NULL,A,25:04.8
+BRCR,10,7260,Brown Creeper,Grimpereau brun,Certhia americana,Certhia americana,1451,NULL,NULL,A,25:04.9
+BRSP,49,5620,Brewer's Sparrow,Bruant de Brewer,Spizella breweri,Spizella breweri,1830,NULL,NULL,A,25:05.1
+BRTH,6,7050,Brown Thrasher,Moqueur roux,Toxostoma rufum,Toxostoma rufum,1620,NULL,NULL,A,25:05.2
+BRWA,58,6412,Blue-winged/Golden-winged Warbler hybrid Brewster's form,Paruline de Brewster,"Vermivora cyanoptera x chrysoptera ""leucobronchialis""","Vermivora cyanoptera x chrysoptera ""leucobronchialis""",1951.5551,NULL,NULL,A,25:05.3
+BTBW,58,6540,Black-throated Blue Warbler,Paruline bleue,Setophaga caerulescens,Setophaga caerulescens,1995,NULL,NULL,A,25:05.4
+BTNW,58,6670,Black-throated Green Warbler,Paruline à gorge noire,Setophaga virens,Setophaga virens,2012,NULL,NULL,A,25:05.6
+BTPI,13,3120,Band-tailed Pigeon,Pigeon à queue barrée,Patagioenas fasciata,Patagioenas fasciata,155,NULL,NULL,A,25:05.7
+BTYW,58,6650,Black-throated Gray Warbler,Paruline grise,Setophaga nigrescens,Setophaga nigrescens,2008,NULL,NULL,A,25:05.8
+BUFF,14,1530,Bufflehead,Petit Garrot,Bucephala albeola,Bucephala albeola,71,NULL,NULL,A,25:06.0
+BUOR,2,5080,Bullock's Oriole,Oriole de Bullock,Icterus bullockii,Icterus bullockii,1915,NULL,NULL,A,25:06.1
+BUOW,40,3780,Burrowing Owl,Chevêche des terriers,Athene cunicularia,Athene cunicularia,855,NULL,NULL,A,25:06.2
+BUSH,4,7430,Bushtit,Mésange buissonnière,Psaltriparus minimus,Psaltriparus minimus,1446,NULL,NULL,A,25:06.4
+BWHA,22,3430,Broad-winged Hawk,Petite Buse,Buteo platypterus,Buteo platypterus,813,NULL,NULL,A,25:06.5
+BWTE,14,1400,Blue-winged Teal,Sarcelle à ailes bleues,Anas discors,Anas discors,37,NULL,NULL,A,25:06.6
+BWWA,58,6410,Blue-winged Warbler,Paruline à ailes bleues,Vermivora cyanoptera,Vermivora cyanoptera,1952,NULL,NULL,A,25:06.8
+CAAU,33,160,Cassin's Auklet,Starique de Cassin,Ptychoramphus aleuticus,Ptychoramphus aleuticus,555,NULL,NULL,A,25:06.9
+CACG,14,1725,Cackling Goose,Bernache de Hutchins,Branta hutchinsii,Branta hutchinsii,22,NULL,NULL,A,25:07.0
+CAEG,23,2001,Cattle Egret,Héron garde-boeufs,Bubulcus ibis,Bubulcus ibis,747,NULL,NULL,A,25:07.2
+CAFI,16,5180,Cassin's Finch,Roselin de Cassin,Haemorhous cassinii,Haemorhous cassinii,1750,NULL,NULL,A,25:07.3
+CAGU,21,530,California Gull,Goéland de Californie,Larus californicus,Larus californicus,584,NULL,NULL,A,25:07.4
+CAHU,24,4360,Calliope Hummingbird,Colibri calliope,Selasphorus calliope,Selasphorus calliope,345,NULL,NULL,A,25:07.5
+CANG,14,1720,Canada Goose,Bernache du Canada,Branta canadensis,Branta canadensis,23,NULL,NULL,A,25:07.7
+CANV,14,1470,Canvasback,Fuligule à dos blanc,Aythya valisineria,Aythya valisineria,53,NULL,NULL,A,25:07.8
+CANW,61,7170,Canyon Wren,Troglodyte des canyons,Catherpes mexicanus,Catherpes mexicanus,1455,NULL,NULL,A,25:07.9
+CAQU,45,2940,California Quail,Colin de Californie,Callipepla californica,Callipepla californica,103,NULL,NULL,A,25:08.1
+CARW,61,7180,Carolina Wren,Troglodyte de Caroline,Thryothorus ludovicianus,Thryothorus ludovicianus,1469,NULL,NULL,A,25:08.2
+CATE,21,640,Caspian Tern,Sterne caspienne,Hydroprogne caspia,Hydroprogne caspia,607,NULL,NULL,A,25:08.3
+CAVI,57,6291,Cassin's Vireo,Viréo de Cassin,Vireo cassinii,Vireo cassinii,1352,NULL,NULL,A,25:08.5
+CAWA,58,6860,Canada Warbler,Paruline du Canada,Cardellina canadensis,Cardellina canadensis,2022,NULL,NULL,A,25:08.6
+CBCH,7,7410,Chestnut-backed Chickadee,Mésange à dos marron,Poecile rufescens,Poecile rufescens,1437,NULL,NULL,A,25:08.7
+CCLO,31,5380,Chestnut-collared Longspur,Plectrophane à ventre noir,Calcarius ornatus,Calcarius ornatus,1773,NULL,NULL,A,25:08.9
+CCSP,49,5610,Clay-colored Sparrow,Bruant des plaines,Spizella pallida,Spizella pallida,1829,NULL,NULL,A,25:09.0
+CEDW,59,6190,Cedar Waxwing,Jaseur d'Amérique,Bombycilla cedrorum,Bombycilla cedrorum,1637,NULL,NULL,A,25:09.1
+CERW,58,6580,Cerulean Warbler,Paruline azurée,Setophaga cerulea,Setophaga cerulea,1986,NULL,NULL,A,25:09.3
+CHRE,16,5275,Unidentified Common/Hoary Redpoll,Sizerin non identifié,Acanthis sp.,Acanthis sp.,1755.999,NULL,NULL,A,25:09.4
+CHSP,49,5600,Chipping Sparrow,Bruant familier,Spizella passerina,Spizella passerina,1828,NULL,NULL,A,25:09.5
+CHSW,54,4230,Chimney Swift,Martinet ramoneur,Chaetura pelagica,Chaetura pelagica,259,NULL,NULL,A,25:09.7
+CHUK,20,2882,Chukar,Perdrix choukar,Alectoris chukar,Alectoris chukar,113,NULL,NULL,A,25:09.8
+CITE,14,1410,Cinnamon Teal,Sarcelle cannelle,Anas cyanoptera,Anas cyanoptera,38,NULL,NULL,A,25:09.9
+CLNU,27,4910,Clark's Nutcracker,Cassenoix d'Amérique,Nucifraga columbiana,Nucifraga columbiana,1388,NULL,NULL,A,25:10.0
+CLSW,53,6120,Cliff Swallow,Hirondelle à front blanc,Petrochelidon pyrrhonota,Petrochelidon pyrrhonota,1429,NULL,NULL,A,25:10.2
+CMWA,58,6500,Cape May Warbler,Paruline tigrée,Setophaga tigrina,Setophaga tigrina,1985,NULL,NULL,A,25:10.3
+COEI,14,1590,Common Eider,Eider à duvet,Somateria mollissima,Somateria mollissima,63,NULL,NULL,A,25:10.4
+COGA,46,2190,Common Gallinule,Gallinule d’Amérique,Gallinula galeata,Gallinula galeata,430,NULL,NULL,A,25:10.5
+COGO,14,1510,Common Goldeneye,Garrot à oeil d'or,Bucephala clangula,Bucephala clangula,72,NULL,NULL,A,25:10.7
+COGR,2,5110,Common Grackle,Quiscale bronzé,Quiscalus quiscula,Quiscalus quiscula,1938,NULL,NULL,A,25:10.8
+COHA,22,3330,Cooper's Hawk,Épervier de Cooper,Accipiter cooperii,Accipiter cooperii,792,NULL,NULL,A,25:10.9
+COLO,32,70,Common Loon,Plongeon huard,Gavia immer,Gavia immer,628,NULL,NULL,A,25:11.0
+COME,14,1290,Common Merganser,Grand Harle,Mergus merganser,Mergus merganser,76,NULL,NULL,A,25:11.2
+COMU,33,300,Common Murre,Guillemot marmette,Uria aalge,Uria aalge,542,NULL,NULL,A,25:11.3
+CONI,35,4200,Common Nighthawk,Engoulevent d'Amérique,Chordeiles minor,Chordeiles minor,226,NULL,NULL,A,25:11.4
+CONW,58,6780,Connecticut Warbler,Paruline à gorge grise,Oporornis agilis,Oporornis agilis,1965,NULL,NULL,A,25:11.5
+COPO,35,4180,Common Poorwill,Engoulevent de Nuttall,Phalaenoptilus nuttallii,Phalaenoptilus nuttallii,229,NULL,NULL,A,25:11.7
+CORA,27,4860,Common Raven,Grand Corbeau,Corvus corax,Corvus corax,1405,NULL,NULL,A,25:11.8
+CORE,16,5280,Common Redpoll,Sizerin flammé,Acanthis flammea,Acanthis flammea,1753,NULL,NULL,A,25:11.9
+COTE,21,700,Common Tern,Sterne pierregarin,Sterna hirundo,Sterna hirundo,613,NULL,NULL,A,25:12.0
+COYE,58,6810,Common Yellowthroat,Paruline masquée,Geothlypis trichas,Geothlypis trichas,1976,NULL,NULL,A,25:12.1
+CRPL,44,2750,Common Ringed Plover,Pluvier grand-gravelot,Charadrius hiaticula,Charadrius hiaticula,458,NULL,NULL,A,25:12.3
+CSWA,58,6590,Chestnut-sided Warbler,Paruline à flancs marron,Setophaga pensylvanica,Setophaga pensylvanica,1993,NULL,NULL,A,25:12.4
+CWWI,35,4160,Chuck-will's-widow,Engoulevent de Caroline,Antrostomus carolinensis,Antrostomus carolinensis,235,NULL,NULL,A,25:12.5
+DCCO,8,1200,Double-crested Cormorant,Cormoran à aigrettes,Phalacrocorax auritus,Phalacrocorax auritus,718,NULL,NULL,A,25:12.7
+DEJU,49,5677,Dark-eyed Junco,Junco ardoisé,Junco hyemalis,Junco hyemalis,1860,NULL,NULL,A,25:12.8
+DICK,5,6040,Dickcissel,Dickcissel d'Amérique,Spiza americana,Spiza americana,2065,NULL,NULL,A,25:12.9
+DOVE,33,340,Dovekie,Mergule nain,Alle alle,Alle alle,541,NULL,NULL,A,25:13.0
+DOWO,60,3940,Downy Woodpecker,Pic mineur,Picoides pubescens,Picoides pubescens,960,NULL,NULL,A,25:13.2
+DUFL,56,4690,Dusky Flycatcher,Moucherolle sombre,Empidonax oberholseri,Empidonax oberholseri,1228,NULL,NULL,A,25:13.3
+DUNL,47,2430,Dunlin,Bécasseau variable,Calidris alpina,Calidris alpina,496,NULL,NULL,A,25:13.4
+EABL,55,7660,Eastern Bluebird,Merlebleu de l'Est,Sialia sialis,Sialia sialis,1555,NULL,NULL,A,25:13.5
+EAGR,19,40,Eared Grebe,Grèbe à cou noir,Podiceps nigricollis,Podiceps nigricollis,144,NULL,NULL,A,25:13.7
+EAKI,56,4440,Eastern Kingbird,Tyran tritri,Tyrannus tyrannus,Tyrannus tyrannus,1279,NULL,NULL,A,25:13.8
+EAME,2,5010,Eastern Meadowlark,Sturnelle des prés,Sturnella magna,Sturnella magna,1887,NULL,NULL,A,25:13.9
+EAPH,56,4560,Eastern Phoebe,Moucherolle phébi,Sayornis phoebe,Sayornis phoebe,1236,NULL,NULL,A,25:14.0
+EASO,40,3730,Eastern Screech-Owl,Petit-duc maculé,Megascops asio,Megascops asio,832,NULL,NULL,A,25:14.2
+EATO,49,5870,Eastern Towhee,Tohi à flancs roux,Pipilo erythrophthalmus,Pipilo erythrophthalmus,1805,NULL,NULL,A,25:14.3
+EAWP,56,4610,Eastern Wood-Pewee,Pioui de l'Est,Contopus virens,Contopus virens,1214,NULL,NULL,A,25:14.4
+ESCU,47,2660,Eskimo Curlew,Courlis esquimau,Numenius borealis,Numenius borealis,472,NULL,NULL,A,25:14.5
+EUCD,13,22860,Eurasian Collared-Dove,Tourterelle turque,Streptopelia decaocto,Streptopelia decaocto,164,NULL,NULL,A,25:14.7
+EUST,50,4930,European Starling,Étourneau sansonnet,Sturnus vulgaris,Sturnus vulgaris,1633,NULL,NULL,A,25:14.8
+EVGR,16,5140,Evening Grosbeak,Gros-bec errant,Coccothraustes vespertinus,Coccothraustes vespertinus,1700,NULL,NULL,A,25:14.9
+EWPW,35,4171,Eastern Whip-poor-will,Engoulevent bois-pourri,Antrostomus vociferus,Antrostomus vociferus,241,NULL,NULL,A,25:15.1
+EYWA,43,6960,Eastern Yellow Wagtail,Bergeronnette de Béringie,Motacilla tschutschensis,Motacilla tschutschensis,1669,NULL,NULL,A,25:15.2
+FEHA,22,3480,Ferruginous Hawk,Buse rouilleuse,Buteo regalis,Buteo regalis,820,NULL,NULL,A,25:15.3
+FISP,49,5630,Field Sparrow,Bruant des champs,Spizella pusilla,Spizella pusilla,1831,NULL,NULL,A,25:15.4
+FLOW,40,3740,Flammulated Owl,Petit-duc nain,Otus flammeolus,Otus flammeolus,830,NULL,NULL,A,25:15.6
+FOSP,49,5850,Fox Sparrow,Bruant fauve,Passerella iliaca,Passerella iliaca,1850,NULL,NULL,A,25:15.7
+FOTE,21,690,Forster's Tern,Sterne de Forster,Sterna forsteri,Sterna forsteri,615,NULL,NULL,A,25:15.8
+FRGU,21,590,Franklin's Gull,Mouette de Franklin,Leucophaeus pipixcan,Leucophaeus pipixcan,576,NULL,NULL,A,25:16.0
+FTSP,52,1050,Fork-tailed Storm-Petrel,Océanite à queue fourchue,Oceanodroma furcata,Oceanodroma furcata,689,NULL,NULL,A,25:16.1
+GADW,14,1350,Gadwall,Canard chipeau,Anas strepera,Anas strepera,40,NULL,NULL,A,25:16.2
+GBBG,21,470,Great Black-backed Gull,Goéland marin,Larus marinus,Larus marinus,592,NULL,NULL,A,25:16.4
+GBHE,23,1940,Great Blue Heron,Grand Héron,Ardea herodias,Ardea herodias,733,NULL,NULL,A,25:16.5
+GCFL,56,4520,Great Crested Flycatcher,Tyran huppé,Myiarchus crinitus,Myiarchus crinitus,1251,NULL,NULL,A,25:16.6
+GCKI,29,7480,Golden-crowned Kinglet,Roitelet à couronne dorée,Regulus satrapa,Regulus satrapa,1515,NULL,NULL,A,25:16.8
+GCRF,16,5240,Gray-crowned Rosy-Finch,Roselin à tête grise,Leucosticte tephrocotis,Leucosticte tephrocotis,1745,NULL,NULL,A,25:16.9
+GCSP,49,5570,Golden-crowned Sparrow,Bruant à couronne dorée,Zonotrichia atricapilla,Zonotrichia atricapilla,1858,NULL,NULL,A,25:17.0
+GCTH,55,7570,Gray-cheeked Thrush,Grive à joues grises,Catharus minimus,Catharus minimus,1579,NULL,NULL,A,25:17.2
+GGOW,40,3700,Great Gray Owl,Chouette lapone,Strix nebulosa,Strix nebulosa,861,NULL,NULL,A,25:17.3
+GHCH,7,7390,Gray-headed Chickadee,Mésange lapone,Poecile cinctus,Poecile cinctus,1439,NULL,NULL,A,25:17.4
+GHOW,40,3750,Great Horned Owl,Grand-duc d'Amérique,Bubo virginianus,Bubo virginianus,844,NULL,NULL,A,25:17.6
+GLGU,21,420,Glaucous Gull,Goéland bourgmestre,Larus hyperboreus,Larus hyperboreus,591,NULL,NULL,A,25:17.7
+GOEA,22,3490,Golden Eagle,Aigle royal,Aquila chrysaetos,Aquila chrysaetos,823,NULL,NULL,A,25:17.8
+GRAJ,27,4840,Canada Jay,Mésangeai du Canada,Perisoreus canadensis,Perisoreus canadensis,1362,NULL,NULL,A,25:18.0
+GRAP,20,2881,Gray Partridge,Perdrix grise,Perdix perdix,Perdix perdix,118,NULL,NULL,A,25:18.1
+GRCA,6,7040,Gray Catbird,Moqueur chat,Dumetella carolinensis,Dumetella carolinensis,1612,NULL,NULL,A,25:18.2
+GRCO,8,1190,Great Cormorant,Grand Cormoran,Phalacrocorax carbo,Phalacrocorax carbo,719,NULL,NULL,A,25:18.3
+GREG,23,1960,Great Egret,Grande Aigrette,Ardea alba,Ardea alba,737,NULL,NULL,A,25:18.5
+GRFL,56,4691,Gray Flycatcher,Moucherolle gris,Empidonax wrightii,Empidonax wrightii,1227,NULL,NULL,A,25:18.6
+GRHE,23,2010,Green Heron,Héron vert,Butorides virescens,Butorides virescens,749,NULL,NULL,A,25:18.7
+GRSC,14,1480,Greater Scaup,Fuligule milouinan,Aythya marila,Aythya marila,58,NULL,NULL,A,25:18.9
+GRSG,20,3090,Greater Sage-Grouse,Tétras des armoises,Centrocercus urophasianus,Centrocercus urophasianus,125,NULL,NULL,A,25:19.0
+GRSP,49,5460,Grasshopper Sparrow,Bruant sauterelle,Ammodramus savannarum,Ammodramus savannarum,1842,NULL,NULL,A,25:19.1
+GRYE,47,2540,Greater Yellowlegs,Grand Chevalier,Tringa melanoleuca,Tringa melanoleuca,527,NULL,NULL,A,25:19.2
+GWFG,14,1710,Greater White-fronted Goose,Oie rieuse,Anser albifrons,Anser albifrons,15,NULL,NULL,A,25:19.4
+GWGU,21,440,Glaucous-winged Gull,Goéland à ailes grises,Larus glaucescens,Larus glaucescens,590,NULL,NULL,A,25:19.5
+GWTE,14,1390,Green-winged Teal,Sarcelle d'hiver,Anas crecca,Anas crecca,52,NULL,NULL,A,25:19.6
+GWWA,58,6420,Golden-winged Warbler,Paruline à ailes dorées,Vermivora chrysoptera,Vermivora chrysoptera,1951,NULL,NULL,A,25:19.7
+GYRF,15,3540,Gyrfalcon,Faucon gerfaut,Falco rusticolus,Falco rusticolus,1004,NULL,NULL,A,25:19.9
+HADU,14,1550,Harlequin Duck,Arlequin plongeur,Histrionicus histrionicus,Histrionicus histrionicus,64,NULL,NULL,A,25:20.0
+HAFL,56,4680,Hammond's Flycatcher,Moucherolle de Hammond,Empidonax hammondii,Empidonax hammondii,1226,NULL,NULL,A,25:20.2
+HASP,49,5530,Harris's Sparrow,Bruant à face noire,Zonotrichia querula,Zonotrichia querula,1856,NULL,NULL,A,25:20.3
+HAWO,60,3930,Hairy Woodpecker,Pic chevelu,Picoides villosus,Picoides villosus,962,NULL,NULL,A,25:20.4
+HDFL,56,4689,Unidentified Hammond's/Dusky Flycatcher,Moucherolle de Hammond/Moucherolle sombre non identifié,Empidonax sp.,Empidonax sp.,1228.999,NULL,NULL,A,25:20.5
+HERG,21,510,Herring Gull,Goéland argenté,Larus argentatus,Larus argentatus,585,NULL,NULL,A,25:20.7
+HESP,49,5470,Henslow's Sparrow,Bruant de Henslow,Ammodramus henslowii,Ammodramus henslowii,1844,NULL,NULL,A,25:20.8
+HETH,55,7590,Hermit Thrush,Grive solitaire,Catharus guttatus,Catharus guttatus,1582,NULL,NULL,A,25:21.0
+HOFI,16,5190,House Finch,Roselin familier,Haemorhous mexicanus,Haemorhous mexicanus,1748,NULL,NULL,A,25:21.1
+HOGR,19,30,Horned Grebe,Grèbe esclavon,Podiceps auritus,Podiceps auritus,142,NULL,NULL,A,25:21.2
+HOLA,30,4740,Horned Lark,Alouette hausse-col,Eremophila alpestris,Eremophila alpestris,1410,NULL,NULL,A,25:21.4
+HOME,14,1310,Hooded Merganser,Harle couronné,Lophodytes cucullatus,Lophodytes cucullatus,75,NULL,NULL,A,25:21.5
+HOPU,33,140,Horned Puffin,Macareux cornu,Fratercula corniculata,Fratercula corniculata,562,NULL,NULL,A,25:21.6
+HORE,16,5270,Hoary Redpoll,Sizerin blanchâtre,Acanthis hornemanni,Acanthis hornemanni,1755,NULL,NULL,A,25:21.8
+HOSP,38,6882,House Sparrow,Moineau domestique,Passer domesticus,Passer domesticus,1667,NULL,NULL,A,25:21.9
+HOWA,58,6840,Hooded Warbler,Paruline à capuchon,Setophaga citrina,Setophaga citrina,1982,NULL,NULL,A,25:22.0
+HOWR,61,7210,House Wren,Troglodyte familier,Troglodytes aedon,Troglodytes aedon,1459,NULL,NULL,A,25:22.1
+HUGO,47,2510,Hudsonian Godwit,Barge hudsonienne,Limosa haemastica,Limosa haemastica,479,NULL,NULL,A,25:22.3
+HUVI,57,6320,Hutton's Vireo,Viréo de Hutton,Vireo huttoni,Vireo huttoni,1349,NULL,NULL,A,25:22.4
+ICGU,21,430,Iceland Gull,Goéland arctique,Larus glaucoides,Larus glaucoides,587,NULL,NULL,A,25:22.6
+INBU,5,5980,Indigo Bunting,Passerin indigo,Passerina cyanea,Passerina cyanea,2060,NULL,NULL,A,25:22.7
+IVGU,21,390,Ivory Gull,Mouette blanche,Pagophila eburnea,Pagophila eburnea,567,NULL,NULL,A,25:22.9
+KIEI,14,1620,King Eider,Eider à tête grise,Somateria spectabilis,Somateria spectabilis,62,NULL,NULL,A,25:23.0
+KILL,44,2730,Killdeer,Pluvier kildir,Charadrius vociferus,Charadrius vociferus,462,NULL,NULL,A,25:23.1
+KIRA,46,2080,King Rail,Râle élégant,Rallus elegans,Rallus elegans,411,NULL,NULL,A,25:23.2
+KIWA,58,6700,Kirtland's Warbler,Paruline de Kirtland,Setophaga kirtlandii,Setophaga kirtlandii,1984,NULL,NULL,A,25:23.4
+LAGU,21,580,Laughing Gull,Mouette atricille,Leucophaeus atricilla,Leucophaeus atricilla,575,NULL,NULL,A,25:23.5
+LALO,31,5360,Lapland Longspur,Plectrophane lapon,Calcarius lapponicus,Calcarius lapponicus,1772,NULL,NULL,A,25:23.6
+LARB,49,6050,Lark Bunting,Bruant noir et blanc,Calamospiza melanocorys,Calamospiza melanocorys,1840,NULL,NULL,A,25:23.7
+LASP,49,5520,Lark Sparrow,Bruant à joues marron,Chondestes grammacus,Chondestes grammacus,1835,NULL,NULL,A,25:23.9
+LAWA,58,6413,Blue-winged/Golden-winged hybrid Lawrence's form,Paruline de Lawrence,"Vermivora cyanoptera x chrysoptera ""lawrencii""","Vermivora cyanoptera x chrysoptera ""lawrencii""",1951.5552,NULL,NULL,A,25:24.0
+LAZB,5,5990,Lazuli Bunting,Passerin azuré,Passerina amoena,Passerina amoena,2059,NULL,NULL,A,25:24.2
+LBCU,47,2640,Long-billed Curlew,Courlis à long bec,Numenius americanus,Numenius americanus,473,NULL,NULL,A,25:24.3
+LBDO,47,2320,Long-billed Dowitcher,Bécassin à long bec,Limnodromus scolopaceus,Limnodromus scolopaceus,508,NULL,NULL,A,25:24.4
+LCSP,49,5480,LeConte's Sparrow,Bruant de Le Conte,Ammodramus leconteii,Ammodramus leconteii,1845,NULL,NULL,A,25:24.5
+LEBI,23,1910,Least Bittern,Petit Blongios,Ixobrychus exilis,Ixobrychus exilis,728,NULL,NULL,A,25:24.7
+LEFL,56,4670,Least Flycatcher,Moucherolle tchébec,Empidonax minimus,Empidonax minimus,1225,NULL,NULL,A,25:24.8
+LEOW,40,3660,Long-eared Owl,Hibou moyen-duc,Asio otus,Asio otus,862,NULL,NULL,A,25:24.9
+LESA,47,2420,Least Sandpiper,Bécasseau minuscule,Calidris minutilla,Calidris minutilla,501,NULL,NULL,A,25:25.0
+LESC,14,1490,Lesser Scaup,Petit Fuligule,Aythya affinis,Aythya affinis,59,NULL,NULL,A,25:25.2
+LESP,52,1060,Leach's Storm-Petrel,Océanite cul-blanc,Oceanodroma leucorhoa,Oceanodroma leucorhoa,692,NULL,NULL,A,25:25.3
+LEWO,60,4080,Lewis's Woodpecker,Pic de Lewis,Melanerpes lewis,Melanerpes lewis,934,NULL,NULL,A,25:25.4
+LEYE,47,2550,Lesser Yellowlegs,Petit Chevalier,Tringa flavipes,Tringa flavipes,523,NULL,NULL,A,25:25.6
+LIGU,21,601,Little Gull,Mouette pygmée,Hydrocoloeus minutus,Hydrocoloeus minutus,572,NULL,NULL,A,25:25.7
+LISP,49,5830,Lincoln's Sparrow,Bruant de Lincoln,Melospiza lincolnii,Melospiza lincolnii,1852,NULL,NULL,A,25:25.8
+LOSH,48,6220,Loggerhead Shrike,Pie-grièche migratrice,Lanius ludovicianus,Lanius ludovicianus,1323,NULL,NULL,A,25:25.9
+LOWA,58,6760,Louisiana Waterthrush,Paruline hochequeue,Parkesia motacilla,Parkesia motacilla,1948,NULL,NULL,A,25:26.1
+LTDU,14,1540,Long-tailed Duck,Harelde kakawi,Clangula hyemalis,Clangula hyemalis,70,NULL,NULL,A,25:26.2
+LTJA,26,380,Long-tailed Jaeger,Labbe à longue queue,Stercorarius longicaudus,Stercorarius longicaudus,540,NULL,NULL,A,25:26.3
+MAGO,47,2490,Marbled Godwit,Barge marbrée,Limosa fedoa,Limosa fedoa,480,NULL,NULL,A,25:26.5
+MALL,14,1320,Mallard,Canard colvert,Anas platyrhynchos,Anas platyrhynchos,47,NULL,NULL,A,25:26.6
+MAMU,33,230,Marbled Murrelet,Guillemot marbré,Brachyramphus marmoratus,Brachyramphus marmoratus,549,NULL,NULL,A,25:26.7
+MASH,17,900,Manx Shearwater,Puffin des Anglais,Puffinus puffinus,Puffinus puffinus,678,NULL,NULL,A,25:26.9
+MAWA,58,6570,Magnolia Warbler,Paruline à tête cendrée,Setophaga magnolia,Setophaga magnolia,1989,NULL,NULL,A,25:27.0
+MAWR,61,7250,Marsh Wren,Troglodyte des marais,Cistothorus palustris,Cistothorus palustris,1468,NULL,NULL,A,25:27.2
+MCLO,31,5390,Thick-billed Longspur,Plectrophane de McCown,Rhynchophanes mccownii,Rhynchophanes mccownii,1775,NULL,NULL,A,25:27.3
+MEGU,21,550,Mew Gull,Goéland cendré,Larus canus,Larus canus,580,NULL,NULL,A,25:27.4
+MERL,15,3570,Merlin,Faucon émerillon,Falco columbarius,Falco columbarius,999,NULL,NULL,A,25:27.5
+MGWA,58,6800,MacGillivray's Warbler,Paruline des buissons,Geothlypis tolmiei,Geothlypis tolmiei,1968,NULL,NULL,A,25:27.7
+MOBL,55,7680,Mountain Bluebird,Merlebleu azuré,Sialia currucoides,Sialia currucoides,1557,NULL,NULL,A,25:27.8
+MOCH,7,7380,Mountain Chickadee,Mésange de Gambel,Poecile gambeli,Poecile gambeli,1435,NULL,NULL,A,25:27.9
+MODO,13,3160,Mourning Dove,Tourterelle triste,Zenaida macroura,Zenaida macroura,197,NULL,NULL,A,25:28.0
+MOPL,44,2810,Mountain Plover,Pluvier montagnard,Charadrius montanus,Charadrius montanus,464,NULL,NULL,A,25:28.2
+MOWA,58,6790,Mourning Warbler,Paruline triste,Geothlypis philadelphia,Geothlypis philadelphia,1969,NULL,NULL,A,25:28.3
+MUSW,14,1782,Mute Swan,Cygne tuberculé,Cygnus olor,Cygnus olor,25,NULL,NULL,A,25:28.4
+NAWA,58,6450,Nashville Warbler,Paruline à joues grises,Oreothlypis ruficapilla,Oreothlypis ruficapilla,1962,NULL,NULL,A,25:28.6
+NESP,49,5491,Nelson's Sparrow,Bruant de Nelson,Ammodramus nelsoni,Ammodramus nelsoni,1846,NULL,NULL,A,25:28.7
+NHOW,40,3770,Northern Hawk Owl,Chouette épervière,Surnia ulula,Surnia ulula,846,NULL,NULL,A,25:28.8
+NOBO,45,2890,Northern Bobwhite,Colin de Virginie,Colinus virginianus,Colinus virginianus,98,NULL,NULL,A,25:29.0
+NOCA,5,5930,Northern Cardinal,Cardinal rouge,Cardinalis cardinalis,Cardinalis cardinalis,2047,NULL,NULL,A,25:29.1
+NOCR,27,4890,Northwestern Crow,Corneille d'Alaska,Corvus caurinus,Corvus caurinus,1394,NULL,NULL,A,25:29.2
+NOFL,60,4123,Northern Flicker,Pic flamboyant,Colaptes auratus,Colaptes auratus,976,NULL,NULL,A,25:29.4
+NOFU,17,860,Northern Fulmar,Fulmar boréal,Fulmarus glacialis,Fulmarus glacialis,641,NULL,NULL,A,25:29.5
+NOGA,3,1170,Northern Gannet,Fou de Bassan,Morus bassanus,Morus bassanus,715,NULL,NULL,A,25:29.6
+NOGO,22,3340,Northern Goshawk,Autour des palombes,Accipiter gentilis,Accipiter gentilis,795,NULL,NULL,A,25:29.8
+NOHA,22,3310,Northern Harrier,Busard Saint-Martin,Circus cyaneus,Circus cyaneus,785,NULL,NULL,A,25:29.9
+NOMO,6,7030,Northern Mockingbird,Moqueur polyglotte,Mimus polyglottos,Mimus polyglottos,1632,NULL,NULL,A,25:30.0
+NOPA,58,6480,Northern Parula,Paruline à collier,Setophaga americana,Setophaga americana,1987,NULL,NULL,A,25:30.2
+NOPI,14,1430,Northern Pintail,Canard pilet,Anas acuta,Anas acuta,51,NULL,NULL,A,25:30.3
+NOPO,40,3790,Northern Pygmy-Owl,Chevêchette naine,Glaucidium gnoma,Glaucidium gnoma,847,NULL,NULL,A,25:30.4
+NOWA,58,6750,Northern Waterthrush,Paruline des ruisseaux,Parkesia noveboracensis,Parkesia noveboracensis,1949,NULL,NULL,A,25:30.6
+NOWH,37,7650,Northern Wheatear,Traquet motteux,Oenanthe oenanthe,Oenanthe oenanthe,1554,NULL,NULL,A,25:30.7
+NRWS,53,6170,Northern Rough-winged Swallow,Hirondelle à ailes hérissées,Stelgidopteryx serripennis,Stelgidopteryx serripennis,1426,NULL,NULL,A,25:30.8
+NSHO,14,1420,Northern Shoveler,Canard souchet,Anas clypeata,Anas clypeata,39,NULL,NULL,A,25:31.0
+NSHR,48,6210,Northern Shrike,Pie-grièche grise,Lanius excubitor,Lanius excubitor,1324,NULL,NULL,A,25:31.1
+NSWO,40,3720,Northern Saw-whet Owl,Petite Nyctale,Aegolius acadicus,Aegolius acadicus,868,NULL,NULL,A,25:31.3
+OCWA,58,6460,Orange-crowned Warbler,Paruline verdâtre,Oreothlypis celata,Oreothlypis celata,1959,NULL,NULL,A,25:31.4
+OROR,2,5060,Orchard Oriole,Oriole des vergers,Icterus spurius,Icterus spurius,1908,NULL,NULL,A,25:31.5
+OSFL,56,4590,Olive-sided Flycatcher,Moucherolle à côtés olive,Contopus cooperi,Contopus cooperi,1209,NULL,NULL,A,25:31.7
+OSPR,39,3640,Osprey,Balbuzard pêcheur,Pandion haliaetus,Pandion haliaetus,769,NULL,NULL,A,25:31.8
+OVEN,58,6740,Ovenbird,Paruline couronnée,Seiurus aurocapilla,Seiurus aurocapilla,1946,NULL,NULL,A,25:31.9
+PAJA,26,370,Parasitic Jaeger,Labbe parasite,Stercorarius parasiticus,Stercorarius parasiticus,539,NULL,NULL,A,25:32.1
+PALO,32,100,Pacific Loon,Plongeon du Pacifique,Gavia pacifica,Gavia pacifica,627,NULL,NULL,A,25:32.2
+PAWA,58,6720,Palm Warbler,Paruline à couronne rousse,Setophaga palmarum,Setophaga palmarum,1996,NULL,NULL,A,25:32.3
+PAWR,61,7221,Pacific Wren,Troglodyte de Baird,Troglodytes pacificus,Troglodytes pacificus,1464,NULL,NULL,A,25:32.4
+PBGR,19,60,Pied-billed Grebe,Grèbe à bec bigarré,Podilymbus podiceps,Podilymbus podiceps,140,NULL,NULL,A,25:32.6
+PECO,8,1230,Pelagic Cormorant,Cormoran pélagique,Phalacrocorax pelagicus,Phalacrocorax pelagicus,721,NULL,NULL,A,25:32.7
+PEFA,15,3560,Peregrine Falcon,Faucon pèlerin,Falco peregrinus,Falco peregrinus,1005,NULL,NULL,A,25:32.8
+PESA,47,2390,Pectoral Sandpiper,Bécasseau à poitrine cendrée,Calidris melanotos,Calidris melanotos,504,NULL,NULL,A,25:33.0
+PHVI,57,6260,Philadelphia Vireo,Viréo de Philadelphie,Vireo philadelphicus,Vireo philadelphicus,1355,NULL,NULL,A,25:33.1
+PIGR,16,5150,Pine Grosbeak,Durbec des sapins,Pinicola enucleator,Pinicola enucleator,1742,NULL,NULL,A,25:33.2
+PIGU,33,290,Pigeon Guillemot,Guillemot colombin,Cepphus columba,Cepphus columba,547,NULL,NULL,A,25:33.4
+PIPL,44,2770,Piping Plover,Pluvier siffleur,Charadrius melodus,Charadrius melodus,460,NULL,NULL,A,25:33.5
+PISI,16,5330,Pine Siskin,Tarin des pins,Spinus pinus,Spinus pinus,1762,NULL,NULL,A,25:33.6
+PIWA,58,6710,Pine Warbler,Paruline des pins,Setophaga pinus,Setophaga pinus,1998,NULL,NULL,A,25:33.7
+PIWO,60,4050,Pileated Woodpecker,Grand Pic,Dryocopus pileatus,Dryocopus pileatus,982,NULL,NULL,A,25:33.9
+POJA,26,360,Pomarine Jaeger,Labbe pomarin,Stercorarius pomarinus,Stercorarius pomarinus,538,NULL,NULL,A,25:34.0
+PRAW,58,6730,Prairie Warbler,Paruline des prés,Setophaga discolor,Setophaga discolor,2003,NULL,NULL,A,25:34.2
+PRFA,15,3550,Prairie Falcon,Faucon des prairies,Falco mexicanus,Falco mexicanus,1006,NULL,NULL,A,25:34.3
+PROW,58,6370,Prothonotary Warbler,Paruline orangée,Protonotaria citrea,Protonotaria citrea,1954,NULL,NULL,A,25:34.4
+PSFL,56,4641,Pacific-slope Flycatcher,Moucherolle côtier,Empidonax difficilis,Empidonax difficilis,1230,NULL,NULL,A,25:34.6
+PUFI,16,5170,Purple Finch,Roselin pourpré,Haemorhous purpureus,Haemorhous purpureus,1749,NULL,NULL,A,25:34.7
+PUMA,53,6110,Purple Martin,Hirondelle noire,Progne subis,Progne subis,1411,NULL,NULL,A,25:34.8
+PUSA,47,2350,Purple Sandpiper,Bécasseau violet,Calidris maritima,Calidris maritima,498,NULL,NULL,A,25:34.9
+PWWR,61,7220,Unidentified Pacific Wren / Winter Wren,Troglodyte de Baird ou des forêts non-identifié,Troglodytes sp.,Troglodytes sp.,1465.999,NULL,NULL,A,25:35.1
+PYNU,36,7300,Pygmy Nuthatch,Sittelle pygmée,Sitta pygmaea,Sitta pygmaea,1449,NULL,NULL,A,25:35.2
+RAZO,33,320,Razorbill,Petit Pingouin,Alca torda,Alca torda,544,NULL,NULL,A,25:35.3
+RBGR,5,5950,Rose-breasted Grosbeak,Cardinal à poitrine rose,Pheucticus ludovicianus,Pheucticus ludovicianus,2051,NULL,NULL,A,25:35.5
+RBGU,21,540,Ring-billed Gull,Goéland à bec cerclé,Larus delawarensis,Larus delawarensis,581,NULL,NULL,A,25:35.6
+RBME,14,1300,Red-breasted Merganser,Harle huppé,Mergus serrator,Mergus serrator,77,NULL,NULL,A,25:35.7
+RBNU,36,7280,Red-breasted Nuthatch,Sittelle à poitrine rousse,Sitta canadensis,Sitta canadensis,1447,NULL,NULL,A,25:35.9
+RBSA,60,4030,Red-breasted Sapsucker,Pic à poitrine rouge,Sphyrapicus ruber,Sphyrapicus ruber,955,NULL,NULL,A,25:36.0
+RBWO,60,4090,Red-bellied Woodpecker,Pic à ventre roux,Melanerpes carolinus,Melanerpes carolinus,950,NULL,NULL,A,25:36.1
+RCKI,29,7490,Ruby-crowned Kinglet,Roitelet à couronne rubis,Regulus calendula,Regulus calendula,1516,NULL,NULL,A,25:36.3
+RECR,16,5210,Red Crossbill,Bec-croisé des sapins,Loxia curvirostra,Loxia curvirostra,1756,NULL,NULL,A,25:36.4
+REDH,14,1460,Redhead,Fuligule à tête rouge,Aythya americana,Aythya americana,54,NULL,NULL,A,25:36.5
+REKN,47,2340,Red Knot,Bécasseau maubèche,Calidris canutus,Calidris canutus,484,NULL,NULL,A,25:36.7
+REPH,47,2220,Red Phalarope,Phalarope à bec large,Phalaropus fulicarius,Phalaropus fulicarius,533,NULL,NULL,A,25:36.8
+REVI,57,6240,Red-eyed Vireo,Viréo aux yeux rouges,Vireo olivaceus,Vireo olivaceus,1358,NULL,NULL,A,25:36.9
+RHAU,33,150,Rhinoceros Auklet,Macareux rhinocéros,Cerorhinca monocerata,Cerorhinca monocerata,560,NULL,NULL,A,25:37.0
+RHWO,60,4060,Red-headed Woodpecker,Pic à tête rouge,Melanerpes erythrocephalus,Melanerpes erythrocephalus,937,NULL,NULL,A,25:37.2
+RLHA,22,3470,Rough-legged Hawk,Buse pattue,Buteo lagopus,Buteo lagopus,819,NULL,NULL,A,25:37.3
+RNDU,14,1500,Ring-necked Duck,Fuligule à collier,Aythya collaris,Aythya collaris,56,NULL,NULL,A,25:37.4
+RNEP,20,3091,Ring-necked Pheasant,Faisan de Colchide,Phasianus colchicus,Phasianus colchicus,122,NULL,NULL,A,25:37.5
+RNGR,19,20,Red-necked Grebe,Grèbe jougris,Podiceps grisegena,Podiceps grisegena,143,NULL,NULL,A,25:37.7
+RNPH,47,2230,Red-necked Phalarope,Phalarope à bec étroit,Phalaropus lobatus,Phalaropus lobatus,532,NULL,NULL,A,25:37.8
+RNSA,60,4021,Red-naped Sapsucker,Pic à nuque rouge,Sphyrapicus nuchalis,Sphyrapicus nuchalis,954,NULL,NULL,A,25:37.9
+ROGO,14,1700,Ross's Goose,Oie de Ross,Chen rossii,Chen rossii,13,NULL,NULL,A,25:38.1
+ROGU,21,610,Ross's Gull,Mouette rosée,Rhodostethia rosea,Rhodostethia rosea,573,NULL,NULL,A,25:38.2
+ROPI,13,3131,Rock Pigeon,Pigeon biset,Columba livia,Columba livia,148,NULL,NULL,A,25:38.3
+ROPT,20,3020,Rock Ptarmigan,Lagopède alpin,Lagopus muta,Lagopus muta,129,NULL,NULL,A,25:38.4
+ROST,21,720,Roseate Tern,Sterne de Dougall,Sterna dougallii,Sterna dougallii,612,NULL,NULL,A,25:38.6
+ROWR,61,7150,Rock Wren,Troglodyte des rochers,Salpinctes obsoletus,Salpinctes obsoletus,1452,NULL,NULL,A,25:38.7
+RSHA,22,3390,Red-shouldered Hawk,Buse à épaulettes,Buteo lineatus,Buteo lineatus,811,NULL,NULL,A,25:38.8
+RTHA,22,3370,Red-tailed Hawk,Buse à queue rousse,Buteo jamaicensis,Buteo jamaicensis,818,NULL,NULL,A,25:38.9
+RTHU,24,4280,Ruby-throated Hummingbird,Colibri à gorge rubis,Archilochus colubris,Archilochus colubris,331,NULL,NULL,A,25:39.1
+RTLO,32,110,Red-throated Loon,Plongeon catmarin,Gavia stellata,Gavia stellata,625,NULL,NULL,A,25:39.2
+RUBL,2,5090,Rusty Blackbird,Quiscale rouilleux,Euphagus carolinus,Euphagus carolinus,1936,NULL,NULL,A,25:39.3
+RUDU,14,1670,Ruddy Duck,Érismature rousse,Oxyura jamaicensis,Oxyura jamaicensis,79,NULL,NULL,A,25:39.5
+RUGR,20,3000,Ruffed Grouse,Gélinotte huppée,Bonasa umbellus,Bonasa umbellus,124,NULL,NULL,A,25:39.6
+RUHU,24,4330,Rufous Hummingbird,Colibri roux,Selasphorus rufus,Selasphorus rufus,340,NULL,NULL,A,25:39.7
+RUTU,47,2830,Ruddy Turnstone,Tournepierre à collier,Arenaria interpres,Arenaria interpres,481,NULL,NULL,A,25:39.9
+RWBL,2,4980,Red-winged Blackbird,Carouge à épaulettes,Agelaius phoeniceus,Agelaius phoeniceus,1925,NULL,NULL,A,25:40.0
+SACR,9,2060,Sandhill Crane,Grue du Canada,Grus canadensis,Grus canadensis,437,NULL,NULL,A,25:40.1
+SAGU,21,620,Sabine's Gull,Mouette de Sabine,Xema sabini,Xema sabini,568,NULL,NULL,A,25:40.2
+SAND,47,2480,Sanderling,Bécasseau sanderling,Calidris alba,Calidris alba,495,NULL,NULL,A,25:40.4
+SAPH,56,4570,Say's Phoebe,Moucherolle à ventre roux,Sayornis saya,Sayornis saya,1237,NULL,NULL,A,25:40.5
+SAPS_UNI,60,4022,Sapsuckers (Yellow-bellied/Red-naped/Red-breasted),Pics buveur de sève (maculé/à nuque rouge/à poitrine rouge),Sphyrapicus sp.,Sphyrapicus sp.,956.999,NULL,NULL,A,25:40.7
+SATH,6,7020,Sage Thrasher,Moqueur des armoises,Oreoscoptes montanus,Oreoscoptes montanus,1628,NULL,NULL,A,25:40.8
+SAVS,49,5420,Savannah Sparrow,Bruant des prés,Passerculus sandwichensis,Passerculus sandwichensis,1841,NULL,NULL,A,25:40.9
+SBDO,47,2310,Short-billed Dowitcher,Bécassin roux,Limnodromus griseus,Limnodromus griseus,507,NULL,NULL,A,25:41.0
+SCTA,5,6080,Scarlet Tanager,Piranga écarlate,Piranga olivacea,Piranga olivacea,2034,NULL,NULL,A,25:41.2
+SEOW,40,3670,Short-eared Owl,Hibou des marais,Asio flammeus,Asio flammeus,864,NULL,NULL,A,25:41.3
+SEPL,44,2740,Semipalmated Plover,Pluvier semipalmé,Charadrius semipalmatus,Charadrius semipalmatus,459,NULL,NULL,A,25:41.4
+SESA,47,2460,Semipalmated Sandpiper,Bécasseau semipalmé,Calidris pusilla,Calidris pusilla,505,NULL,NULL,A,25:41.6
+SEWR,61,7240,Sedge Wren,Troglodyte à bec court,Cistothorus platensis,Cistothorus platensis,1467,NULL,NULL,A,25:41.7
+SMLO,31,5370,Smith's Longspur,Plectrophane de Smith,Calcarius pictus,Calcarius pictus,1774,NULL,NULL,A,25:41.8
+SNBU,31,5340,Snow Bunting,Plectrophane des neiges,Plectrophenax nivalis,Plectrophenax nivalis,1776,NULL,NULL,A,25:42.0
+SNEG,23,1970,Snowy Egret,Aigrette neigeuse,Egretta thula,Egretta thula,743,NULL,NULL,A,25:42.1
+SNGO,14,1690,Snow Goose,Oie des neiges,Chen caerulescens,Chen caerulescens,12,NULL,NULL,A,25:42.2
+SNOW,40,3760,Snowy Owl,Harfang des neiges,Bubo scandiacus,Bubo scandiacus,845,NULL,NULL,A,25:42.4
+SORA,46,2140,Sora,Marouette de Caroline,Porzana carolina,Porzana carolina,418,NULL,NULL,A,25:42.5
+SOSA,47,2560,Solitary Sandpiper,Chevalier solitaire,Tringa solitaria,Tringa solitaria,520,NULL,NULL,A,25:42.6
+SOSP,49,5810,Song Sparrow,Bruant chanteur,Melospiza melodia,Melospiza melodia,1851,NULL,NULL,A,25:42.8
+SOVI,57,6295,Solitary Vireo (Blue-headed/Cassin's),Viréo à tête bleue (à tête bleue/de Cassin),Vireo sp.,Vireo sp.,1354.999,NULL,NULL,A,25:42.9
+SPGR,20,2980,Spruce Grouse,Tétras du Canada,Falcipennis canadensis,Falcipennis canadensis,127,NULL,NULL,A,25:43.0
+SPOW,40,3690,Spotted Owl,Chouette tachetée,Strix occidentalis,Strix occidentalis,858,NULL,NULL,A,25:43.1
+SPPI,43,7000,Sprague's Pipit,Pipit de Sprague,Anthus spragueii,Anthus spragueii,1679,NULL,NULL,A,25:43.3
+SPSA,47,2630,Spotted Sandpiper,Chevalier grivelé,Actitis macularius,Actitis macularius,518,NULL,NULL,A,25:43.4
+SPTO,49,5880,Spotted Towhee,Tohi tacheté,Pipilo maculatus,Pipilo maculatus,1804,NULL,NULL,A,25:43.5
+SSHA,22,3320,Sharp-shinned Hawk,Épervier brun,Accipiter striatus,Accipiter striatus,791,NULL,NULL,A,25:43.6
+STGR,20,3080,Sharp-tailed Grouse,Tétras à queue fine,Tympanuchus phasianellus,Tympanuchus phasianellus,133,NULL,NULL,A,25:43.8
+STJA,27,4780,Steller's Jay,Geai de Steller,Cyanocitta stelleri,Cyanocitta stelleri,1379,NULL,NULL,A,25:43.9
+STSA,47,2330,Stilt Sandpiper,Bécasseau à échasses,Calidris himantopus,Calidris himantopus,489,NULL,NULL,A,25:44.0
+SURF,47,2820,Surfbird,Bécasseau du ressac,Aphriza virgata,Aphriza virgata,485,NULL,NULL,A,25:44.2
+SUSC,14,1660,Surf Scoter,Macreuse à front blanc,Melanitta perspicillata,Melanitta perspicillata,66,NULL,NULL,A,25:44.3
+SWHA,22,3420,Swainson's Hawk,Buse de Swainson,Buteo swainsoni,Buteo swainsoni,816,NULL,NULL,A,25:44.4
+SWSP,49,5840,Swamp Sparrow,Bruant des marais,Melospiza georgiana,Melospiza georgiana,1853,NULL,NULL,A,25:44.6
+SWTH,55,7580,Swainson's Thrush,Grive à dos olive,Catharus ustulatus,Catharus ustulatus,1581,NULL,NULL,A,25:44.7
+TBMU,33,310,Thick-billed Murre,Guillemot de Brünnich,Uria lomvia,Uria lomvia,543,NULL,NULL,A,25:44.8
+TEWA,58,6470,Tennessee Warbler,Paruline obscure,Oreothlypis peregrina,Oreothlypis peregrina,1958,NULL,NULL,A,25:45.0
+TOSO,55,7540,Townsend's Solitaire,Solitaire de Townsend,Myadestes townsendi,Myadestes townsendi,1558,NULL,NULL,A,25:45.1
+TOWA,58,6680,Townsend's Warbler,Paruline de Townsend,Setophaga townsendi,Setophaga townsendi,2009,NULL,NULL,A,25:45.2
+TRES,53,6140,Tree Swallow,Hirondelle bicolore,Tachycineta bicolor,Tachycineta bicolor,1418,NULL,NULL,A,25:45.4
+TRFL,56,4665,Traill's Flycatcher (Alder/Willow),Moucherolle de Traill (des aulnes/ des saules),Empidonax sp.,Empidonax sp.,1223.2,NULL,NULL,A,25:45.5
+TRUS,14,1810,Trumpeter Swan,Cygne trompette,Cygnus buccinator,Cygnus buccinator,26,NULL,NULL,A,25:45.6
+TUPU,33,120,Tufted Puffin,Macareux huppé,Fratercula cirrhata,Fratercula cirrhata,563,NULL,NULL,A,25:45.7
+TUSW,14,1800,Tundra Swan,Cygne siffleur,Cygnus columbianus,Cygnus columbianus,27,NULL,NULL,A,25:45.9
+TUTI,7,7310,Tufted Titmouse,Mésange bicolore,Baeolophus bicolor,Baeolophus bicolor,1443,NULL,NULL,A,25:46.0
+TUVU,34,3250,Turkey Vulture,Urubu à tête rouge,Cathartes aura,Cathartes aura,765,NULL,NULL,A,25:46.1
+UNSA,60,4022,Unidentified Sapsucker,Pic buveur de sève non identifié,Sphyrapicus sp.,Sphyrapicus sp.,955.999,NULL,NULL,A,25:46.3
+UPSA,47,2610,Upland Sandpiper,Maubèche des champs,Bartramia longicauda,Bartramia longicauda,468,NULL,NULL,A,25:46.4
+VASW,54,4240,Vaux's Swift,Martinet de Vaux,Chaetura vauxi,Chaetura vauxi,260,NULL,NULL,A,25:46.5
+VATH,55,7630,Varied Thrush,Grive à collier,Ixoreus naevius,Ixoreus naevius,1607,NULL,NULL,A,25:46.7
+VEER,55,7560,Veery,Grive fauve,Catharus fuscescens,Catharus fuscescens,1578,NULL,NULL,A,25:46.8
+VESP,49,5400,Vesper Sparrow,Bruant vespéral,Pooecetes gramineus,Pooecetes gramineus,1834,NULL,NULL,A,25:46.9
+VGSW,53,6150,Violet-green Swallow,Hirondelle à face blanche,Tachycineta thalassina,Tachycineta thalassina,1421,NULL,NULL,A,25:47.1
+VIRA,46,2120,Virginia Rail,Râle de Virginie,Rallus limicola,Rallus limicola,412,NULL,NULL,A,25:47.2
+WATA,47,2590,Wandering Tattler,Chevalier errant,Tringa incana,Tringa incana,522,NULL,NULL,A,25:47.3
+WAVI,57,6270,Warbling Vireo,Viréo mélodieux,Vireo gilvus,Vireo gilvus,1356,NULL,NULL,A,25:47.5
+WAXW_UNI,59,6185,Unidentified Waxwing,Jaseur non identifié,Bombycilla sp.,Bombycilla sp.,1637.999,NULL,NULL,A,25:47.6
+WBNU,36,7270,White-breasted Nuthatch,Sittelle à poitrine blanche,Sitta carolinensis,Sitta carolinensis,1448,NULL,NULL,A,25:47.7
+WCSP,49,5540,White-crowned Sparrow,Bruant à couronne blanche,Zonotrichia leucophrys,Zonotrichia leucophrys,1857,NULL,NULL,A,25:47.9
+WEBL,55,7670,Western Bluebird,Merlebleu de l'Ouest,Sialia mexicana,Sialia mexicana,1556,NULL,NULL,A,25:48.0
+WECL_UNI,19,12,Western Grebe (Clark's/Western),Grèbe élégant (à face blanche/élégant),Aechmophorus sp.,Aechmophorus sp.,145.999,NULL,NULL,A,25:48.1
+WEFL,56,4642,Western Flycatcher (Cordilleran/Pacific-slope),Moucherolle côtier (des ravins/ côtier),Empidonax sp.,Empidonax sp.,1230.999,NULL,NULL,A,25:48.2
+WEGU,21,490,Western Gull,Goéland d'Audubon,Larus occidentalis,Larus occidentalis,582,NULL,NULL,A,25:48.4
+WEKI,56,4470,Western Kingbird,Tyran de l'Ouest,Tyrannus verticalis,Tyrannus verticalis,1278,NULL,NULL,A,25:48.5
+WEME,2,5011,Western Meadowlark,Sturnelle de l'Ouest,Sturnella neglecta,Sturnella neglecta,1888,NULL,NULL,A,25:48.6
+WESO,40,3732,Western Screech-Owl,Petit-duc des montagnes,Megascops kennicottii,Megascops kennicottii,831,NULL,NULL,A,25:48.8
+WETA,5,6070,Western Tanager,Piranga à tête rouge,Piranga ludoviciana,Piranga ludoviciana,2035,NULL,NULL,A,25:48.9
+WEVI,57,6310,White-eyed Vireo,Viréo aux yeux blancs,Vireo griseus,Vireo griseus,1338,NULL,NULL,A,25:49.0
+WEWP,56,4620,Western Wood-Pewee,Pioui de l'Ouest,Contopus sordidulus,Contopus sordidulus,1213,NULL,NULL,A,25:49.2
+WFIB,25,1870,White-faced Ibis,Ibis à face blanche,Plegadis chihi,Plegadis chihi,759,NULL,NULL,A,25:49.3
+WGWH,21,495,Western/Glaucous-winged Gull hybrid,Hybride de Goéland d'Audubon et de Goéland à ailes grises,Larus occidentalis x glaucescens,Larus occidentalis x glaucescens,582.555,NULL,NULL,A,25:49.4
+WHCR,9,2040,Whooping Crane,Grue blanche,Grus americana,Grus americana,439,NULL,NULL,A,25:49.6
+WHIM,47,2650,Whimbrel,Courlis corlieu,Numenius phaeopus,Numenius phaeopus,470,NULL,NULL,A,25:49.7
+WHWO,60,3990,White-headed Woodpecker,Pic à tête blanche,Picoides albolarvatus,Picoides albolarvatus,966,NULL,NULL,A,25:49.8
+WIFL,56,4660,Willow Flycatcher,Moucherolle des saules,Empidonax traillii,Empidonax traillii,1223,NULL,NULL,A,25:50.0
+WILL,47,2580,Willet,Chevalier semipalmé,Tringa semipalmata,Tringa semipalmata,524,NULL,NULL,A,25:50.1
+WIPH,47,2240,Wilson's Phalarope,Phalarope de Wilson,Phalaropus tricolor,Phalaropus tricolor,531,NULL,NULL,A,25:50.2
+WIPT,20,3010,Willow Ptarmigan,Lagopède des saules,Lagopus lagopus,Lagopus lagopus,128,NULL,NULL,A,25:50.3
+WISA,60,4040,Williamson's Sapsucker,Pic de Williamson,Sphyrapicus thyroideus,Sphyrapicus thyroideus,952,NULL,NULL,A,25:50.5
+WISN,47,2300,Wilson's Snipe,Bécassine de Wilson,Gallinago delicata,Gallinago delicata,515,NULL,NULL,A,25:50.6
+WITU,20,3100,Wild Turkey,Dindon sauvage,Meleagris gallopavo,Meleagris gallopavo,136,NULL,NULL,A,25:50.7
+WIWA,58,6850,Wilson's Warbler,Paruline à calotte noire,Cardellina pusilla,Cardellina pusilla,2023,NULL,NULL,A,25:50.8
+WIWR,61,7222,Winter Wren,Troglodyte des forêts,Troglodytes hiemalis,Troglodytes hiemalis,1465,NULL,NULL,A,25:51.0
+WODU,14,1440,Wood Duck,Canard branchu,Aix sponsa,Aix sponsa,34,NULL,NULL,A,25:51.1
+WOTH,55,7550,Wood Thrush,Grive des bois,Hylocichla mustelina,Hylocichla mustelina,1583,NULL,NULL,A,25:51.2
+WRSA,47,2400,White-rumped Sandpiper,Bécasseau à croupion blanc,Calidris fuscicollis,Calidris fuscicollis,502,NULL,NULL,A,25:51.4
+WTPT,20,3040,White-tailed Ptarmigan,Lagopède à queue blanche,Lagopus leucura,Lagopus leucura,130,NULL,NULL,A,25:51.5
+WTSP,49,5580,White-throated Sparrow,Bruant à gorge blanche,Zonotrichia albicollis,Zonotrichia albicollis,1855,NULL,NULL,A,25:51.7
+WTSW,54,4250,White-throated Swift,Martinet à gorge blanche,Aeronautes saxatalis,Aeronautes saxatalis,273,NULL,NULL,A,25:51.8
+WWCR,16,5220,White-winged Crossbill,Bec-croisé bifascié,Loxia leucoptera,Loxia leucoptera,1759,NULL,NULL,A,25:51.9
+WWSC,14,1650,White-winged Scoter,Macreuse brune,Melanitta fusca,Melanitta fusca,67,NULL,NULL,A,25:52.1
+YBCH,58,6830,Yellow-breasted Chat,Paruline polyglotte,Icteria virens,Icteria virens,1884,NULL,NULL,A,25:52.2
+YBCU,11,3870,Yellow-billed Cuckoo,Coulicou à bec jaune,Coccyzus americanus,Coccyzus americanus,204,NULL,NULL,A,25:52.3
+YBFL,56,4630,Yellow-bellied Flycatcher,Moucherolle à ventre jaune,Empidonax flaviventris,Empidonax flaviventris,1220,NULL,NULL,A,25:52.5
+YBLO,32,80,Yellow-billed Loon,Plongeon à bec blanc,Gavia adamsii,Gavia adamsii,629,NULL,NULL,A,25:52.6
+YBSA,60,4020,Yellow-bellied Sapsucker,Pic maculé,Sphyrapicus varius,Sphyrapicus varius,953,NULL,NULL,A,25:52.7
+YERA,46,2150,Yellow Rail,Râle jaune,Coturnicops noveboracensis,Coturnicops noveboracensis,400,NULL,NULL,A,25:52.9
+YEWA,58,6520,Yellow Warbler,Paruline jaune,Setophaga petechia,Setophaga petechia,1992,NULL,NULL,A,25:53.0
+YHBL,2,4970,Yellow-headed Blackbird,Carouge à tête jaune,Xanthocephalus xanthocephalus,Xanthocephalus xanthocephalus,1885,NULL,NULL,A,25:53.1
+YRWA,58,6556,Yellow-rumped Warbler,Paruline à croupion jaune,Setophaga coronata,Setophaga coronata,1999,NULL,NULL,A,25:53.2
+YTVI,57,6280,Yellow-throated Vireo,Viréo à gorge jaune,Vireo flavifrons,Vireo flavifrons,1350,NULL,NULL,A,25:53.4

@@ -32,14 +32,14 @@ library(foreach)
 # Generate trend uncertainty maps that show the variation in trend estimates across ~50 samples from the posterior
 # or at least a map that plots the CIs of the trends
 
+
+
+setwd("C:/Users/SmithAC/Documents/GitHub/bbsStanBayes")
 source("functions/posterior_summary_functions.R")
 source("functions/generate-indices-alt.R")
 source("functions/plot-indices-alt.R")
 source("functions/extract-index-data-alt.R")
 source("functions/generate-trends-alt.R")
-
-
-setwd("C:/Users/SmithAC/Documents/GitHub/bbsStanBayes")
 
 strat_sel <- "bbs_cws"
 
@@ -90,22 +90,39 @@ CV_threshold <- function(m,ci,thresh = 100){
 }
 
 
-sp_tmp <- c("(Northwestern Crow) American Crow",
-            "Wood Stork",
-            "Cedar Waxwing",
-            "Northern Shoveler",
-            "Lesser Scaup",
-            "White Ibis",
-            "American Woodcock",
-            "Common Eider",
-            "White-winged Scoter")
-# 
-# sp_tmp <- c("American Robin",
-#             "Barn Swallow",
-#             "House Sparrow",
-#             "American Crow",
-#             "Carolina Wren",
-#             "Greater Roadrunner")
+
+sp_tmp <- c( "Brown-headed Cowbird",
+             "Clark's Nutcracker",
+             "Western Wood-Pewee",
+             "Eastern Towhee",
+             "Common Grackle",
+             "Song Sparrow",
+             "Townsend's Solitaire",
+             "Black-throated Green Warbler",
+             "Common Yellowthroat",
+             "American Robin",
+             "Hermit Thrush",
+             "American Wigeon",
+             "Bufflehead",
+             "Broad-tailed Hummingbird",
+             "Common Nighthawk",
+             "Downy Woodpecker",
+             "Acorn Woodpecker",
+             "Spotted Sandpiper",
+             "Wood Stork",
+             "Horned Grebe",
+             "Double-crested Cormorant",
+             "House Wren",
+             "Rock Wren",
+             "Townsend's Warbler",
+             "Savannah Sparrow",
+             "American Robin",
+             "Barn Swallow",
+             "House Sparrow",
+             "American Crow",
+             "Carolina Wren",
+             "Greater Roadrunner")
+
 # 
 species_to_run <- filter(species_to_run,
                          english %in% sp_tmp)
@@ -122,7 +139,7 @@ species_to_run <- filter(species_to_run,
 
 
 # Species loop to plot diagnostic trajectories ------------------------------------------------------------
-n_cores <- 9#
+n_cores <- 15#
 cluster <- makeCluster(n_cores, type = "PSOCK")
 registerDoParallel(cluster)
 
@@ -282,7 +299,7 @@ stopCluster(cl = cluster)
 
 
 # Species loop to plot simple trajectories ------------------------------------------------------------
-n_cores <- 10#length(provs)
+n_cores <- 15#length(provs)
 cluster <- makeCluster(n_cores, type = "PSOCK")
 registerDoParallel(cluster)
 

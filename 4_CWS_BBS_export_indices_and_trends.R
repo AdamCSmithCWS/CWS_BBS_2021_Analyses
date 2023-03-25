@@ -88,6 +88,48 @@ load("species_lists.RData") # loads objects created at the beginning of the scri
 
 species_to_run <- nrecs_sp 
 
+# 
+# sp_tmp <- c( "Brown-headed Cowbird",
+#              "Clark's Nutcracker",
+#              "Western Wood-Pewee",
+#              "Eastern Towhee",
+#              "Common Grackle",
+#              "Song Sparrow",
+#              "Townsend's Solitaire",
+#              "Black-throated Green Warbler",
+#              "Common Yellowthroat",
+#              "American Robin",
+#              "Hermit Thrush",
+#              "American Wigeon",
+#              "Bufflehead",
+#              "Broad-tailed Hummingbird",
+#              "Common Nighthawk",
+#              "Downy Woodpecker",
+#              "Acorn Woodpecker",
+#              "Spotted Sandpiper",
+#              "Wood Stork",
+#              "Horned Grebe",
+#              "Double-crested Cormorant",
+#              "House Wren",
+#              "Rock Wren",
+#              "Townsend's Warbler",
+#              "Savannah Sparrow",
+#              "American Robin",
+#              "Barn Swallow",
+#              "House Sparrow",
+#              "American Crow",
+#              "Carolina Wren",
+#              "Greater Roadrunner")
+# 
+# 
+# 
+# species_to_run <- filter(species_to_run,
+#                          english %in% sp_tmp)
+# 
+
+
+
+
 CV_threshold <- function(m,ci,thresh = 100){
   y <- ifelse(ci/m > thresh,TRUE,FALSE)
   return(y)
@@ -259,7 +301,7 @@ fullrun <- foreach(jj = (1:nrow(species_to_run)),
                  coverage = reliab_func_cov(reliab.cov),
                  backcast_reliab = reliab_func_backcast(backcast_flag),
                  reliability = reliability_func(precision,coverage,backcast_reliab)) %>% 
-          mutate(across(where(is.numeric),~signif(.,3)))
+          mutate(across(where(is.double),~signif(.,3)))
         
         
   
@@ -332,7 +374,7 @@ fullrun <- foreach(jj = (1:nrow(species_to_run)),
                  species = species,
                  espece = espece,
                  bbs_num = as.integer(aou)) %>% 
-          mutate(across(where(is.numeric),~signif(.,3)))
+          mutate(across(where(is.double),~signif(.,3)))
         
         write.csv(ind_out,file = paste0("indices/full/",species_f_bil,"_annual_indices.csv"),
                   row.names = FALSE)
@@ -345,7 +387,7 @@ fullrun <- foreach(jj = (1:nrow(species_to_run)),
                  espece = espece,
                  bbs_num = as.integer(aou),
                  index_type = "Smooth") %>% 
-          mutate(across(where(is.numeric),~signif(.,3)))
+          mutate(across(where(is.double),~signif(.,3)))
         
         write.csv(inds_out,file = paste0("indices/smooth/",species_f_bil,"_smoothed_annual_indices.csv"),
                   row.names = FALSE)

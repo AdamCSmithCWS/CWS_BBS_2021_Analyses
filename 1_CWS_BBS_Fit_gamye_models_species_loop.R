@@ -80,6 +80,37 @@ rerun_sp <- c("(Northwestern Crow) American Crow",
               "Common Eider",
               "White-winged Scoter")
 
+
+
+rerun_sp <- c("Brown-headed Cowbird",
+             "Clark's Nutcracker",
+             "Western Wood-Pewee",
+             "Eastern Towhee",
+             "Common Grackle",
+             "Song Sparrow",
+             "Townsend's Solitaire",
+             "Black-throated Green Warbler",
+             "Common Yellowthroat",
+             "American Robin",
+             "Hermit Thrush",
+             "American Wigeon",
+             "Bufflehead",
+             "Broad-tailed Hummingbird",
+             "Common Nighthawk",
+             "Downy Woodpecker",
+             "Acorn Woodpecker",
+             "Spotted Sandpiper",
+             "Horned Grebe",
+             "Double-crested Cormorant",
+             "House Wren",
+             "Rock Wren",
+             "Townsend's Warbler",
+             "Savannah Sparrow",
+             "Olive-sided Flycatcher",
+             "American Dipper",
+             "Scott's Oriole")
+
+
 # species_to_run <- nrecs_sp %>% 
 #   filter(grouping == GG)
 
@@ -98,8 +129,9 @@ if(consider_spatial){
 output_dir <- "F:/bbsStanBayes/output/" # Stan writes output to files as it samples. This is great because it's really stable, but the user needs to think about where to store that output
 
 #output_dir <- "output/" # Stan writes output to files as it samples. This is great because it's really stable, but the user needs to think about where to store that output
+k <- 1
 
-for(jj in 1:(nrow(species_to_run)-1)){
+for(jj in ((k*2)-1):(k*2)){ #1:(nrow(species_to_run))){
 species <- as.character(species_to_run[jj,"english"])
 
 #species <- as.character(rerun[GG,"species"])
@@ -314,6 +346,18 @@ save(list = c("stanfit","stan_data",
 
 
 print(paste("Completed",out_base))
+
+
+# load(paste0("output/",out_base,"_Stan_fit.RData"))
+# output_dir <- "F:/bbsStanBayes/output/" # Stan writes output to files as it samples. This is great because it's really stable, but the user needs to think about where to store that output
+# 
+# stanfit$save_output_files(dir = output_dir, basename = out_base, timestamp = FALSE, random = FALSE)
+# save(list = c("stanfit","stan_data",
+#               "out_base",
+#               "fit_summary"),
+#      file = paste0(output_dir,"/",out_base,"_Stan_fit.RData"))
+
+
 # }else{
 #   print(paste("Skipped",out_base,"already run"))
 # 

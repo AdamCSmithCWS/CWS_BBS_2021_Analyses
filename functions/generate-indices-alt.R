@@ -306,8 +306,16 @@ generate_indices <- function(jags_mod = NULL,
       if(rr == "bcr"){region_alt_name = paste("BCR",region_alt_name,sep = "_")}
 
       st_sela <- as.character(region_names[which(region_names[,rr] == rrs),"region"])
-
-      st_rem2 <- st_rem
+      
+      if(rr == "stratum"){
+        st_rem2 <- NULL
+      }else{
+        if(any(st_rem %in% st_sela)){
+        st_rem2 <- st_rem[which(st_rem %in% st_sela)]
+        }else{
+          st_rem2 <- NULL
+        }
+      }
       strata_sel <- area_weights[which(area_weights$region %in% st_sela),"num"]
       st_sel <- area_weights[which(area_weights$region %in% st_sela),"region"]
       pz_area <- area_weights[,"area_sq_km"]*non_zero_weight
@@ -349,7 +357,9 @@ generate_indices <- function(jags_mod = NULL,
         strata_p <- pz_area[j]/sum(pz_area[strata_sel])
 
         if(sum(nnzero[1:max_backcast]) <= n_obs_backcast & as.integer(fyearbystrat[j]) > y_min ){ #if no observations of the species in the first 5 years, then remove the strata from trend summaries
-          st_rem2 <- c(st_rem2,as.character(area_weights[which(area_weights$num == j),"region"]))
+          if(drop_exclude){
+            st_rem2 <- c(st_rem2,as.character(area_weights[which(area_weights$num == j),"region"]))
+          }
           strem_flag <- c(rep(strata_p,fyearbystrat[j]-(y_min-1)),rep(0,y_max-fyearbystrat[j]))
           #if(length(strata_sel) == 1){break}
         }else{
@@ -377,7 +387,7 @@ generate_indices <- function(jags_mod = NULL,
       
 
       if(!is.null(st_rem2)){
-        if(drop_exclude & (rr != "stratum") & length(strata_sel) > 1){
+        if((rr != "stratum")){
           strata_sel <- strata_sel[-which(strata_sel %in% area_weights[which(area_weights$region %in% st_rem2),"num"])]
           st_sel <- st_sel[-which(st_sel %in% st_rem2)]
           st_rem3 <- st_rem2

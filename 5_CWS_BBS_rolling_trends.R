@@ -76,8 +76,45 @@ species_to_run <- nrecs_sp
 
 
 
+sp_tmp <- c( "Brown-headed Cowbird",
+             "Clark's Nutcracker",
+             "Western Wood-Pewee",
+             "Eastern Towhee",
+             "Common Grackle",
+             "Song Sparrow",
+             "Townsend's Solitaire",
+             "Black-throated Green Warbler",
+             "Common Yellowthroat",
+             "American Robin",
+             "Hermit Thrush",
+             "American Wigeon",
+             "Bufflehead",
+             "Broad-tailed Hummingbird",
+             "Common Nighthawk",
+             "Downy Woodpecker",
+             "Acorn Woodpecker",
+             "Spotted Sandpiper",
+             "Wood Stork",
+             "Horned Grebe",
+             "Double-crested Cormorant",
+             "House Wren",
+             "Rock Wren",
+             "Townsend's Warbler",
+             "Savannah Sparrow",
+             "American Robin",
+             "Barn Swallow",
+             "House Sparrow",
+             "American Crow",
+             "Carolina Wren",
+             "Greater Roadrunner")
+
+species_to_run <- filter(species_to_run,
+                         english %in% sp_tmp)
+
+
+
 # Species loop to save indices and generate trends ------------------------------------------------------------
-n_cores <- 20#length(provs)
+n_cores <- 15#length(provs)
 cluster <- makeCluster(n_cores, type = "PSOCK")
 registerDoParallel(cluster)
 

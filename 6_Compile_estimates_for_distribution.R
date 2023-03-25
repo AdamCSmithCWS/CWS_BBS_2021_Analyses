@@ -46,7 +46,7 @@ print(round(jj/nrow(species_to_run),2))
   
 }# end species loop
 
-numeric_cols_trends <- names(trends)[which(as.character(lapply(trends,class)) == "numeric")]
+numeric_cols_trends <- names(trends)[which(as.character(lapply(trends,typeof)) %in% c("double"))]
 
 trends_round <- trends %>% 
   mutate(across(all_of(numeric_cols_trends),~signif(.,3)))
@@ -56,7 +56,7 @@ write.csv(trends_round, paste0("website/All_",YYYY,"_BBS_trends.csv"),row.names 
 
 
 
-numeric_cols_indices <- names(indices)[which(as.character(lapply(indices,class)) == "numeric")]
+numeric_cols_indices <- names(indices)[which(as.character(lapply(indices,typeof)) %in% c("double"))]
 
 indices_round <- indices %>% 
   mutate(across(all_of(numeric_cols_indices),~signif(.,3)))
@@ -64,7 +64,7 @@ indices_round <- indices %>%
 saveRDS(indices,"output/allindices.rds")
 write.csv(indices_round, paste0("website/All_",YYYY,"_BBS_indices.csv"),row.names = F)
 
-numeric_cols_smooth_indices <- names(smooth_indices)[which(as.character(lapply(smooth_indices,class)) == "numeric")]
+numeric_cols_smooth_indices <- names(smooth_indices)[which(as.character(lapply(smooth_indices,typeof)) %in% c("double"))]
 
 smooth_indices_round <- smooth_indices %>% 
   mutate(across(all_of(numeric_cols_indices),~signif(.,3)))
