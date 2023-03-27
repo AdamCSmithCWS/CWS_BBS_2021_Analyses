@@ -54,7 +54,9 @@ trends_round <- trends %>%
 saveRDS(trends,"output/alltrends.rds")
 write.csv(trends_round, paste0("website/All_",YYYY,"_BBS_trends.csv"),row.names = F)
 
-
+trends_high_level <- trends_round %>% 
+  filter(Region_type %in% c("national","continental"))
+write.csv(trends_high_level, paste0("website/","continent_national_trends_cws_BBS_",YYYY,".csv"),row.names = F)
 
 numeric_cols_indices <- names(indices)[which(as.character(lapply(indices,typeof)) %in% c("double"))]
 
@@ -63,6 +65,12 @@ indices_round <- indices %>%
 
 saveRDS(indices,"output/allindices.rds")
 write.csv(indices_round, paste0("website/All_",YYYY,"_BBS_indices.csv"),row.names = F)
+
+indices_high_level <- indices_round %>% 
+  filter(Region_type %in% c("national","continental"))
+write.csv(indices_high_level, paste0("website/","continent_national_indicess_cws_BBS_",YYYY,".csv"),row.names = F)
+
+
 
 numeric_cols_smooth_indices <- names(smooth_indices)[which(as.character(lapply(smooth_indices,typeof)) %in% c("double"))]
 
@@ -85,6 +93,49 @@ web <- trends_round %>%
          prob_increase_0_33_percent = prob_increase_0_percent-prob_increase_33_percent,
          prob_increase_33_100_percent = prob_increase_0_percent - (prob_increase_0_33_percent + prob_increase_100_percent),
          mapfile = paste(bbs_num,Region_alt,Trend_Time,"map.png",sep = "_"))
+
+web_species <- read.csv("alt_data/BBS_AvianCore.csv")
+
+names_match <- web %>% 
+  select(species,espece,bbs_num) %>% 
+  distinct()
+
+miss_bbs_num <- names_match %>% 
+  select(bbs_num,species) %>% 
+  left_join(.,
+            web_species,
+            by = c("bbs_num" = "bbsNumber"),
+            multiple = "all") %>% 
+  arrange(bbs_num) %>% 
+  filter(is.na(commonNameE))
+
+if(nrow(miss_bbs_num) > 0){
+  warning("At least one bbs number is missing from Avian Core")
+  
+  print(paste("Avian core is missing",
+              paste(miss_bbs_num$bbs_num,
+                    collapse = ", ")))
+  web <- web %>% 
+    filter(bbs_num %in% web_species$bbsNumber)
+}
+
+
+miss_english_names <- names_match %>% 
+  select(bbs_num,species,espece) %>% 
+  left_join(.,
+            web_species,
+            by = c("species" = "commonNameE"),
+            multiple = "all") %>% 
+  arrange(bbs_num) %>% 
+  filter(is.na(bbs_num))
+
+
+if(nrow(miss_english_names) > 0){
+  warning("At least one species name is missing from Avian Core")
+  web <- web %>% 
+    filter(species %in% web_species$commonNameE)
+
+}
 
 
 
@@ -125,7 +176,21 @@ for(sp in unique(web$bbs_num)){
 }
 ## maps have Canadian regions only and show the regions included in each trend
 
+map_dup_test <- any(duplicated(web$mapfile))
 
+test_map <- any(!file.exists(paste0("website/webmaps/",web$mapfile)))
+
+if(test_map){
+  stop("At least one map is missing")
+}
+
+maps <- list.files("website/webmaps/",
+                   pattern = ".png")
+test_map_extra <- any((web$mapfile %in% maps) == FALSE)
+
+if(test_map_extra){
+  warning("There are extra maps in the webmaps folder")
+}
 
 
 
@@ -172,33 +237,18 @@ clnms = c("sp","species","espece","geo.area","trendtype",
 web = web[,clout]
 names(web) = clnms
 
-web_species <- read.csv("alt_data/BBS_AvianCore.csv")
-names_match <- web %>% 
-  select(species,espece,bbs_num) %>% 
-  distinct()
-
-miss_bbs_num <- names_match %>% 
-  select(bbs_num,species) %>% 
-  left_join(.,
-            web_species,
-            by = c("bbs_num" = "bbsNumber"),
-            multiple = "all") %>% 
-  arrange(bbs_num) %>% 
-  filter(is.na(commonNameE))
-
-
-miss_english_names <- names_match %>% 
-  select(bbs_num,species,espece) %>% 
-  left_join(.,
-            web_species,
-            by = c("species" = "commonNameE"),
-            multiple = "all") %>% 
-  arrange(bbs_num) %>% 
-  filter(is.na(bbsNumber))
-
-
 
 write.csv(web, paste0("website/",YYYY," BBS trends for website.csv"),row.names = F)
+
+
+
+
+
+
+
+
+
+
 
 # Indices for website -----------------------------------------------------
 
@@ -217,6 +267,8 @@ webi <- indices_round %>%
                Region_type != "bcr") %>% 
   bind_rows(.,webi_short)
 
+webi <- webi %>% 
+  filter(bbs_num %in% web_species$bbsNumber)
 
 clouti =  c("bbs_num",
             "species",
@@ -235,12 +287,35 @@ webi = webi[,clouti]
 names(webi) <- clnmsi
 
 
+
+tshort = web %>% 
+  filter(trendtype == "Short-term")
+tlong= web %>% 
+  filter(trendtype == "Long-term")
+index_short <- webi %>% 
+  filter(year == YYYY-10,
+         trendtype == "Short-term")
+index_long <- webi %>% 
+  filter(year == YYYY-10,
+         trendtype == "Long-term")
+  
+if(nrow(index_long) != nrow(tlong) |
+   nrow(index_short) != nrow(tshort)){
+warning("The number of indices and trends don't match \n explore index_trend_test")  
+
+index_trend_test <- webi %>% 
+  filter(year == YYYY-10) %>% 
+  select(species,trendtype,geo.area,an.index) %>% 
+  full_join(.,web,
+            by = c("species","trendtype","geo.area"))
+}
+
 write.csv(webi, paste0("website/",YYYY," BBS indices for website.csv"),row.names = F)
 
-webi_short = webi_short[,clouti]
-names(webi_short) <- clnmsi
-
-write.csv(webi_short, paste0("website/",YYYY," Short-term only BBS indices for website.csv"),row.names = F)
+# webi_short = webi_short[,clouti]
+# names(webi_short) <- clnmsi
+# 
+# write.csv(webi_short, paste0("website/",YYYY," Short-term only BBS indices for website.csv"),row.names = F)
 
 
 # SOCB Trends -------------------------------------------------------------

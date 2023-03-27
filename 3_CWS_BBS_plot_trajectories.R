@@ -89,45 +89,45 @@ CV_threshold <- function(m,ci,thresh = 100){
   return(y)
 }
 
-
-
-sp_tmp <- c( "Brown-headed Cowbird",
-             "Clark's Nutcracker",
-             "Western Wood-Pewee",
-             "Eastern Towhee",
-             "Common Grackle",
-             "Song Sparrow",
-             "Townsend's Solitaire",
-             "Black-throated Green Warbler",
-             "Common Yellowthroat",
-             "American Robin",
-             "Hermit Thrush",
-             "American Wigeon",
-             "Bufflehead",
-             "Broad-tailed Hummingbird",
-             "Common Nighthawk",
-             "Downy Woodpecker",
-             "Acorn Woodpecker",
-             "Spotted Sandpiper",
-             "Wood Stork",
-             "Horned Grebe",
-             "Double-crested Cormorant",
-             "House Wren",
-             "Rock Wren",
-             "Townsend's Warbler",
-             "Savannah Sparrow",
-             "American Robin",
-             "Barn Swallow",
-             "House Sparrow",
-             "American Crow",
-             "Carolina Wren",
-             "Greater Roadrunner")
-
 # 
-species_to_run <- filter(species_to_run,
-                         english %in% sp_tmp)
-
-
+# 
+# sp_tmp <- c( "Brown-headed Cowbird",
+#              "Clark's Nutcracker",
+#              "Western Wood-Pewee",
+#              "Eastern Towhee",
+#              "Common Grackle",
+#              "Song Sparrow",
+#              "Townsend's Solitaire",
+#              "Black-throated Green Warbler",
+#              "Common Yellowthroat",
+#              "American Robin",
+#              "Hermit Thrush",
+#              "American Wigeon",
+#              "Bufflehead",
+#              "Broad-tailed Hummingbird",
+#              "Common Nighthawk",
+#              "Downy Woodpecker",
+#              "Acorn Woodpecker",
+#              "Spotted Sandpiper",
+#              "Wood Stork",
+#              "Horned Grebe",
+#              "Double-crested Cormorant",
+#              "House Wren",
+#              "Rock Wren",
+#              "Townsend's Warbler",
+#              "Savannah Sparrow",
+#              "American Robin",
+#              "Barn Swallow",
+#              "House Sparrow",
+#              "American Crow",
+#              "Carolina Wren",
+#              "Greater Roadrunner")
+# 
+# # 
+# species_to_run <- filter(species_to_run,
+#                          english %in% sp_tmp)
+# 
+# 
 
 
 
@@ -281,27 +281,27 @@ dev.off()  # close diagnostic trajectory plotting
 
 } #temp end loop
 
-
-stopCluster(cl = cluster)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Species loop to plot simple trajectories ------------------------------------------------------------
-n_cores <- 15#length(provs)
-cluster <- makeCluster(n_cores, type = "PSOCK")
-registerDoParallel(cluster)
+# 
+# stopCluster(cl = cluster)
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# # Species loop to plot simple trajectories ------------------------------------------------------------
+# n_cores <- 15#length(provs)
+# cluster <- makeCluster(n_cores, type = "PSOCK")
+# registerDoParallel(cluster)
 
 
 fullrun <- foreach(jj = rev(1:nrow(species_to_run)),
