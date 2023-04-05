@@ -4,6 +4,8 @@
 ### 2 - State of Canada's Birds
 YYYY <- 2021
 
+webmaps <- FALSE # set to true if needing to create all map images for ECCC website
+
 library(bbsBayes)
 library(tidyverse)
 
@@ -138,7 +140,7 @@ if(nrow(miss_english_names) > 0){
 }
 
 
-
+if(webmaps){
 
 # generate maps for CWS website -------------------------------------------
 
@@ -192,7 +194,7 @@ if(test_map_extra){
   warning("There are extra maps in the webmaps folder")
 }
 
-
+}#end webmaps
 
 clout = c("bbs_num",
           "species",
@@ -318,6 +320,17 @@ write.csv(webi, paste0("website/",YYYY," BBS indices for website.csv"),row.names
 # write.csv(webi_short, paste0("website/",YYYY," Short-term only BBS indices for website.csv"),row.names = F)
 
 
+
+
+
+
+
+
+
+
+
+
+
 # SOCB Trends -------------------------------------------------------------
 
 ## export all trends that include some area within Canada, as well as the US trends
@@ -326,138 +339,250 @@ write.csv(webi, paste0("website/",YYYY," BBS indices for website.csv"),row.names
 
 # trends <- readRDS("output/alltrends.rds")
 # indices <- readRDS("output/allindices.rds")
-#smooth_indices <- readRDS("output/allsmooth_indices.rds")
+# smooth_indices <- readRDS("output/allsmooth_indices.rds")
+
+
+trends_round <- read.csv(paste0("website/All_",YYYY,"_BBS_trends.csv"))
+
 
 trends_out <- trends_round %>% 
-   filter((For_web == TRUE | Region %in% c("Continental","US"))) #%>% 
-  # mutate(prob_decrease_0_25_percent = prob_decrease_0_percent-prob_decrease_25_percent,
-  #        prob_decrease_25_50_percent = prob_decrease_0_percent - (prob_decrease_0_25_percent + prob_decrease_50_percent),
-  #        prob_increase_0_33_percent = prob_increase_0_percent-prob_increase_33_percent,
-  #        prob_increase_33_100_percent = prob_increase_0_percent - (prob_increase_0_33_percent + prob_increase_100_percent))
-socb_headings <- c("results_code",
-                   "version",
-                   "area_code",
-                   "species_code",
-                   "species_id",
-                   "season",
-                   "period",
-                   "years",
-                   "year_start",
-                   "year_end",
-                   "trnd",
-                   "index_type",
-                   "lower_ci",
-                   "upper_ci",
-                   "stderr",
-                   "model_type",
-                   "model_fit",
-                   "percent_change",
-                   "percent_change_low",
-                   "percent_change_high",
-                   "prob_decrease_0",
-                   "prob_decrease_25",
-                   "prob_decrease_30",
-                   "prob_decrease_50",
-                   "prob_increase_0",
-                   "prob_increase_33",
-                   "prob_increase_100",
-                   "reliability",
-                   "precision_num",
-                   "precision_cat",
-                   "coverage_num",
-                   "coverage_cat",
-                   "goal",
-                   "goal_lower",
-                   "sample_size",
-                   "sample_total",
-                   "subtitle",
-                   "prob_LD",
-                   "prob_MD",
-                   "prob_LC",
-                   "prob_MI",
-                   "prob_LI")
+   filter((For_web == TRUE | Region %in% c("Continental","US"))) %>% 
+  mutate(prob_LD = prob_decrease_50_percent,
+         prob_MD = prob_decrease_25_percent - prob_decrease_50_percent,
+         prob_LC = (prob_decrease_0_percent-prob_decrease_25_percent)+(prob_increase_0_percent-prob_increase_33_percent) ,
+         prob_MI = prob_increase_33_percent - prob_increase_100_percent,
+         prob_LI = prob_increase_100_percent)
 
-trend_headings_match <- c("",
-                          "",
-                          "Region_alt",
-                          "",
-                          "espece",
-                          "species",
-                          "Trend_Time",
-                          "",
-                          "Start_year",
-                          "End_year",
-                          "Trend",
-                          "",
-                          "Trend_Q0.025",
-                          "Trend_Q0.975",
-                          "",
-                          "",
-                          "",
-                          "Percent_Change",
-                          "Percent_Change_Q0.025",
-                          "Percent_Change_Q0.975",
-                          "prob_decrease_0_percent",
-                          "prob_decrease_25_percent",
-                          "prob_decrease_30_percent",
-                          "prob_decrease_50_percent",
-                          "prob_increase_0_percent",
-                          "prob_increase_33_percent",
-                          "prob_increase_100_percent",
-                          "reliability",
-                          "Width_of_95_percent_Credible_Interval",
-                          "precision",
-                          "reliab.cov",
-                          "coverage",
-                          "",
-                          "",
-                          "Mean_Number_of_Routes",
-                          "Number_of_Routes",
-                          "",
-                          "",
-                          "",
-                          "",
-                          "",
-                          "")
+test_probs <- trends_out %>% 
+  mutate(prob_test = prob_LD+prob_MD+prob_LC+prob_MI+prob_LI)
+  
+if(any(round(test_probs$prob_test,2) != 1)){stop("probabilites of change categories don't sum properly")}
 
-socb_headings_extract <- data.frame(socb = socb_headings,
-                                    trend = trend_headings_match)
 
-trends_select <- trend_headings_match[-which(trend_headings_match == "")]
-
-socb_headings_select <- socb_headings_extract %>% 
-  filter(trend != "")
+trends_out <- trends_out %>%
+  mutate(years = paste(Start_year,End_year,sep = "-")) %>% 
+  rename(area_code = Region_alt,
+         species_code = bbs_num,
+         species_id = species,
+         period = Trend_Time,
+         year_start = Start_year,
+         year_end = End_year,
+         trnd = Trend,
+         lower_ci = Trend_Q0.025,
+         upper_ci = Trend_Q0.975,
+         percent_change = Percent_Change,
+         percent_change_low = Percent_Change_Q0.025,
+         percent_change_high = Percent_Change_Q0.975,
+         prob_decrease_0 = prob_decrease_0_percent,
+         prob_decrease_25 = prob_decrease_25_percent,
+         prob_decrease_30 = prob_decrease_30_percent,
+         prob_decrease_50 = prob_decrease_50_percent,
+         prob_increase_0 = prob_increase_0_percent,
+         prob_increase_33 = prob_increase_33_percent,
+         prob_increase_100 = prob_increase_100_percent,
+         reliability = reliability,
+         precision_num = Width_of_95_percent_Credible_Interval,
+         precision_cat = precision,
+         coverage_num = reliab.cov,
+         coverage_cat = coverage,
+         sample_size = Mean_Number_of_Routes,
+         sample_total = Number_of_Routes,
+         prob_LD = prob_LD,
+         prob_MD = prob_MD,
+         prob_LC = prob_LC,
+         prob_MI = prob_MI,
+         prob_LI = prob_LI)
 
 trends_socb <- trends_out %>% 
-  select(any_of(trends_select))
+  relocate(area_code,
+         species_code,
+         species_id,
+         period,
+         years,
+         year_start,
+         year_end,
+         trnd,
+         lower_ci,
+         upper_ci,
+         percent_change,
+         percent_change_low,
+         percent_change_high,
+         prob_decrease_0,
+         prob_decrease_25,
+         prob_decrease_30,
+         prob_decrease_50,
+         prob_increase_0,
+         prob_increase_33,
+         prob_increase_100,
+         reliability,
+         precision_num,
+         precision_cat,
+         coverage_num,
+         coverage_cat,
+         sample_size,
+         sample_total,
+         prob_LD,
+         prob_MD,
+         prob_LC,
+         prob_MI,
+         prob_LI)
 
-if(any(names(trends_socb) != socb_headings_select[,2])) stop("Stop columns don't match")
+write.csv(trends_socb,
+          paste0("website/BBS_",YYYY,"_trends_for_socb.csv"),
+          row.names = FALSE)
 
-write.csv(trends_socb,paste0("website/BBS_",YYYY,"_trends_for_socb.csv"))
+write.csv(trends_socb[1:300,],
+          paste0("website/sample_BBS_",YYYY,"_trends_for_socb.csv"),
+          row.names = FALSE)
 
-socb_headings_extract <- socb_headings_extract %>% 
-  rename(NatureCountsTrendsSample = socb,
-         BBS_trend_headers = trend)
 
-write.csv(socb_headings_extract,
-          "website/linking_columns_naturecounts_bbs.csv")
 
+
+
+# 
+# 
+# socb_headings <- c("results_code",
+#                    "version",
+#                    "area_code",
+#                    "species_code",
+#                    "species_id",
+#                    "season",
+#                    "period",
+#                    "years",
+#                    "year_start",
+#                    "year_end",
+#                    "trnd",
+#                    "index_type",
+#                    "lower_ci",
+#                    "upper_ci",
+#                    "stderr",
+#                    "model_type",
+#                    "model_fit",
+#                    "percent_change",
+#                    "percent_change_low",
+#                    "percent_change_high",
+#                    "prob_decrease_0",
+#                    "prob_decrease_25",
+#                    "prob_decrease_30",
+#                    "prob_decrease_50",
+#                    "prob_increase_0",
+#                    "prob_increase_33",
+#                    "prob_increase_100",
+#                    "reliability",
+#                    "precision_num",
+#                    "precision_cat",
+#                    "coverage_num",
+#                    "coverage_cat",
+#                    "goal",
+#                    "goal_lower",
+#                    "sample_size",
+#                    "sample_total",
+#                    "subtitle",
+#                    "prob_LD",
+#                    "prob_MD",
+#                    "prob_LC",
+#                    "prob_MI",
+#                    "prob_LI")
+# 
+# trend_headings_match <- c("",
+#                           "",
+#                           "Region_alt",
+#                           "bbs_num",
+#                           "species",
+#                           "Trend_Time",
+#                           "",
+#                           "Start_year",
+#                           "End_year",
+#                           "Trend",
+#                           "",
+#                           "Trend_Q0.025",
+#                           "Trend_Q0.975",
+#                           "",
+#                           "",
+#                           "",
+#                           "Percent_Change",
+#                           "Percent_Change_Q0.025",
+#                           "Percent_Change_Q0.975",
+#                           "prob_decrease_0_percent",
+#                           "prob_decrease_25_percent",
+#                           "prob_decrease_30_percent",
+#                           "prob_decrease_50_percent",
+#                           "prob_increase_0_percent",
+#                           "prob_increase_33_percent",
+#                           "prob_increase_100_percent",
+#                           "reliability",
+#                           "Width_of_95_percent_Credible_Interval",
+#                           "precision",
+#                           "reliab.cov",
+#                           "coverage",
+#                           "",
+#                           "",
+#                           "Mean_Number_of_Routes",
+#                           "Number_of_Routes",
+#                           "",
+#                           "prob_LD",
+#                           "prob_MD",
+#                           "prob_LC",
+#                           "prob_MI",
+#                           "prob_LI")
+# 
+# socb_headings_extract <- data.frame(socb = socb_headings,
+#                                     trend = trend_headings_match)
+# 
+# trends_select <- trend_headings_match[-which(trend_headings_match == "")]
+# 
+# socb_headings_select <- socb_headings_extract %>% 
+#   filter(trend != "")
+# 
+# trends_socb <- trends_out %>% 
+#   select(any_of(trends_select))
+# 
+# if(any(names(trends_socb) != socb_headings_select[,2])) stop("Stop columns don't match")
+# 
+# names(trends_socb) <- socb_headings_select[,1]
+# write.csv(trends_socb,paste0("website/BBS_",YYYY,"_trends_for_socb.csv"))
+# 
+# socb_headings_extract <- socb_headings_extract %>% 
+#   rename(NatureCountsTrendsSample = socb,
+#          BBS_trend_headers = trend)
+# 
+# write.csv(socb_headings_extract,
+#           "website/linking_columns_naturecounts_bbs.csv")
+# 
 
 
 
 # SOCB indices ------------------------------------------------------------
 
+indices_round <- read.csv(paste0("website/All_",YYYY,"_BBS_indices.csv"))
+
 indices_socb <- indices_round %>% 
   filter((For_web == TRUE | Region %in% c("Continental","US"))) %>% 
   group_by(species,Region,Trend_Time) %>% 
   mutate(LOESS_index = loess_func(Index,Year)) %>% 
-  select(Year,Region,Index,Trend_Time,
-         Index_q_0.05,Index_q_0.95,
-         species,espece,bbs_num,
-         LOESS_index) %>% 
-  rename(upper_ci = Index_q_0.95,
-         lower_ci = Index_q_0.05) 
+  rename(species_code = bbs_num,
+    species_id = species,
+    index = Index,
+    year = Year,
+         area_code = Region_alt,
+         period = Trend_Time,
+         upper_ci = Index_q_0.95,
+         lower_ci = Index_q_0.05) %>% 
+  select(-c(Index_q_0.025,
+            Index_q_0.975)) %>% 
+  relocate(area_code,
+           year,
+           period, 
+           species_code,
+           species_id,
+           index,
+           upper_ci,
+           lower_ci,
+           LOESS_index)
 
 write.csv(indices_socb,
-          file = paste0("website/BBS_",YYYY,"_annual_indices_for_socb.csv"))
+          file = paste0("website/BBS_",YYYY,"_annual_indices_for_socb.csv"),
+          row.names = FALSE)
+
+write.csv(indices_socb[sample(1:nrow(indices_socb),100,FALSE),],"sample_indices_output_bbs.csv",row.names = FALSE)
 
