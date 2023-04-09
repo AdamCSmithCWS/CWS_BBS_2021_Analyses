@@ -1,6 +1,8 @@
 ### bbsBayes2 post fit plotting with bbsBayes2
 
 library(bbsBayes2)
+library(tidyverse)
+library(patchwork)
 setwd("C:/GitHub/bbsStanBayes")
 load("species_lists.RData")
 
@@ -64,38 +66,4 @@ saveRDS(m,file = paste0("output/saved_bbsBayes2_",species_f,".rds"))
 
 # confirm that bbsBayes2 functions work -----------------------------------
 
-
-
-species <- "Song Sparrow"
-jj <- which(nrecs_sp$english == species)
-species_f <- as.character(nrecs_sp[jj,"species_file"])
-
-m <- readRDS(paste0("output/saved_bbsBayes2_",species_f,".rds"))
-
-
-ind <- generate_indices(m,
-                        regions = "continent")
-trajs <- plot_indices(ind)
-print(trajs[["continent"]])
-
-inds <- generate_indices(m,
-                         alternate_n = "nsmooth")
-
-starts <- c(1966,
-            1978,
-            1990,
-            2010,
-            2021)
-
-maps <- vector(mode = "list",
-               length = length(starts)-1)
-for(y in 1:(length(starts)-1)){
-  fy <- starts[y]
-  ly <- starts[y+1]
-
-tr <- generate_trends(inds,
-                      min_year = fy,
-                      max_year = ly)
-maps[[y]] <- plot_map(tr)
-}
 
