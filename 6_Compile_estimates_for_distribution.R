@@ -361,7 +361,7 @@ if(any(round(test_probs$prob_test,2) != 1)){stop("probabilites of change categor
 
 trends_out <- trends_out %>%
   mutate(years = paste(Start_year,End_year,sep = "-")) %>% 
-  rename(area_code = Region_alt,
+  rename(area_code = Region,
          species_code = bbs_num,
          species_id = species,
          period = Trend_Time,
@@ -564,7 +564,7 @@ indices_socb <- indices_round %>%
     species_id = species,
     index = Index,
     year = Year,
-         area_code = Region_alt,
+         area_code = Region,
          period = Trend_Time,
          upper_ci = Index_q_0.95,
          lower_ci = Index_q_0.05) %>% 

@@ -3,28 +3,16 @@
 library(bbsBayes2)
 library(tidyverse)
 library(patchwork)
-setwd("C:/GitHub/bbsStanBayes")
+
 load("species_lists.RData")
-
-
-
-
-
 model_sel = "gamye"
 strat = "bbs_cws"
 output_dir <- "F:/bbsStanBayes/output/" # Stan writes output to files as it samples. This is great because it's really stable, but the user needs to think about where to store that output
 output_dir <- "output/"
 species_to_run <- nrecs_sp
-sps <- c("Common Yellowthroat",
-         "Song Sparrow",
-         "Downy Woodpecker",
-         "Common Nighthawk",
-         "Savannah Sparrow",
-         "Black-throated Green Warbler",
-         "American Robin")
-wtemp <- which(species_to_run$english %in% sps)
 
-for(jj in wtemp[6:7]){ #:nrow(species_to_run)){
+for(jj in 1:nrow(species_to_run)){
+
   # prep data with bbsBayes2 ------------------------------------------------
 species <- as.character(species_to_run[jj,"english"])
 
@@ -58,12 +46,5 @@ saveRDS(m,file = paste0("output/saved_bbsBayes2_",species_f,".rds"))
 
 }
 
-
-
-
-
-
-
-# confirm that bbsBayes2 functions work -----------------------------------
 
 
