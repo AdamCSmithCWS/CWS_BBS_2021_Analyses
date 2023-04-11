@@ -11,7 +11,7 @@ load("species_lists.RData")
 
 
 
-species <- "Wood Thrush"
+species <- "Downy Woodpecker"
 jj <- which(nrecs_sp$english == species)
 species_f <- as.character(nrecs_sp[jj,"species_file"])
 
@@ -32,9 +32,9 @@ base <- bbsBayes2::load_map("bbs_cws") %>%
   st_bbox()
 
 starts <- c(1966,
-            1977,
-            1990,
-            2011,
+            1988,
+            1995,
+            2002,
             2021) #identify some change points
 
 
@@ -114,7 +114,7 @@ traj <- trajs[[1]] +
 
 mapt <- traj + map + plot_layout(nrow = 2,heights = c(2,4))
 mag = 3
-png(filename = paste0("Sharing/",species_f,"_",fy,"-",ly,".png"),
+png(filename = paste0("Sharing/",species_f,"_",fy,"-",ly,"overall.png"),
     res = 72 *mag,
     height = 900*mag,
     width = 600*mag)
