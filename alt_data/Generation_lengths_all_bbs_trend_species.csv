@@ -6,7 +6,7 @@ aou,english,GenLength
 2630,Spotted Sandpiper,3.655805581
 11,Clark's Grebe,4.814294093
 10,Western Grebe,5.331588962
-12,Western Grebe (Clark's/Western),5
+12,Western Grebe (Clark's/Western),5.072941528
 4250,White-throated Swift,2.447301252
 4980,Red-winged Blackbird,4.27953597
 5000,Tricolored Blackbird,3.777039139
@@ -144,7 +144,7 @@ aou,english,GenLength
 1810,Trumpeter Swan,9.306894418
 1800,Tundra Swan,11.99546495
 4220,Black Swift,3.738376237
-2973,Blue Grouse (Dusky/Sooty),4
+2973,Blue Grouse (Dusky/Sooty),4.029642569
 2970,Dusky Grouse,4.475357304
 2971,Sooty Grouse,3.583927834
 1770,Black-bellied Whistling-Duck,2.362207056
@@ -171,8 +171,8 @@ aou,english,GenLength
 4680,Hammond's Flycatcher,1.968662931
 4670,Least Flycatcher,1.995003415
 4641,Pacific-slope Flycatcher,2.031465222
-4665,Traill's Flycatcher (Alder/Willow),2.2
-4642,Western Flycatcher (Cordilleran/Pacific-slope),2
+4665,Traill's Flycatcher (Alder/Willow),2.302521235
+4642,Western Flycatcher (Cordilleran/Pacific-slope),1.992514746
 4660,Willow Flycatcher,2.442111367
 4630,Yellow-bellied Flycatcher,1.993268327
 4740,Horned Lark,3.042270207
@@ -213,7 +213,7 @@ aou,english,GenLength
 5070,Baltimore Oriole,2.680863532
 5080,Bullock's Oriole,2.595343415
 5050,Hooded Oriole,2.519003615
-5077,Northern Oriole (Bullock's/Baltimore),2.6
+5077,Northern Oriole (Bullock's/Baltimore),2.638103474
 5060,Orchard Oriole,2.501405461
 5040,Scott's Oriole,3.107281677
 3290,Mississippi Kite,5.087532041
@@ -409,7 +409,7 @@ aou,english,GenLength
 1420,Northern Shoveler,4.095844242
 4030,Red-breasted Sapsucker,1.881848945
 4021,Red-naped Sapsucker,1.950032103
-4022,Sapsuckers (Yellow-bellied/Red-naped/Red-breasted/Williamson's),2
+4022,Sapsuckers (Yellow-bellied/Red-naped/Red-breasted/Williamson's),1.953468161
 4040,Williamson's Sapsucker,1.942203555
 4020,Yellow-bellied Sapsucker,2.039788041
 5290,American Goldfinch,2.379974974
