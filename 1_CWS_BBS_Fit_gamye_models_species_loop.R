@@ -28,7 +28,7 @@ name_simpl_function <- function(y){
 nrecs_sp <- stratified_data$bird_strat %>% 
   group_by(AOU) %>% 
   summarise(num_counts = n(),
-            num_routes = length(unique(rt.uni))) %>% 
+            num_routes = length(unique(rt.uni))) #%>% 
   left_join(.,stratified_data$species_strat,by = c("AOU" = "sp.bbs")) %>% 
   filter(num_counts > 200,
          !grepl("unid",english)) %>% 

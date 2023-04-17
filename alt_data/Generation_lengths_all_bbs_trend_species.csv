@@ -1,0 +1,485 @@
+aou,english,GenLength
+5280,Common Redpoll,2.592005464
+3330,Cooper's Hawk,5.552181056
+3340,Northern Goshawk,7.483527603
+3320,Sharp-shinned Hawk,5.472726925
+2630,Spotted Sandpiper,3.655805581
+11,Clark's Grebe,4.814294093
+10,Western Grebe,5.331588962
+12,Western Grebe (Clark's/Western),5
+4250,White-throated Swift,2.447301252
+4980,Red-winged Blackbird,4.27953597
+5000,Tricolored Blackbird,3.777039139
+5800,Rufous-crowned Sparrow,2.196889551
+1440,Wood Duck,4.056081918
+2882,Chukar,2.271141313
+5460,Grasshopper Sparrow,2.152036823
+5480,LeConte's Sparrow,1.948327451
+5491,Nelson's Sparrow,2.634638554
+5500,Seaside Sparrow,2.842087376
+5730,Black-throated Sparrow,2.202279982
+1330,American Black Duck,4.821432747
+1390,Green-winged Teal,3.878402736
+1320,Mallard,4.781012977
+1340,Mottled Duck,4.552456265
+1430,Northern Pintail,4.947677081
+1180,Anhinga,6.251448767
+6970,American Pipit,2.058400577
+7000,Sprague's Pipit,1.940463213
+2060,Sandhill Crane,11.45521958
+4160,Chuck-will's-widow,4.055669608
+4171,Eastern Whip-poor-will,3.696018219
+4812,California Scrub-Jay,4.745295137
+4820,Mexican Jay,5.563176083
+4813,Woodhouse's Scrub-Jay,5.175549526
+3490,Golden Eagle,16.25526957
+4290,Black-chinned Hummingbird,2.449862119
+4280,Ruby-throated Hummingbird,2.160837318
+1940,Great Blue Heron,7.44001806
+1960,Great Egret,6.036657469
+5860,Olive Sparrow,2.500319042
+5739,Bell's Sparrow,2.362743673
+5738,Sagebrush Sparrow,2.262258433
+3670,Short-eared Owl,3.982087093
+3780,Burrowing Owl,3.059077808
+7460,Verdin,2.026468057
+1470,Canvasback,5.161870032
+1480,Greater Scaup,4.148126497
+1490,Lesser Scaup,5.023958311
+1460,Redhead,4.194698424
+1500,Ring-necked Duck,3.76042376
+7320,Black-crested Titmouse,2.773136012
+7340,Bridled Titmouse,2.555563954
+7331,Juniper Titmouse,2.336777188
+7330,Oak Titmouse,2.500326492
+7310,Tufted Titmouse,2.817908958
+2610,Upland Sandpiper,3.646180638
+6180,Bohemian Waxwing,2.812218458
+6190,Cedar Waxwing,2.377284295
+3000,Ruffed Grouse,2.398076811
+1900,American Bittern,3.52468164
+230,Marbled Murrelet,6.559886244
+1720,Canada Goose,9.449200494
+3750,Great Horned Owl,7.580364415
+2001,Cattle Egret,6.069601865
+1520,Barrow's Goldeneye,6.602453125
+1530,Bufflehead,5.492261298
+1510,Common Goldeneye,7.109900304
+3430,Broad-winged Hawk,5.770490449
+3480,Ferruginous Hawk,6.860257537
+3390,Red-shouldered Hawk,5.553059841
+3370,Red-tailed Hawk (all forms),9.188919209
+3420,Swainson's Hawk,8.447092745
+2010,Green Heron,4.210398689
+6050,Lark Bunting,2.030157659
+5380,Chestnut-collared Longspur,2.275903816
+5360,Lapland Longspur,2.584916869
+2420,Least Sandpiper,3.403927912
+2940,California Quail,2.222432767
+2950,Gambel's Quail,2.126172625
+2930,Scaled Quail,2.152866308
+4310,Anna's Hummingbird,2.079680549
+4300,Costa's Hummingbird,2.093650257
+7130,Cactus Wren,2.600460286
+3620,Crested Caracara,8.225450423
+6860,Canada Warbler,2.048246608
+6900,Red-faced Warbler,2.085432044
+6850,Wilson's Warbler,2.125301481
+5930,Northern Cardinal,4.156734357
+5940,Pyrrhuloxia,5.599267088
+5275,Redpoll (Common/Hoary),2.592005464
+3250,Turkey Vulture,6.805193786
+7570,Gray-cheeked Thrush,2.310912736
+7590,Hermit Thrush,2.286469271
+7580,Swainson's Thrush,2.471010853
+7560,Veery,2.717673017
+7170,Canyon Wren,1.818057318
+3090,Greater Sage-Grouse,3.822699139
+5450,Baird's Sparrow,2.13507425
+5470,Henslow's Sparrow,2.04219075
+290,Pigeon Guillemot,7.710186337
+7260,Brown Creeper,1.724861893
+4230,Chimney Swift,3.009395796
+4240,Vaux's Swift,2.348481441
+7420,Wrentit,2.764946534
+2730,Killdeer,3.924036198
+2810,Mountain Plover,4.01403855
+2740,Semipalmated Plover,3.532632541
+770,Black Tern,5.682020735
+5520,Lark Sparrow,2.20312474
+4200,Common Nighthawk,4.585997652
+4210,Lesser Nighthawk,3.361353004
+600,Bonaparte's Gull,6.67781153
+7010,American Dipper,2.518614967
+3310,Northern Harrier,4.471506812
+7250,Marsh Wren,2.000993233
+7240,Sedge Wren,2.275027239
+1540,Long-tailed Duck,6.005650979
+5140,Evening Grosbeak,3.098212161
+3880,Black-billed Cuckoo,2.543153489
+3870,Yellow-billed Cuckoo,2.532871766
+4130,(Red-shafted Flicker) Northern Flicker,2.701236365
+4120,(Yellow-shafted Flicker) Northern Flicker,2.701236365
+4140,Gilded Flicker,3.274948209
+4123,Northern Flicker (all forms),2.701236365
+2890,Northern Bobwhite,2.258734621
+3131,Rock Pigeon,3.993083763
+3200,Common Ground Dove,2.931066034
+3210,Inca Dove,2.799722853
+4610,Eastern Wood-Pewee,2.33554447
+4590,Olive-sided Flycatcher,3.212456282
+4620,Western Wood-Pewee,2.318320776
+3260,Black Vulture,14.19923167
+4890,(Northwestern Crow) American Crow,7.993566253
+4880,American Crow,7.993566253
+4870,Chihuahuan Raven,5.649748724
+4860,Common Raven,7.464649592
+4900,Fish Crow,5.21193923
+2150,Yellow Rail,2.126855185
+3840,Groove-billed Ani,3.192426485
+4770,Blue Jay,5.15878621
+4780,Steller's Jay,4.326749528
+4830,Green Jay,7.142998682
+1782,Mute Swan,9.800268867
+1810,Trumpeter Swan,9.306894418
+1800,Tundra Swan,11.99546495
+4220,Black Swift,3.738376237
+2973,Blue Grouse (Dusky/Sooty),4
+2970,Dusky Grouse,4.475357304
+2971,Sooty Grouse,3.583927834
+1770,Black-bellied Whistling-Duck,2.362207056
+1780,Fulvous Whistling-Duck,2.619713927
+4940,Bobolink,2.86256725
+3940,Downy Woodpecker,2.534501603
+3930,Hairy Woodpecker,3.112775309
+3960,Ladder-backed Woodpecker,2.517709841
+3970,Nuttall's Woodpecker,2.60174637
+3950,Red-cockaded Woodpecker,3.03043827
+3990,White-headed Woodpecker,2.593478519
+4050,Pileated Woodpecker,4.378856859
+7040,Gray Catbird,3.464713412
+2000,Little Blue Heron,3.463573215
+1970,Snowy Egret,4.106743696
+1990,Tricolored Heron,5.300525251
+3270,Swallow-tailed Kite,6.56465429
+3280,White-tailed Kite,4.286761197
+4650,Acadian Flycatcher,2.657902826
+4661,Alder Flycatcher,2.162931103
+4640,Cordilleran Flycatcher,1.95356427
+4690,Dusky Flycatcher,2.13714676
+4691,Gray Flycatcher,1.981054001
+4680,Hammond's Flycatcher,1.968662931
+4670,Least Flycatcher,1.995003415
+4641,Pacific-slope Flycatcher,2.031465222
+4665,Traill's Flycatcher (Alder/Willow),2.2
+4642,Western Flycatcher (Cordilleran/Pacific-slope),2
+4660,Willow Flycatcher,2.442111367
+4630,Yellow-bellied Flycatcher,1.993268327
+4740,Horned Lark,3.042270207
+1840,White Ibis,6.506976058
+5100,Brewer's Blackbird,2.706886845
+5090,Rusty Blackbird,2.373692921
+2980,Spruce Grouse,3.394960462
+3600,American Kestrel,3.029874828
+3570,Merlin,3.176692949
+3560,Peregrine Falcon,5.712366517
+3550,Prairie Falcon,4.955306116
+2210,American Coot,4.031447748
+2300,Wilson's Snipe,2.606551743
+2190,Common Gallinule,2.561011413
+70,Common Loon,11.29641116
+100,Pacific Loon,9.053883332
+110,Red-throated Loon,8.185562761
+630,Gull-billed Tern,9.747824285
+3850,Greater Roadrunner,3.216720014
+6810,Common Yellowthroat,2.538277341
+6770,Kentucky Warbler,2.197692357
+6800,MacGillivray's Warbler,2.409588172
+6790,Mourning Warbler,2.123503652
+3410,White-tailed Hawk,6.56131443
+3790,Northern Pygmy-Owl,2.412193292
+4920,Pinyon Jay,4.625597206
+5180,Cassin's Finch,2.375655281
+5190,House Finch,2.506719457
+5170,Purple Finch,2.847863485
+3520,Bald Eagle,14.1937938
+6390,Worm-eating Warbler,2.264556536
+2260,Black-necked Stilt,5.599142123
+6130,Barn Swallow,3.132150175
+1550,Harlequin Duck,6.149206491
+640,Caspian Tern,9.749406689
+7550,Wood Thrush,2.404420008
+6830,Yellow-breasted Chat,2.241553184
+5070,Baltimore Oriole,2.680863532
+5080,Bullock's Oriole,2.595343415
+5050,Hooded Oriole,2.519003615
+5077,Northern Oriole (Bullock's/Baltimore),2.6
+5060,Orchard Oriole,2.501405461
+5040,Scott's Oriole,3.107281677
+3290,Mississippi Kite,5.087532041
+1910,Least Bittern,3.135139649
+7630,Varied Thrush,2.371356469
+5690,(Gray-headed Junco) Dark-eyed Junco,2.385897614
+5671,(Oregon Junco) Dark-eyed Junco,2.385897614
+5670,(Slate-colored Junco) Dark-eyed Junco,2.385897614
+5660,(White-winged Junco) Dark-eyed Junco,2.385897614
+5677,Dark-eyed Junco (all forms),2.385897614
+3010,Willow Ptarmigan,2.332812222
+6220,Loggerhead Shrike,2.702084494
+530,California Gull,9.753341131
+440,Glaucous-winged Gull,13.81947507
+470,Great Black-backed Gull,12.51374299
+510,Herring Gull,14.07477897
+550,Mew Gull,10.67097076
+540,Ring-billed Gull,10.06890851
+490,Western Gull,12.27999724
+6430,Lucy's Warbler,2.017240687
+6450,Nashville Warbler,2.306610575
+6460,Orange-crowned Warbler,2.079755232
+6470,Tennessee Warbler,1.862894145
+6440,Virginia's Warbler,1.930102826
+590,Franklin's Gull,7.124439976
+580,Laughing Gull,7.865540035
+6380,Swainson's Warbler,2.317199656
+2490,Marbled Godwit,7.439255425
+1310,Hooded Merganser,4.513622284
+5210,Red Crossbill,3.161850713
+5220,White-winged Crossbill,1.999659757
+1370,American Wigeon,3.89349214
+1350,Gadwall,3.673352314
+3900,Belted Kingfisher,2.692133072
+3730,Eastern Screech-Owl,3.933060173
+3732,Western Screech-Owl,3.55858021
+4070,Acorn Woodpecker,4.71306791
+4110,Gila Woodpecker,2.646667733
+4100,Golden-fronted Woodpecker,2.595243572
+4080,Lewis's Woodpecker,2.232979572
+4090,Red-bellied Woodpecker,2.670782129
+4060,Red-headed Woodpecker,2.651364715
+1650,White-winged Scoter,5.778288318
+3100,Wild Turkey,4.689787737
+5830,Lincoln's Sparrow,2.097614456
+5810,Song Sparrow,2.588141994
+5840,Swamp Sparrow,2.078270071
+5920,Abert's Towhee,2.657521365
+5911,California Towhee,2.729696484
+5910,Canyon Towhee,2.677993343
+1290,Common Merganser,5.050720794
+1300,Red-breasted Merganser,5.730468376
+7030,Northern Mockingbird,3.761658285
+6360,Black-and-white Warbler,2.592005464
+4960,Bronzed Cowbird,2.459147624
+4950,Brown-headed Cowbird,3.285866402
+7540,Townsend's Solitaire,2.604380783
+1880,Wood Stork,8.840286446
+4540,Ash-throated Flycatcher,2.989367065
+4530,Brown-crested Flycatcher,3.281657418
+4520,Great Crested Flycatcher,3.336289418
+4910,Clark's Nutcracker,4.395406084
+2640,Long-billed Curlew,6.748466121
+2030,Yellow-crowned Night-Heron,4.640267872
+2020,Black-crowned Night-Heron,5.994405196
+6780,Connecticut Warbler,1.942642126
+2920,Mountain Quail,2.578428464
+7020,Sage Thrasher,2.475182001
+1670,Ruddy Duck,3.856815295
+3640,Osprey,9.901877185
+3350,Harris's Hawk,6.591665147
+6760,Louisiana Waterthrush,2.134498512
+6750,Northern Waterthrush,2.215035085
+6883,Eurasian Tree Sparrow,2.719771587
+6882,House Sparrow,3.726344591
+5420,Savannah Sparrow,2.242147407
+5850,Fox Sparrow,2.565488998
+5970,Blue Grosbeak,3.085739873
+5980,Indigo Bunting,2.777197368
+5990,Lazuli Bunting,2.341236644
+6010,Painted Bunting,2.467333191
+6000,Varied Bunting,2.229390891
+3120,Band-tailed Pigeon,4.394132128
+1250,American White Pelican,15.03473199
+1260,Brown Pelican,9.953688603
+2881,Gray Partridge,1.933238715
+4840,Canada Jay,3.668742765
+6121,Cave Swallow,2.668670335
+6120,Cliff Swallow,2.563576795
+5750,Bachman's Sparrow,2.01129262
+5780,Cassin's Sparrow,1.998739509
+6200,Phainopepla,2.351991131
+1200,Double-crested Cormorant,7.21950274
+1210,Neotropic Cormorant,5.464667654
+1230,Pelagic Cormorant,7.14754948
+4180,Common Poorwill,2.767326657
+2230,Red-necked Phalarope,3.222582303
+2240,Wilson's Phalarope,3.18429541
+3091,Ring-necked Pheasant,4.77330905
+5960,Black-headed Grosbeak,2.626122912
+5950,Rose-breasted Grosbeak,2.6961497
+7470,Arctic Warbler,2.064107876
+4750,Black-billed Magpie,4.123549167
+4760,Yellow-billed Magpie,3.408051597
+4010,American Three-toed Woodpecker,3.07341632
+4000,Black-backed Woodpecker,3.350072462
+5150,Pine Grosbeak,2.594824817
+5870,Eastern Towhee,2.77244191
+5900,Green-tailed Towhee,2.780343374
+5880,Spotted Towhee,2.898097809
+6090,Hepatic Tanager,2.250777359
+6080,Scarlet Tanager,2.390336661
+6100,Summer Tanager,2.529418312
+6070,Western Tanager,2.230321436
+4490,Great Kiskadee,2.985169291
+1830,Roseate Spoonbill,7.852077571
+1860,Glossy Ibis,7.246297223
+1870,White-faced Ibis,5.140344254
+40,Eared Grebe,5.027990321
+30,Horned Grebe,4.411423392
+20,Red-necked Grebe,5.626612132
+60,Pied-billed Grebe,3.428296921
+7350,Black-capped Chickadee,2.623277
+7400,Boreal Chickadee,2.262583194
+7360,Carolina Chickadee,2.486529497
+7410,Chestnut-backed Chickadee,2.208218433
+7380,Mountain Chickadee,2.29350444
+7520,Black-tailed Gnatcatcher,1.686474104
+7510,Blue-gray Gnatcatcher,1.837491668
+5400,Vesper Sparrow,2.214711172
+2180,Purple Gallinule,2.12580627
+2140,Sora,1.865370331
+6110,Purple Martin,2.865840726
+6370,Prothonotary Warbler,2.006374883
+7430,Bushtit,2.148992039
+4710,Vermilion Flycatcher,2.285797798
+5130,Boat-tailed Grackle,3.981324655
+5110,Common Grackle,4.115782122
+5120,Great-tailed Grackle,3.255220394
+2110,Clapper Rail,1.968098426
+2080,King Rail,3.269379405
+2120,Virginia Rail,2.141265419
+2250,American Avocet,4.550597019
+7480,Golden-crowned Kinglet,1.778840172
+7490,Ruby-crowned Kinglet,2.097204457
+5390,Thick-billed Longspur,2.508512634
+6160,Bank Swallow,2.279290105
+800,Black Skimmer,7.011577329
+7150,Rock Wren,1.985917675
+4580,Black Phoebe,2.106409313
+4560,Eastern Phoebe,2.326197409
+4570,Say's Phoebe,2.00366952
+2280,American Woodcock,3.860470492
+6740,Ovenbird,2.427777608
+4340,Allen's Hummingbird,1.968304783
+4320,Broad-tailed Hummingbird,2.592795163
+4360,Calliope Hummingbird,1.947960776
+4330,Rufous Hummingbird,2.128899918
+6560,(Audubon's Warbler) Yellow-rumped Warbler,2.275221628
+6550,(Myrtle Warbler) Yellow-rumped Warbler,2.275221628
+6870,American Redstart,2.290661573
+6600,Bay-breasted Warbler,2.053568026
+6620,Blackburnian Warbler,2.237287672
+6610,Blackpoll Warbler,2.083837971
+6540,Black-throated Blue Warbler,2.256927131
+6650,Black-throated Gray Warbler,2.430695515
+6670,Black-throated Green Warbler,1.985630255
+6500,Cape May Warbler,1.889569075
+6580,Cerulean Warbler,1.960813984
+6590,Chestnut-sided Warbler,2.000625124
+6640,Grace's Warbler,2.135095065
+6690,Hermit Warbler,2.178412242
+6840,Hooded Warbler,2.048552778
+6570,Magnolia Warbler,2.125301481
+6480,Northern Parula,1.916144929
+6720,Palm Warbler,2.012091168
+6710,Pine Warbler,2.060304474
+6730,Prairie Warbler,2.321933109
+6680,Townsend's Warbler,2.378907897
+6520,Yellow Warbler,2.409592181
+6556,Yellow-rumped Warbler (all forms),2.275221628
+6630,Yellow-throated Warbler,1.972186319
+7660,Eastern Bluebird,2.37074215
+7680,Mountain Bluebird,2.154883319
+7670,Western Bluebird,2.110735311
+7290,Brown-headed Nuthatch,2.710632816
+7300,Pygmy Nuthatch,2.593836899
+7280,Red-breasted Nuthatch,2.160160436
+7270,White-breasted Nuthatch,2.255599547
+1590,Common Eider,11.21901402
+1400,Blue-winged Teal,3.937736958
+1410,Cinnamon Teal,2.91362668
+1420,Northern Shoveler,4.095844242
+4030,Red-breasted Sapsucker,1.881848945
+4021,Red-naped Sapsucker,1.950032103
+4022,Sapsuckers (Yellow-bellied/Red-naped/Red-breasted/Williamson's),2
+4040,Williamson's Sapsucker,1.942203555
+4020,Yellow-bellied Sapsucker,2.039788041
+5290,American Goldfinch,2.379974974
+5310,Lawrence's Goldfinch,2.073691654
+5300,Lesser Goldfinch,2.089842577
+5330,Pine Siskin,2.353143059
+6040,Dickcissel,2.079148346
+5650,Black-chinned Sparrow,2.388759557
+5620,Brewer's Sparrow,2.117613195
+5600,Chipping Sparrow,2.539412426
+5610,Clay-colored Sparrow,2.113274944
+5630,Field Sparrow,2.172682596
+5590,American Tree Sparrow,2.385897614
+6170,Northern Rough-winged Swallow,2.026909388
+380,Long-tailed Jaeger,7.780979306
+710,Arctic Tern,11.27037394
+700,Common Tern,10.39724168
+690,Forster's Tern,7.679346806
+740,Least Tern,8.372812288
+22860,Eurasian Collared-Dove,3.455689008
+3680,Barred Owl,6.404935458
+5010,Eastern Meadowlark,2.6782694
+5011,Western Meadowlark,2.680879929
+4930,European Starling,5.650993902
+6140,Tree Swallow,2.574948263
+6150,Violet-green Swallow,2.255309784
+650,Royal Tern,10.50757482
+7190,Bewick's Wren,1.994533614
+7180,Carolina Wren,2.179122367
+7080,Bendire's Thrasher,2.536164707
+7050,Brown Thrasher,2.681555771
+7100,California Thrasher,2.959549169
+7120,Crissal Thrasher,2.798039596
+7070,Curve-billed Thrasher,2.892583828
+7110,LeConte's Thrasher,2.523927773
+7060,Long-billed Thrasher,2.432853404
+2540,Greater Yellowlegs,4.856839238
+2550,Lesser Yellowlegs,4.061051404
+2560,Solitary Sandpiper,3.038332371
+2580,Willet,5.541358723
+7210,House Wren,2.13714676
+7221,Pacific Wren,1.912086464
+7222,Winter Wren,1.781788398
+7610,American Robin,3.146893471
+3050,Greater Prairie-Chicken,2.633883697
+3080,Sharp-tailed Grouse,2.537761556
+4480,Cassin's Kingbird,2.724748003
+4461,Couch's Kingbird,2.638102132
+4440,Eastern Kingbird,2.586855542
+4450,Gray Kingbird,2.892699702
+4430,Scissor-tailed Flycatcher,2.346737821
+4470,Western Kingbird,2.646492858
+3650,Barn Owl,5.81585489
+6410,Blue-winged Warbler,2.135991434
+6420,Golden-winged Warbler,2.07904359
+6330,Bell's Vireo,2.186976141
+6290,Blue-headed Vireo,2.339618291
+6291,Cassin's Vireo,2.30111226
+6340,Gray Vireo,2.17768724
+6320,Hutton's Vireo,2.776791813
+6260,Philadelphia Vireo,2.255599547
+6292,Plumbeous Vireo,2.303455161
+6240,Red-eyed Vireo,2.589017783
+6295,Solitary Vireo (Blue-headed/Cassin's),2.339618291
+6270,Warbling Vireo,2.719934475
+6310,White-eyed Vireo,2.409588172
+6280,Yellow-throated Vireo,2.352781493
+4970,Yellow-headed Blackbird,3.029981906
+3160,Mourning Dove,5.371662876
+3190,White-winged Dove,4.063751857
+5570,Golden-crowned Sparrow,2.465744217
+5540,White-crowned Sparrow,2.748363144
+5580,White-throated Sparrow,2.978161552

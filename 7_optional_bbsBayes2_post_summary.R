@@ -1,5 +1,5 @@
 ### bbsBayes2 post fit plotting with bbsBayes2
-
+setwd("C:/Users/SmithAC/Documents/GitHub/bbsStanBayes")
 library(bbsBayes2)
 library(tidyverse)
 library(patchwork)
@@ -8,7 +8,8 @@ load("species_lists.RData")
 model_sel = "gamye"
 strat = "bbs_cws"
 output_dir <- "F:/bbsStanBayes/output/" # Stan writes output to files as it samples. This is great because it's really stable, but the user needs to think about where to store that output
-output_dir <- "output/"
+output_dir2 <- "F:/bbsStanBayes/output2/" # Stan writes output to files as it samples. This is great because it's really stable, but the user needs to think about where to store that output
+#output_dir <- "output/"
 species_to_run <- nrecs_sp
 
 for(jj in 1:nrow(species_to_run)){
@@ -34,6 +35,7 @@ m <- md
 
 out_base <- paste(species_f,model_sel,"BBS",sep = "_")
 
+if(file.exists(paste0(output_dir,"/",out_base,"_Stan_fit.RData"))){
 load(paste0(output_dir,"/",out_base,"_Stan_fit.RData"))
 
 # combine the fitted model with prepped data
@@ -42,8 +44,8 @@ load(paste0(output_dir,"/",out_base,"_Stan_fit.RData"))
 
 m[["model_fit"]] <- stanfit
 
-saveRDS(m,file = paste0("output/saved_bbsBayes2_",species_f,".rds"))  
-
+saveRDS(m,file = paste0(output_dir2,"/","saved_bbsBayes2_",species_f,".rds"))  
+}
 }
 
 

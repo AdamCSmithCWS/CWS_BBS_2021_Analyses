@@ -53,7 +53,7 @@ numeric_cols_trends <- names(trends)[which(as.character(lapply(trends,typeof)) %
 trends_round <- trends %>% 
   mutate(across(all_of(numeric_cols_trends),~signif(.,3)))
 
-saveRDS(trends,"output/alltrends.rds")
+saveRDS(trends_round,"output/alltrends.rds")
 write.csv(trends_round, paste0("website/All_",YYYY,"_BBS_trends.csv"),row.names = F)
 
 trends_high_level <- trends_round %>% 
@@ -65,7 +65,7 @@ numeric_cols_indices <- names(indices)[which(as.character(lapply(indices,typeof)
 indices_round <- indices %>% 
   mutate(across(all_of(numeric_cols_indices),~signif(.,3)))
 
-saveRDS(indices,"output/allindices.rds")
+saveRDS(indices_round,"output/allindices.rds")
 write.csv(indices_round, paste0("website/All_",YYYY,"_BBS_indices.csv"),row.names = F)
 
 indices_high_level <- indices_round %>% 
@@ -78,7 +78,7 @@ numeric_cols_smooth_indices <- names(smooth_indices)[which(as.character(lapply(s
 
 smooth_indices_round <- smooth_indices %>% 
   mutate(across(all_of(numeric_cols_indices),~signif(.,3)))
-saveRDS(smooth_indices,"output/allsmooth_indices.rds")
+saveRDS(smooth_indices_round,"output/allsmooth_indices.rds")
 write.csv(smooth_indices_round, paste0("website/All_",YYYY,"_BBS_smooth_indices.csv"),row.names = F)
 
 
@@ -337,13 +337,16 @@ write.csv(webi, paste0("website/",YYYY," BBS indices for website.csv"),row.names
 ## see note from M-A, Teams chat Jan 26, 2023
 # ok, here we go: we want the ability to see trends for Canada (of course), but also continental, US, BCR, prov/terr, and the intersections of BCR and prov/terr, because that will feed into the goals (ugh)
 
-# trends <- readRDS("output/alltrends.rds")
-# indices <- readRDS("output/allindices.rds")
-# smooth_indices <- readRDS("output/allsmooth_indices.rds")
+ trends_round <- readRDS("output/alltrends.rds")
+# indices_round <- readRDS("output/allindices.rds")
+# smooth_indices_round <- readRDS("output/allsmooth_indices.rds")
 
 
-trends_round <- read.csv(paste0("website/All_",YYYY,"_BBS_trends.csv"))
-
+# tlong <- trends_round %>% 
+#   filter(Trend_Time == "Long-term") %>% 
+#   group_by(species) %>% 
+#   summarise(earliest = min(Start_year),
+#             latest = max(Start_year))
 
 trends_out <- trends_round %>% 
    filter((For_web == TRUE | Region %in% c("Continental","US"))) %>% 
@@ -360,10 +363,17 @@ if(any(round(test_probs$prob_test,2) != 1)){stop("probabilites of change categor
 
 
 trends_out <- trends_out %>%
-  mutate(years = paste(Start_year,End_year,sep = "-")) %>% 
-  rename(area_code = Region,
-         species_code = bbs_num,
-         species_id = species,
+  mutate(years = paste(Start_year,End_year,sep = "-"),
+         results_code = "BBS",
+         season = "breeding",
+         version = YYYY,
+         species_id = "",
+         area_code = ifelse(Region_type == "prov_state",Region,Region_alt),
+         area_code = gsub(area_code,pattern = "United States of America",
+                          replacement = "USA"),
+         model_type = "GAMYE") %>% 
+  rename(species_code = bbs_num,
+         species_name = species,
          period = Trend_Time,
          year_start = Start_year,
          year_end = End_year,
@@ -380,7 +390,7 @@ trends_out <- trends_out %>%
          prob_increase_0 = prob_increase_0_percent,
          prob_increase_33 = prob_increase_33_percent,
          prob_increase_100 = prob_increase_100_percent,
-         reliability = reliability,
+         confidence = reliability,
          precision_num = Width_of_95_percent_Credible_Interval,
          precision_cat = precision,
          coverage_num = reliab.cov,
@@ -393,10 +403,18 @@ trends_out <- trends_out %>%
          prob_MI = prob_MI,
          prob_LI = prob_LI)
 
+
+
+
 trends_socb <- trends_out %>% 
-  relocate(area_code,
+  relocate(results_code,
+           season,
+           version,
+           model_type,
+           area_code,
          species_code,
          species_id,
+         species_name,
          period,
          years,
          year_start,
@@ -414,7 +432,7 @@ trends_socb <- trends_out %>%
          prob_increase_0,
          prob_increase_33,
          prob_increase_100,
-         reliability,
+         confidence,
          precision_num,
          precision_cat,
          coverage_num,
@@ -431,10 +449,10 @@ write.csv(trends_socb,
           paste0("website/BBS_",YYYY,"_trends_for_socb.csv"),
           row.names = FALSE)
 
-write.csv(trends_socb[1:300,],
-          paste0("website/sample_BBS_",YYYY,"_trends_for_socb.csv"),
-          row.names = FALSE)
-
+# write.csv(trends_socb[1:300,],
+#           paste0("website/sample_BBS_",YYYY,"_trends_for_socb.csv"),
+#           row.names = FALSE)
+# 
 
 
 
@@ -554,22 +572,27 @@ write.csv(trends_socb[1:300,],
 
 # SOCB indices ------------------------------------------------------------
 
-indices_round <- read.csv(paste0("website/All_",YYYY,"_BBS_indices.csv"))
+indices_round <- readRDS("output/allindices.rds")
 
 indices_socb <- indices_round %>% 
   filter((For_web == TRUE | Region %in% c("Continental","US"))) %>% 
-  group_by(species,Region,Trend_Time) %>% 
-  mutate(LOESS_index = loess_func(Index,Year)) %>% 
+  group_by(species,Region,Region_type,Trend_Time) %>% 
+  mutate(LOESS_index = loess_func(Index,Year),
+         area_code = ifelse(Region_type == "prov_state",Region,Region_alt),
+         area_code = gsub(area_code,pattern = "United States of America",
+                          replacement = "USA")) %>% 
+  ungroup() %>% 
   rename(species_code = bbs_num,
     species_id = species,
     index = Index,
     year = Year,
-         area_code = Region,
          period = Trend_Time,
          upper_ci = Index_q_0.95,
          lower_ci = Index_q_0.05) %>% 
   select(-c(Index_q_0.025,
-            Index_q_0.975)) %>% 
+            Index_q_0.975,
+            Region_type,
+            Region)) %>% 
   relocate(area_code,
            year,
            period, 
@@ -584,5 +607,5 @@ write.csv(indices_socb,
           file = paste0("website/BBS_",YYYY,"_annual_indices_for_socb.csv"),
           row.names = FALSE)
 
-write.csv(indices_socb[sample(1:nrow(indices_socb),100,FALSE),],"sample_indices_output_bbs.csv",row.names = FALSE)
+# write.csv(indices_socb[sample(1:nrow(indices_socb),100,FALSE),],"sample_indices_output_bbs.csv",row.names = FALSE)
 
