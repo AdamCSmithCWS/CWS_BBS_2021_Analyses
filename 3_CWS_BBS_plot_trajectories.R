@@ -299,9 +299,9 @@ dev.off()  # close diagnostic trajectory plotting
 # 
 # 
 # # Species loop to plot simple trajectories ------------------------------------------------------------
-# n_cores <- 15#length(provs)
-# cluster <- makeCluster(n_cores, type = "PSOCK")
-# registerDoParallel(cluster)
+n_cores <- 15#length(provs)
+cluster <- makeCluster(n_cores, type = "PSOCK")
+registerDoParallel(cluster)
 
 
 fullrun <- foreach(jj = rev(1:nrow(species_to_run)),

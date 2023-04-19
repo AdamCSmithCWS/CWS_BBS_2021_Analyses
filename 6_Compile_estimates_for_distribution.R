@@ -51,35 +51,41 @@ print(round(jj/nrow(species_to_run),2))
 numeric_cols_trends <- names(trends)[which(as.character(lapply(trends,typeof)) %in% c("double"))]
 
 trends_round <- trends %>% 
-  mutate(across(all_of(numeric_cols_trends),~signif(.,3)))
+  mutate(across(all_of(numeric_cols_trends),~signif(.,3))) %>% 
+  relocate(species,espece,bbs_num,Trend_Time)
 
 saveRDS(trends_round,"output/alltrends.rds")
-write.csv(trends_round, paste0("website/All_",YYYY,"_BBS_trends.csv"),row.names = F)
+readr::write_excel_csv(trends_round, paste0("website/All_",YYYY,"_BBS_trends.csv"))
 
 trends_high_level <- trends_round %>% 
   filter(Region_type %in% c("national","continental"))
-write.csv(trends_high_level, paste0("website/","continent_national_trends_cws_BBS_",YYYY,".csv"),row.names = F)
+readr::write_excel_csv(trends_high_level, 
+          paste0("website/","continent_national_trends_cws_BBS_",YYYY,".csv"))
 
 numeric_cols_indices <- names(indices)[which(as.character(lapply(indices,typeof)) %in% c("double"))]
 
 indices_round <- indices %>% 
-  mutate(across(all_of(numeric_cols_indices),~signif(.,3)))
+  mutate(across(all_of(numeric_cols_indices),~signif(.,3))) %>% 
+  relocate(species,espece,bbs_num,Trend_Time)
 
 saveRDS(indices_round,"output/allindices.rds")
-write.csv(indices_round, paste0("website/All_",YYYY,"_BBS_indices.csv"),row.names = F)
+readr::write_excel_csv(indices_round, paste0("website/All_",YYYY,"_BBS_indices.csv"))
 
 indices_high_level <- indices_round %>% 
   filter(Region_type %in% c("national","continental"))
-write.csv(indices_high_level, paste0("website/","continent_national_indicess_cws_BBS_",YYYY,".csv"),row.names = F)
+readr::write_excel_csv(indices_high_level, 
+                       paste0("website/","continent_national_indicess_cws_BBS_",YYYY,".csv"))
 
 
 
 numeric_cols_smooth_indices <- names(smooth_indices)[which(as.character(lapply(smooth_indices,typeof)) %in% c("double"))]
 
 smooth_indices_round <- smooth_indices %>% 
-  mutate(across(all_of(numeric_cols_indices),~signif(.,3)))
+  mutate(across(all_of(numeric_cols_indices),~signif(.,3))) %>% 
+  relocate(species,espece,bbs_num,Trend_Time)
 saveRDS(smooth_indices_round,"output/allsmooth_indices.rds")
-write.csv(smooth_indices_round, paste0("website/All_",YYYY,"_BBS_smooth_indices.csv"),row.names = F)
+readr::write_excel_csv(smooth_indices_round, 
+                       paste0("website/All_",YYYY,"_BBS_smooth_indices.csv"))
 
 
 
@@ -240,7 +246,7 @@ web = web[,clout]
 names(web) = clnms
 
 
-write.csv(web, paste0("website/",YYYY," BBS trends for website.csv"),row.names = F)
+readr::write_excel_csv(web, paste0("website/",YYYY," BBS trends for website.csv"))
 
 
 
@@ -312,12 +318,12 @@ index_trend_test <- webi %>%
             by = c("species","trendtype","geo.area"))
 }
 
-write.csv(webi, paste0("website/",YYYY," BBS indices for website.csv"),row.names = F)
+readr::write_excel_csv(webi, paste0("website/",YYYY," BBS indices for website.csv"))
 
 # webi_short = webi_short[,clouti]
 # names(webi_short) <- clnmsi
 # 
-# write.csv(webi_short, paste0("website/",YYYY," Short-term only BBS indices for website.csv"),row.names = F)
+# readr::write_excel_csv(webi_short, paste0("website/",YYYY," Short-term only BBS indices for website.csv"))
 
 
 
@@ -445,13 +451,11 @@ trends_socb <- trends_out %>%
          prob_MI,
          prob_LI)
 
-write.csv(trends_socb,
-          paste0("website/BBS_",YYYY,"_trends_for_socb.csv"),
-          row.names = FALSE)
+readr::write_excel_csv(trends_socb,
+          paste0("website/BBS_",YYYY,"_trends_for_socb.csv"))
 
-# write.csv(trends_socb[1:300,],
-#           paste0("website/sample_BBS_",YYYY,"_trends_for_socb.csv"),
-#           row.names = FALSE)
+# readr::write_excel_csv(trends_socb[1:300,],
+#           paste0("website/sample_BBS_",YYYY,"_trends_for_socb.csv"))
 # 
 
 
@@ -558,13 +562,13 @@ write.csv(trends_socb,
 # if(any(names(trends_socb) != socb_headings_select[,2])) stop("Stop columns don't match")
 # 
 # names(trends_socb) <- socb_headings_select[,1]
-# write.csv(trends_socb,paste0("website/BBS_",YYYY,"_trends_for_socb.csv"))
+# readr::write_excel_csv(trends_socb,paste0("website/BBS_",YYYY,"_trends_for_socb.csv"))
 # 
 # socb_headings_extract <- socb_headings_extract %>% 
 #   rename(NatureCountsTrendsSample = socb,
 #          BBS_trend_headers = trend)
 # 
-# write.csv(socb_headings_extract,
+# readr::write_excel_csv(socb_headings_extract,
 #           "website/linking_columns_naturecounts_bbs.csv")
 # 
 
@@ -573,9 +577,20 @@ write.csv(trends_socb,
 # SOCB indices ------------------------------------------------------------
 
 indices_round <- readRDS("output/allindices.rds")
+smooth_indices_round <- readRDS("output/allsmooth_indices.rds")
+smooth_join <- smooth_indices_round %>% 
+  select(species,Region,Region_type,Trend_Time,
+         Year,Index) %>% 
+  rename(smooth_index = Index)
 
 indices_socb <- indices_round %>% 
   filter((For_web == TRUE | Region %in% c("Continental","US"))) %>% 
+  inner_join(.,smooth_join,
+             by = c("species",
+                    "Region",
+                    "Region_type",
+                    "Trend_Time",
+                    "Year")) %>% 
   group_by(species,Region,Region_type,Trend_Time) %>% 
   mutate(LOESS_index = loess_func(Index,Year),
          area_code = ifelse(Region_type == "prov_state",Region,Region_alt),
@@ -601,11 +616,11 @@ indices_socb <- indices_round %>%
            index,
            upper_ci,
            lower_ci,
-           LOESS_index)
+           LOESS_index,
+           smooth_index)
 
-write.csv(indices_socb,
-          file = paste0("website/BBS_",YYYY,"_annual_indices_for_socb.csv"),
-          row.names = FALSE)
+readr::write_excel_csv(indices_socb,
+          file = paste0("website/BBS_",YYYY,"_annual_indices_for_socb.csv"))
 
-# write.csv(indices_socb[sample(1:nrow(indices_socb),100,FALSE),],"sample_indices_output_bbs.csv",row.names = FALSE)
+# readr::write_excel_csv(indices_socb[sample(1:nrow(indices_socb),100,FALSE),],"sample_indices_output_bbs.csv")
 

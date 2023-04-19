@@ -305,8 +305,7 @@ fullrun <- foreach(jj = (1:nrow(species_to_run)),
         
         
   
-        write.csv(tall,file = paste0("trends/Trends_by_species/",species_f_bil,"_trends.csv"),
-                  row.names = FALSE)
+        readr::write_excel_csv(tall,file = paste0("trends/Trends_by_species/",species_f_bil,"_trends.csv"))
         
         
         
@@ -376,8 +375,7 @@ fullrun <- foreach(jj = (1:nrow(species_to_run)),
                  bbs_num = as.integer(aou)) %>% 
           mutate(across(where(is.double),~signif(.,3)))
         
-        write.csv(ind_out,file = paste0("indices/full/",species_f_bil,"_annual_indices.csv"),
-                  row.names = FALSE)
+        readr::write_excel_csv(ind_out,file = paste0("indices/full/",species_f_bil,"_annual_indices.csv"))
         
         inds_out <- inds$data_summary %>% 
           filter(Year >= fy) %>% 
@@ -389,8 +387,7 @@ fullrun <- foreach(jj = (1:nrow(species_to_run)),
                  index_type = "Smooth") %>% 
           mutate(across(where(is.double),~signif(.,3)))
         
-        write.csv(inds_out,file = paste0("indices/smooth/",species_f_bil,"_smoothed_annual_indices.csv"),
-                  row.names = FALSE)
+        readr::write_excel_csv(inds_out,file = paste0("indices/smooth/",species_f_bil,"_smoothed_annual_indices.csv"))
         
   } #temp end loop
 

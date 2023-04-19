@@ -50,11 +50,14 @@ trends_round <- trends %>%
   relocate(species,espece,bbs_num,Trend_Time)
 
 saveRDS(trends_round,"output/all_trends3_generation_short.rds")
-write.csv(trends_round, paste0("website/All_",YYYY,"_BBS_trends_3_generation_short.csv"),row.names = F)
+#trends_round <- readRDS("output/all_trends3_generation_short.rds")
+readr::write_excel_csv(trends_round, 
+          paste0("website/All_",YYYY,"_BBS_trends_3_generation_short.csv"))
 
 trends_high_level <- trends_round %>% 
   filter(Region_type %in% c("national","continental"))
-write.csv(trends_high_level, paste0("website/","continent_national_3_generation_short_trends_cws_BBS_",YYYY,".csv"),row.names = F)
+readr::write_excel_csv(trends_high_level, 
+          paste0("website/","continent_national_3_generation_short_trends_cws_BBS_",YYYY,".csv"))
 
 
 
@@ -62,7 +65,8 @@ trends_round_short <- trends_round %>%
   filter(Trend_Time == "Short-term")
 
 saveRDS(trends_round_short,"output/all_3_generation_trends.rds")
-write.csv(trends_round_short, paste0("website/All_",YYYY,"_BBS_short-term_3_generation_trends.csv"),row.names = F)
+readr::write_excel_csv(trends_round_short, 
+          paste0("website/All_",YYYY,"_BBS_short-term_3_generation_trends.csv"))
 
 
 # 
@@ -183,11 +187,11 @@ write.csv(trends_round_short, paste0("website/All_",YYYY,"_BBS_short-term_3_gene
 #          prob_MI,
 #          prob_LI)
 # 
-# write.csv(trends_socb,
+# readr::write_excel_csv(trends_socb,
 #           paste0("website/BBS_",YYYY,"_trends_for_socb.csv"),
 #           row.names = FALSE)
 # 
-# # write.csv(trends_socb[1:300,],
+# # readr::write_excel_csv(trends_socb[1:300,],
 # #           paste0("website/sample_BBS_",YYYY,"_trends_for_socb.csv"),
 # #           row.names = FALSE)
 # # 
@@ -296,13 +300,13 @@ write.csv(trends_round_short, paste0("website/All_",YYYY,"_BBS_short-term_3_gene
 # # if(any(names(trends_socb) != socb_headings_select[,2])) stop("Stop columns don't match")
 # # 
 # # names(trends_socb) <- socb_headings_select[,1]
-# # write.csv(trends_socb,paste0("website/BBS_",YYYY,"_trends_for_socb.csv"))
+# # readr::write_excel_csv(trends_socb,paste0("website/BBS_",YYYY,"_trends_for_socb.csv"))
 # # 
 # # socb_headings_extract <- socb_headings_extract %>% 
 # #   rename(NatureCountsTrendsSample = socb,
 # #          BBS_trend_headers = trend)
 # # 
-# # write.csv(socb_headings_extract,
+# # readr::write_excel_csv(socb_headings_extract,
 # #           "website/linking_columns_naturecounts_bbs.csv")
 # # 
 # 
@@ -341,9 +345,9 @@ write.csv(trends_round_short, paste0("website/All_",YYYY,"_BBS_short-term_3_gene
 #            lower_ci,
 #            LOESS_index)
 # 
-# write.csv(indices_socb,
+# readr::write_excel_csv(indices_socb,
 #           file = paste0("website/BBS_",YYYY,"_annual_indices_for_socb.csv"),
 #           row.names = FALSE)
 # 
-# # write.csv(indices_socb[sample(1:nrow(indices_socb),100,FALSE),],"sample_indices_output_bbs.csv",row.names = FALSE)
+# # readr::write_excel_csv(indices_socb[sample(1:nrow(indices_socb),100,FALSE),],"sample_indices_output_bbs.csv",row.names = FALSE)
 

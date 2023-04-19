@@ -224,8 +224,7 @@ fullrun <- foreach(jj = rev(1:nrow(species_to_run)),
                  espece = espece,
                  bbs_num = aou,
                  Trend_Time = "rolling-short")
-        write.csv(roll_trends_out,file = paste0("trends/rolling_trend_estimates/",species_f_bil,"_rolling_trends.csv"),
-                  row.names = FALSE)
+        readr::write_excel_csv(roll_trends_out,file = paste0("trends/rolling_trend_estimates/",species_f_bil,"_rolling_trends.csv"))
         
         roll_trends_out <- roll_trends_out %>% 
           filter(Region_type %in% c("continental","national","prov_state"))
