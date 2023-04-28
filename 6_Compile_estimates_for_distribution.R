@@ -595,7 +595,11 @@ indices_socb <- indices_round %>%
   mutate(LOESS_index = loess_func(Index,Year),
          area_code = ifelse(Region_type == "prov_state",Region,Region_alt),
          area_code = gsub(area_code,pattern = "United States of America",
-                          replacement = "USA")) %>% 
+                          replacement = "USA"),
+         results_code = "BBS",
+         season = "breeding",
+         version = YYYY,
+         model_type = "GAMYE") %>% 
   ungroup() %>% 
   rename(species_code = bbs_num,
     species_id = species,
@@ -608,7 +612,11 @@ indices_socb <- indices_round %>%
             Index_q_0.975,
             Region_type,
             Region)) %>% 
-  relocate(area_code,
+  relocate(results_code,
+           season,
+           version,
+           model_type,
+           area_code,
            year,
            period, 
            species_code,
