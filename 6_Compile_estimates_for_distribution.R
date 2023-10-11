@@ -344,6 +344,10 @@ readr::write_excel_csv(webi, paste0("website/",YYYY," BBS indices for website.cs
 # ok, here we go: we want the ability to see trends for Canada (of course), but also continental, US, BCR, prov/terr, and the intersections of BCR and prov/terr, because that will feed into the goals (ugh)
 
  trends_round <- readRDS("output/alltrends.rds")
+trends_3g <- readRDS("output/all_3_generation_trends.rds") %>% 
+  mutate(Trend_Time = "Three-generations")
+trends_round <- bind_rows(trends_round,
+                          trends_3g)
 # indices_round <- readRDS("output/allindices.rds")
 # smooth_indices_round <- readRDS("output/allsmooth_indices.rds")
 

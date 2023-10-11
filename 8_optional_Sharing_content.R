@@ -11,11 +11,12 @@ load("species_lists.RData")
 
 
 
-species <- "Downy Woodpecker"
+species <- "Barn Swallow"
 jj <- which(nrecs_sp$english == species)
 species_f <- as.character(nrecs_sp[jj,"species_file"])
 
-m <- readRDS(paste0("output/saved_bbsBayes2_",species_f,".rds"))
+#m <- readRDS(paste0("output/saved_bbsBayes2_",species_f,".rds"))
+m <- readRDS(paste0("output/",species,"_gamye_spatial.rds"))
 
 
 ind <- generate_indices(m,
@@ -25,16 +26,16 @@ trajs <- plot_indices(ind,
 print(trajs[["continent"]])
 
 inds <- generate_indices(m,
-                         alternate_n = "nsmooth")
+                         alternate_n = "n_smooth")
 
 base <- bbsBayes2::load_map("bbs_cws") %>% 
   filter(strata_name %in% inds$indices$region) %>% 
   st_bbox()
 
 starts <- c(1966,
-            1988,
-            1995,
-            2002,
+            1980,
+            2001,
+            2010,
             2021) #identify some change points
 
 
@@ -76,12 +77,12 @@ for(y in 1:(length(starts)-1)){
     
   mapt <- traj + map + plot_layout(nrow = 2,heights = c(2,4))
   mag = 3
-  png(filename = paste0("Sharing/",species_f,"_",fy,"-",ly,".png"),
-      res = 72 *mag,
-      height = 900*mag,
-      width = 600*mag)
-  print(mapt)
-  dev.off()
+  # png(filename = paste0("Sharing/",species_f,"_",fy,"-",ly,".png"),
+  #     res = 72 *mag,
+  #     height = 900*mag,
+  #     width = 600*mag)
+  # print(mapt)
+  # dev.off()
   maps[[y]] <- map
   
 }
@@ -114,12 +115,12 @@ traj <- trajs[[1]] +
 
 mapt <- traj + map + plot_layout(nrow = 2,heights = c(2,4))
 mag = 3
-png(filename = paste0("Sharing/",species_f,"_",fy,"-",ly,"overall.png"),
-    res = 72 *mag,
-    height = 900*mag,
-    width = 600*mag)
-print(mapt)
-dev.off()
+# png(filename = paste0("Sharing/",species_f,"_",fy,"-",ly,"overall.png"),
+#     res = 72 *mag,
+#     height = 900*mag,
+#     width = 600*mag)
+# print(mapt)
+# dev.off()
 
 
 
@@ -155,8 +156,8 @@ plot_layout(design = c("
                                  "))
 mag = 3
 png(filename = paste0("Sharing/",species_f,"_",fy,"-",ly,".png"),
-    res = 72 *mag,
-    height = 500*mag,
+    res = 72*mag,
+    height = 450*mag,
     width = 600*mag)
 print(mapt)
 dev.off()
